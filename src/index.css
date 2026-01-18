@@ -1,0 +1,283 @@
+@import "tailwindcss";
+
+/* Hide scrollbar globally but keep scroll */
+html,
+body {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari/Opera */
+  width: 0;
+  height: 0;
+}
+
+@theme {
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #18181b;
+  --color-zinc-800: #27272a;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-600: #52525b;
+  --color-zinc-500: #71717a;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-100: #f4f4f5;
+
+  --font-jetbrains: "JetBrains Mono", monospace;
+  --font-geist: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+  --font-doto: "Doto", sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 24 24 27;
+    /* #18181b */
+    --foreground: 250 250 250;
+    /* zinc-50 */
+  }
+
+  body {
+    @apply antialiased min-h-screen text-zinc-100;
+    background-color: #18181b;
+    /* zinc-950 - exact match to bilal.works */
+    font-family: var(--font-geist);
+    overflow-x: hidden;
+    /* Hide scrollbar but keep scroll */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari/Opera */
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-jetbrains tracking-tight;
+  }
+}
+
+@layer components {
+
+  /* THE AURA EFFECT - Disabled to fix visible patterns */
+  .aura-overlay {
+    @apply fixed inset-0 pointer-events-none z-50;
+    /* Removed box-shadow that was causing visible patterns */
+  }
+
+  /* SCANLINE / GRAIN EFFECT - Exact replica from research */
+  .scanlines {
+    @apply fixed inset-0 pointer-events-none z-40 opacity-[0.03];
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg,
+        rgba(255, 0, 0, 0.06),
+        rgba(0, 255, 0, 0.02),
+        rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+  }
+
+  .aura-frame {
+    @apply relative mx-auto my-12 w-full max-w-5xl border border-zinc-900 p-6 sm:p-12 z-10;
+    /* Removed bg and box-shadow that was causing visible patterns */
+  }
+
+  .sidebar-icon {
+    @apply flex h-10 w-10 items-center justify-center rounded-lg text-zinc-500 transition-all hover:bg-zinc-900 hover:text-zinc-100;
+  }
+
+  .dot-matrix {
+    font-family: "Doto", sans-serif;
+    @apply text-6xl font-black uppercase tracking-tighter;
+  }
+}
+
+/* Dither Effect with SVG Filter */
+.dithered {
+  filter: grayscale(1) contrast(1.2) brightness(1.1) url(#dissolve-filter);
+}
+
+/* Skill Card Icon Color on Hover */
+.skill-card .skill-icon {
+  color: #52525b;
+  /* zinc-600 */
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.skill-card:hover .skill-icon {
+  color: var(--skill-color);
+  filter: grayscale(0);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ===== BLOG CONTENT STYLING ===== */
+.blog-content {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #a1a1aa;
+  /* zinc-400 */
+}
+
+.blog-content h1 {
+  font-family: "Doto", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f4f4f5;
+  /* zinc-100 */
+  margin: 2.5rem 0 1rem 0;
+}
+
+.blog-content h2 {
+  font-family: "Geist Mono", monospace;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e4e4e7;
+  /* zinc-200 */
+  margin: 2rem 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #27272a;
+}
+
+.blog-content h3 {
+  font-family: "Geist Mono", monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d4d4d8;
+  /* zinc-300 */
+  margin: 1.5rem 0 0.5rem 0;
+}
+
+.blog-content p {
+  margin: 1rem 0;
+  color: #a1a1aa;
+}
+
+.blog-content a {
+  color: #60a5fa;
+  /* blue-400 */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+
+.blog-content a:hover {
+  color: #93c5fd;
+  /* blue-300 */
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.blog-content ul {
+  list-style-type: disc;
+}
+
+.blog-content ol {
+  list-style-type: decimal;
+}
+
+.blog-content li {
+  margin: 0.5rem 0;
+  color: #a1a1aa;
+}
+
+.blog-content strong {
+  font-weight: 600;
+  color: #e4e4e7;
+}
+
+.blog-content em {
+  font-style: italic;
+  color: #d4d4d8;
+}
+
+.blog-content blockquote {
+  border-left: 3px solid #3f3f46;
+  padding: 0.5rem 0 0.5rem 1rem;
+  margin: 1.5rem 0;
+  background: rgba(39, 39, 42, 0.3);
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+  color: #a1a1aa;
+}
+
+.blog-content code {
+  font-family: "Geist Mono", monospace;
+  background: #27272a;
+  color: #d4d4d8;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.blog-content pre {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.blog-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.blog-content img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid #27272a;
+  margin: 1.5rem 0;
+}
+
+.blog-content hr {
+  border: none;
+  border-top: 1px dashed #3f3f46;
+  margin: 2rem 0;
+}
+
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+}
+
+.blog-content th,
+.blog-content td {
+  border: 1px solid #27272a;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.blog-content th {
+  background: #18181b;
+  color: #d4d4d8;
+  font-weight: 600;
+}
+
+.blog-content td {
+  color: #a1a1aa;
+}
