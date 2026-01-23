@@ -569,8 +569,8 @@ const experienceData: Experience[] = [
         tags: ['React', 'Java', 'MongoDB'],
         description: [
             "Developed a full-stack web application to automate internal deployment workflows.",
-            "Reduced manual lead time by ≈99.1% (from ~3 weeks to ~6 hours).",
-            "Designed an in-app CSV editor with schema-aware validation using AG Grid."
+            "Designed an in-app CSV editor with schema-aware validation using AG Grid.",
+            "Tech Stack: React, Java, MongoDB"
         ]
     },
     {
