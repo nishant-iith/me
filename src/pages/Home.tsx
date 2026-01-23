@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Github, ExternalLink, ChevronDown, Linkedin, Twitter, BadgeCheck, Briefcase } from 'lucide-react';
-import VisitorCounter from '../components/VisitorCounter';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Github, ExternalLink, ChevronDown, Linkedin, Twitter, BadgeCheck, Briefcase, GraduationCap } from 'lucide-react';
+import VisitorCounter from '~components/VisitorCounter';
+import SuspenseLoader from '~components/SuspenseLoader';
+import { useGithubContributions } from '@/features/github';
+import { useLeetCodeStats } from '@/features/leetcode';
+import { useCodeforcesData } from '@/features/codeforces';
 
-import logoGS from '../assets/logos/gs.png';
-import logoOCS from '../assets/logos/ocs.png';
-import logo10x from '../assets/logos/10xscale.png';
-import logoFCC from '../assets/logos/fcc.png';
-import logoPentakod from '../assets/logos/pentakod.png';
-import logoIITH from '../assets/logos/iith.png';
+import logoGS from '~assets/logos/gs.png';
+import logoOCS from '~assets/logos/ocs.png';
+import logo10x from '~assets/logos/10xscale.png';
+import logoFCC from '~assets/logos/fcc.png';
+import logoPentakod from '~assets/logos/pentakod.png';
+import logoIITH from '~assets/logos/iith.png';
 
 const Home = () => {
     return (
@@ -46,7 +50,9 @@ const Home = () => {
             <PatternDivider />
 
             {/* CONTRIBUTION GRAPH */}
-            <ContributionGraph />
+            <SuspenseLoader>
+                <ContributionGraph />
+            </SuspenseLoader>
 
             {/* PATTERN DIVIDER - After Contribution Graph */}
             <PatternDivider />
@@ -147,7 +153,16 @@ const Home = () => {
     );
 };
 
-const EducationItem = ({ school, degree, period, grade, logo, courses = {} }) => {
+interface EducationItemProps {
+    school: string;
+    degree: string;
+    period: string;
+    grade: string;
+    logo?: string;
+    courses?: Record<string, string[]>;
+}
+
+const EducationItem: React.FC<EducationItemProps> = ({ school, degree, period, grade, logo, courses = {} }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Get total course count from object
@@ -208,7 +223,7 @@ const EducationItem = ({ school, degree, period, grade, logo, courses = {} }) =>
                                             {category}
                                         </h5>
                                         <div className="flex flex-wrap gap-1.5">
-                                            {courseList.map((course, i) => (
+                                            {courseList.map((course: string, i: number) => (
                                                 <span
                                                     key={i}
                                                     className="font-mono text-[10px] text-zinc-500 px-2 py-1 bg-zinc-900/30 border border-zinc-800/50 rounded hover:border-zinc-700 hover:text-zinc-400 transition-colors"
@@ -230,7 +245,11 @@ const EducationItem = ({ school, degree, period, grade, logo, courses = {} }) =>
 
 /* --- COMPONENTS --- */
 
-const TypewriterEffect = ({ words }) => {
+interface TypewriterEffectProps {
+    words: string[];
+}
+
+const TypewriterEffect: React.FC<TypewriterEffectProps> = ({ words }) => {
     const [index, setIndex] = useState(0);
     const [subIndex, setSubIndex] = useState(0);
     const [reverse, setReverse] = useState(false);
@@ -272,7 +291,11 @@ const TypewriterEffect = ({ words }) => {
     );
 };
 
-export const SectionTitle = ({ title }) => (
+interface SectionTitleProps {
+    title: string;
+}
+
+export const SectionTitle: React.FC<SectionTitleProps> = ({ title }) => (
     <h3 className="font-mono text-zinc-400 text-sm flex items-center gap-2">
         <span className="w-2 h-2 bg-zinc-700 rounded-sm"></span>
         {title}
@@ -292,7 +315,12 @@ export const PatternDivider = () => (
     </div>
 );
 
-const SocialLink = ({ href, icon }) => (
+interface SocialLinkProps {
+    href: string;
+    icon: React.ReactNode;
+}
+
+const SocialLink: React.FC<SocialLinkProps> = ({ href, icon }) => (
     <a
         href={href}
         target="_blank"
@@ -305,19 +333,14 @@ const SocialLink = ({ href, icon }) => (
 
 // Premium Multi-Platform Contribution Graph
 const ContributionGraph = () => {
-    const [activeTab, setActiveTab] = useState('github');
-    const [data, setData] = useState({ github: null, leetcode: null, codeforces: null });
-    const [extraStats, setExtraStats] = useState({
-        github: { label: 'Contributions', value: null },
-        leetcode: { label: 'Questions Solved', value: null },
-        codeforces: { label: 'Rating', value: null, subLabel: null }
-    });
-    const [loading, setLoading] = useState({ github: true, leetcode: true, codeforces: true });
-    const [error, setError] = useState({ github: null, leetcode: null, codeforces: null });
-    const [hoveredDay, setHoveredDay] = useState(null);
+    const [activeTab, setActiveTab] = useState<'github' | 'leetcode' | 'codeforces'>('github');
+    const [hoveredDay, setHoveredDay] = useState<any>(null);
+
+    const { data: githubData } = useGithubContributions();
+    const { data: leetcodeData } = useLeetCodeStats();
+    const { data: codeforcesData } = useCodeforcesData();
 
     // Premium Monochrome Palette
-    // 0: Empty (zinc-900/50), 1: zinc-800, 2: zinc-600, 3: zinc-400, 4: zinc-100 (brightest)
     const levels = ['rgba(39, 39, 42, 0.4)', '#27272a', '#52525b', '#a1a1aa', '#f4f4f5'];
 
     const platforms = {
@@ -326,101 +349,7 @@ const ContributionGraph = () => {
         codeforces: { name: 'Codeforces', icon: '◉', username: 'so-called-iitian' }
     };
 
-    // Helper for caching API responses (Safe JSON parsing)
-    const fetchWithCache = async (key, url, duration = 24 * 60 * 60 * 1000) => {
-        try {
-            const cached = localStorage.getItem(key);
-            if (cached) {
-                const { timestamp, data } = JSON.parse(cached);
-                if (Date.now() - timestamp < duration) return data;
-            }
-        } catch (e) {
-            console.warn('Cache parsing failed', e);
-            localStorage.removeItem(key);
-        }
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch');
-            const data = await response.json();
-            localStorage.setItem(key, JSON.stringify({ timestamp: Date.now(), data }));
-            return data;
-        } catch (error) { throw error; }
-    };
-
-    // Fetch data for all platforms on mount
-    useEffect(() => {
-        const CACHE_DURATION = 24 * 60 * 60 * 1000;
-
-        // GitHub Data
-        fetchWithCache('contrib_github', 'https://github-contributions-api.jogruber.de/v4/nishant-iith?y=last', CACHE_DURATION)
-            .then(result => {
-                setData(prev => ({ ...prev, github: result }));
-                setExtraStats(prev => ({ ...prev, github: { label: 'Contributions', value: result.total?.lastYear } }));
-            })
-            .catch(err => setError(prev => ({ ...prev, github: err.message })))
-            .finally(() => setLoading(prev => ({ ...prev, github: false })));
-
-        // LeetCode Data (Calendar + Solved Stats)
-        Promise.all([
-            fetchWithCache('contrib_leetcode', 'https://alfa-leetcode-api.onrender.com/Nishant-iith/calendar', CACHE_DURATION),
-            fetchWithCache('stats_leetcode', 'https://alfa-leetcode-api.onrender.com/Nishant-iith/solved', CACHE_DURATION)
-        ])
-            .then(([calendarResult, statsResult]) => {
-                // Process Calendar
-                const calendar = calendarResult.submissionCalendar ? JSON.parse(calendarResult.submissionCalendar) : {};
-                const contributions = Object.entries(calendar).map(([ts, count]) => ({
-                    date: new Date(parseInt(ts) * 1000).toISOString().split('T')[0],
-                    count: parseInt(count)
-                }));
-
-                setData(prev => ({ ...prev, leetcode: { contributions, total: calendarResult.totalActiveDays || contributions.length } }));
-
-                // Set Extra Stats (Solved Count)
-                setExtraStats(prev => ({
-                    ...prev,
-                    leetcode: { label: 'Questions Solved', value: statsResult.solvedProblem }
-                }));
-            })
-            .catch(err => setError(prev => ({ ...prev, leetcode: err.message })))
-            .finally(() => setLoading(prev => ({ ...prev, leetcode: false })));
-
-        // Codeforces Data (Status + User Info)
-        Promise.all([
-            fetchWithCache('contrib_codeforces', 'https://codeforces.com/api/user.status?handle=so-called-iitian&from=1&count=10000', CACHE_DURATION),
-            fetchWithCache('stats_codeforces', 'https://codeforces.com/api/user.info?handles=so-called-iitian', CACHE_DURATION)
-        ])
-            .then(([statusResult, infoResult]) => {
-                if (statusResult.status === 'OK') {
-                    const dateMap = {};
-                    statusResult.result.forEach(sub => {
-                        const dateStr = new Date(sub.creationTimeSeconds * 1000).toISOString().split('T')[0];
-                        dateMap[dateStr] = (dateMap[dateStr] || 0) + 1;
-                    });
-                    const contributions = Object.entries(dateMap).map(([date, count]) => ({ date, count }));
-                    const oneYearAgo = new Date();
-                    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                    const total = contributions.filter(c => new Date(c.date) >= oneYearAgo).reduce((s, d) => s + d.count, 0);
-                    setData(prev => ({ ...prev, codeforces: { contributions, total } }));
-                }
-
-                if (infoResult.status === 'OK' && infoResult.result.length > 0) {
-                    const user = infoResult.result[0];
-                    setExtraStats(prev => ({
-                        ...prev,
-                        codeforces: {
-                            label: 'Rating',
-                            value: user.rating,
-                            subLabel: user.rank ? user.rank.replace(/^\w/, c => c.toUpperCase()) : null
-                        }
-                    }));
-                }
-            })
-            .catch(err => setError(prev => ({ ...prev, codeforces: err.message })))
-            .finally(() => setLoading(prev => ({ ...prev, codeforces: false })));
-    }, []);
-
-    const getLevel = (count) => {
+    const getLevel = (count: number) => {
         if (count === 0) return 0;
         if (count === 1) return 1;
         if (count <= 4) return 2;
@@ -428,13 +357,13 @@ const ContributionGraph = () => {
         return 4;
     };
 
-    const processContributions = (platformData, platform) => {
+    const processContributions = (platformData: any, platform: string) => {
         if (!platformData) return { weeks: [], monthLabels: [] };
 
-        const contribMap = {};
+        const contribMap: Record<string, number> = {};
         const contributions = platform === 'github' ? platformData.contributions : platformData.contributions || [];
 
-        contributions.forEach(day => {
+        contributions.forEach((day: any) => {
             contribMap[day.date] = day.count;
         });
 
@@ -450,12 +379,13 @@ const ContributionGraph = () => {
                 date.setDate(date.getDate() - (w * 7 + (6 - d)));
                 const dateStr = date.toISOString().split('T')[0];
                 const count = contribMap[dateStr] || 0;
-                week.push({ date: dateStr, count, level: getLevel(count, platform) });
+                week.push({ date: dateStr, count, level: getLevel(count) });
 
                 if (d === 0) {
                     const month = date.getMonth();
                     if (month !== currentMonth) {
-                        monthLabels.push({ week: 51 - w, month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][month] });
+                        const monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][month];
+                        monthLabels.push({ week: 51 - w, month: monthName });
                         currentMonth = month;
                     }
                 }
@@ -466,39 +396,58 @@ const ContributionGraph = () => {
         return { weeks, monthLabels };
     };
 
-    const currentData = data[activeTab];
-    const currentStats = extraStats[activeTab];
-    const isLoading = loading[activeTab];
-    const hasError = error[activeTab];
-    const { weeks, monthLabels } = processContributions(currentData, activeTab);
+    // Prepare platform-specific data and stats
+    const getPlatformData = () => {
+        switch (activeTab) {
+            case 'github':
+                return {
+                    data: githubData,
+                    stats: { label: 'Contributions', value: githubData.totalContributions }
+                };
+            case 'leetcode':
+                return {
+                    data: leetcodeData,
+                    stats: { label: 'Questions Solved', value: leetcodeData.solvedProblem }
+                };
+            case 'codeforces':
+                return {
+                    data: codeforcesData,
+                    stats: { label: 'Rating', value: codeforcesData.rating, subLabel: codeforcesData.rank }
+                };
+        }
+    };
+
+    const { data: currentData, stats: currentStats } = getPlatformData()!;
+
+    const { weeks, monthLabels } = useMemo(() => processContributions(currentData, activeTab), [currentData, activeTab]);
 
     return (
         <section className="flex flex-col gap-4 relative">
             {/* Header: Tabs & Stats */}
             <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-3">
-                <div className="flex p-1 bg-zinc-900/50 border border-zinc-800/50 rounded-lg">
+                <div className="flex flex-wrap gap-1 p-1 bg-zinc-900/50 border border-zinc-800/50 rounded-lg">
                     {Object.entries(platforms).map(([key, platform]) => (
                         <button
                             key={key}
-                            onClick={() => setActiveTab(key)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-medium text-xs transition-all duration-300 ${activeTab === key
+                            onClick={() => setActiveTab(key as 'github' | 'leetcode' | 'codeforces')}
+                            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md font-medium text-[11px] sm:text-xs transition-all duration-300 ${activeTab === key
                                 ? 'bg-zinc-800 text-zinc-100 shadow-sm'
                                 : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
                                 }`}
                         >
                             <span>{platform.icon}</span>
-                            {platform.name}
+                            <span className="hidden xs:inline sm:inline">{platform.name}</span>
                         </button>
                     ))}
                 </div>
 
             </div>
 
-            {/* Calendar Container */}
-            <div className="relative border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm rounded-xl p-4 overflow-hidden group">
+            {/* Calendar Container - Scrollable on mobile */}
+            <div className="relative border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm rounded-xl p-4 overflow-x-auto group">
                 {/* Month Labels */}
                 <div className="flex mb-2 relative h-4 w-full">
-                    {monthLabels.map((m, i) => (
+                    {monthLabels.map((m: { week: number; month: string }, i: number) => (
                         <span
                             key={i}
                             className="text-[10px] font-mono text-zinc-500 absolute top-0"
@@ -510,24 +459,16 @@ const ContributionGraph = () => {
                 </div>
 
                 {/* Heatmap Grid */}
-                {isLoading ? (
-                    <div className="h-[100px] flex items-center justify-center">
-                        <div className="flex gap-1">
-                            <div className="w-1.5 h-1.5 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                            <div className="w-1.5 h-1.5 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-1.5 h-1.5 bg-zinc-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                    </div>
-                ) : hasError || weeks.length === 0 ? (
+                {weeks.length === 0 ? (
                     <div className="h-[100px] flex items-center justify-center text-xs font-mono text-zinc-600">
                         Unable to load data
                     </div>
                 ) : (
                     <div className="overflow-x-auto pb-2 scrollbar-hide">
                         <svg viewBox={`0 0 ${52 * 13} ${7 * 13}`} className="min-w-[700px] w-full h-auto block select-none">
-                            {weeks.map((week, w) => (
+                            {weeks.map((week: any[], w: number) => (
                                 <g key={w} transform={`translate(${w * 13}, 0)`}>
-                                    {week.map((day, d) => (
+                                    {week.map((day: any, d: number) => (
                                         <rect
                                             key={d}
                                             x="0"
@@ -537,8 +478,8 @@ const ContributionGraph = () => {
                                             fill={levels[day.level]}
                                             rx="2.5"
                                             className="transition-all duration-300 hover:opacity-80 cursor-pointer"
-                                            onMouseEnter={(e) => {
-                                                const rect = e.target.getBoundingClientRect();
+                                            onMouseEnter={(e: React.MouseEvent<SVGRectElement>) => {
+                                                const rect = (e.target as SVGRectElement).getBoundingClientRect();
                                                 setHoveredDay({
                                                     ...day,
                                                     x: rect.left + rect.width / 2,
@@ -560,7 +501,7 @@ const ContributionGraph = () => {
                     {/* Stats Display (Left) */}
                     <div className="flex items-baseline gap-2">
                         <span className="text-xl font-bold font-doto text-zinc-100 tracking-tight">
-                            {isLoading ? '-' : (currentStats.value ?? '-').toLocaleString()}
+                            {(currentStats.value ?? '-').toLocaleString()}
                         </span>
                         {currentStats.subLabel && (
                             <span className="text-[10px] font-mono text-zinc-400">
@@ -601,8 +542,18 @@ const ContributionGraph = () => {
     );
 };
 
+interface Experience {
+    type: 'corporate' | 'college';
+    role: string;
+    company: string;
+    period: string;
+    logo?: string;
+    tags: string[];
+    description: string[];
+}
+
 // Experience data with type classification
-const experienceData = [
+const experienceData: Experience[] = [
     {
         type: 'corporate',
         role: "Software Development Engineer (Summer Analyst)",
@@ -676,8 +627,8 @@ const ExperienceSection = () => {
 
     // Sort by period (most recent first)
     const sortedExperience = [...experienceData].sort((a, b) => {
-        const getDate = (period) => {
-            const months = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
+        const getDate = (period: string) => {
+            const months: Record<string, number> = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
             const match = period.match(/(\w+)\s+(\d{4})/);
             return match ? parseInt(match[2]) * 12 + (months[match[1]] || 0) : 0;
         };
@@ -730,7 +681,16 @@ const ExperienceSection = () => {
     );
 };
 
-const ExperienceItem = ({ role, company, period, description, tags, logo }) => {
+interface ExperienceItemProps {
+    role: string;
+    company: string;
+    period: string;
+    description: string | string[];
+    tags?: string[];
+    logo?: string;
+}
+
+const ExperienceItem: React.FC<ExperienceItemProps> = ({ role, company, period, description, tags, logo }) => {
     // Default expanded as requested
     const [isOpen, setIsOpen] = useState(true);
 
@@ -769,7 +729,7 @@ const ExperienceItem = ({ role, company, period, description, tags, logo }) => {
                     <div className="overflow-hidden">
                         {/* Description as Bullet Points */}
                         <ul className="flex flex-col gap-1.5 mb-4 list-none">
-                            {Array.isArray(description) ? description.map((item, i) => (
+                            {Array.isArray(description) ? (description as string[]).map((item: string, i: number) => (
                                 <li key={i} className="font-mono text-zinc-500 text-[11px] leading-relaxed flex items-start gap-2">
                                     <span className="mt-1.5 min-w-[3px] min-h-[3px] w-[3px] h-[3px] bg-zinc-600 rounded-full block"></span>
                                     {item}
@@ -779,7 +739,7 @@ const ExperienceItem = ({ role, company, period, description, tags, logo }) => {
                             )}
                         </ul>
                         <div className="flex flex-wrap gap-2">
-                            {tags && tags.map((tag, i) => (
+                            {tags && tags.map((tag: string, i: number) => (
                                 <span
                                     key={i}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900/50 border border-zinc-800 text-zinc-500 rounded hover:border-zinc-700 hover:text-zinc-300 transition-colors cursor-default"
@@ -795,7 +755,15 @@ const ExperienceItem = ({ role, company, period, description, tags, logo }) => {
     );
 };
 
-const ProjectCard = ({ title, status, desc, tags, href }) => (
+interface ProjectCardProps {
+    title: string;
+    status: string;
+    desc: string;
+    tags: string[];
+    href: string;
+}
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ title, status, desc, tags, href }) => (
     <a
         href={href}
         target="_blank"
@@ -826,7 +794,7 @@ const ProjectCard = ({ title, status, desc, tags, href }) => (
 
                 <div className="flex items-center justify-between mt-auto pt-2">
                     <div className="flex gap-2">
-                        {tags.slice(0, 3).map((tag, i) => (
+                        {tags.slice(0, 3).map((tag: string, i: number) => (
                             <span key={i} className="text-[10px] font-mono text-zinc-600 group-hover:text-zinc-500">
                                 #{tag}
                             </span>

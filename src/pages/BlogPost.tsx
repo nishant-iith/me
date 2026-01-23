@@ -2,24 +2,16 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, Tag, ExternalLink } from 'lucide-react';
 import DOMPurify from 'dompurify';
-import { useHashnodePost } from '../hooks/useQueries';
+import { useBlogPost } from '../features/blog';
 
 // Your Hashnode publication host
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
-const BlogPost = () => {
-    const { slug } = useParams();
-    const { data: post, isLoading, error } = useHashnodePost(slug);
+const BlogPost: React.FC = () => {
+    const { slug } = useParams<{ slug: string }>();
+    const { data: post } = useBlogPost(slug!);
 
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <div className="w-6 h-6 border-2 border-zinc-600 border-t-zinc-200 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
-
-    if (error || !post) {
+    if (!post) {
         return (
             <div className="flex flex-col items-center justify-center gap-4 py-20">
                 <h2 className="font-mono text-xl text-zinc-300">Post not found</h2>
@@ -33,7 +25,6 @@ const BlogPost = () => {
             </div>
         );
     }
-
     const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -90,7 +81,7 @@ const BlogPost = () => {
                     {post.tags && post.tags.length > 0 && (
                         <div className="flex items-center gap-2">
                             <Tag size={12} className="text-zinc-500" />
-                            {post.tags.map((tag, i) => (
+                            {post.tags.map((tag: any, i: number) => (
                                 <span
                                     key={i}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-500 rounded"

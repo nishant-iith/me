@@ -1,39 +1,15 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, Tag, Clock, ExternalLink } from 'lucide-react';
-import { useHashnodePosts, usePrefetchPost } from '../hooks/useQueries';
+import { useBlogPosts, usePrefetchBlogPost, HashnodePost } from '../features/blog';
 
 // Your Hashnode publication host
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
-const Blog = () => {
-    const { data: posts = [], isLoading, error } = useHashnodePosts(10);
-    const prefetchPost = usePrefetchPost();
+const Blog: React.FC = () => {
+    const { data: posts } = useBlogPosts(10);
+    const prefetchPost = usePrefetchBlogPost();
 
-    if (isLoading) {
-        return (
-            <div className="flex flex-col gap-8">
-                <div className="flex items-center justify-between border-b border-dashed border-zinc-800 pb-4">
-                    <h2 className="font-mono text-lg text-zinc-200">Blog</h2>
-                    <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest">// Loading...</span>
-                </div>
-                <div className="flex items-center justify-center py-12">
-                    <div className="w-6 h-6 border-2 border-zinc-600 border-t-zinc-200 rounded-full animate-spin"></div>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex flex-col gap-8">
-                <div className="flex items-center justify-between border-b border-dashed border-zinc-800 pb-4">
-                    <h2 className="font-mono text-lg text-zinc-200">Blog</h2>
-                </div>
-                <p className="font-mono text-zinc-500 text-sm">Failed to load posts</p>
-            </div>
-        );
-    }
 
     return (
         <div className="flex flex-col gap-8">
@@ -68,8 +44,12 @@ const Blog = () => {
     );
 };
 
-// Memoized BlogCard to prevent unnecessary re-renders
-const BlogCard = memo(({ post, onMouseEnter }) => {
+interface BlogCardProps {
+    post: HashnodePost;
+    onMouseEnter: () => void;
+}
+
+const BlogCard: React.FC<BlogCardProps> = memo(({ post, onMouseEnter }) => {
     const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
