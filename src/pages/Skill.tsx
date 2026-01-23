@@ -55,23 +55,23 @@ const skillCategories = [
     }
 ];
 
-const Skill = () => {
+const Skill: React.FC = () => {
     return (
         <div className="relative z-10 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="px-0 py-8 space-y-4">
+            <div className="px-0 pb-4 space-y-4">
                 <h1 className="text-3xl font-mono font-medium text-white tracking-tight">Tools of the Trade</h1>
                 <p className="text-zinc-400 font-mono text-[10px] leading-relaxed border-dashed border-l border-zinc-800 pl-4 py-1 sm:py-2 bg-black/10">
                     <span className="text-zinc-300 mr-2 font-medium underline">INFO</span>:
-                    A list of tech I use to build stuff. Currently working with <span className="text-white italic">Distributed Systems</span> and <span className="text-white italic">High Performance Computing</span> at IIT Hyderabad.
+                    A list of tech I use to build stuff.
                 </p>
             </div>
 
             {/* Categories */}
-            {skillCategories.map((category, idx) => (
+            {skillCategories.map((category) => (
                 <div key={category.title}>
                     <PatternDivider />
-                    <section className="flex flex-col gap-6 py-8">
+                    <section className="flex flex-col gap-6 mb-8">
                         <div className="flex items-center gap-2 mb-2">
                             <div className="size-1.5 bg-zinc-600"></div>
                             <span className="font-mono text-[11px] font-bold tracking-[0.3em] uppercase text-zinc-300">
@@ -79,7 +79,7 @@ const Skill = () => {
                             </span>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                            {category.skills.map((skill) => (
+                            {category.skills.map((skill: { name: string; icon: string }) => (
                                 <SkillCard key={skill.name} name={skill.name} icon={skill.icon} />
                             ))}
                         </div>
@@ -91,7 +91,12 @@ const Skill = () => {
     );
 };
 
-const SkillCard = ({ name, icon }) => (
+interface SkillCardProps {
+    name: string;
+    icon: string;
+}
+
+const SkillCard: React.FC<SkillCardProps> = ({ name, icon }) => (
     <div className="group relative flex flex-col items-center justify-center p-2 border border-zinc-900 border-dashed bg-black/10 transition-all hover:bg-white/[0.02] hover:border-zinc-800 aspect-square overflow-hidden">
         {/* Corner markers */}
         <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-zinc-600 opacity-50 group-hover:opacity-100 transition-all"></div>

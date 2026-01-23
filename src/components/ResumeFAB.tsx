@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileText, Download } from 'lucide-react';
 
-const ResumeFAB = () => {
+const ResumeFAB: React.FC = () => {
     return (
         <a
             href="/Nishant_IITH.pdf"

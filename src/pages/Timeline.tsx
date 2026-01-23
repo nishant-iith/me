@@ -1,63 +1,165 @@
 import React from 'react';
-import { SectionTitle, PatternDivider } from './Home';
+import { PatternDivider } from './Home';
 import { Briefcase, Trophy, Code, GraduationCap, Rocket, Star, Heart } from 'lucide-react';
 
-const milestones = [
+interface Milestone {
+    date: string;
+    title: string;
+    desc: string;
+    icon: React.ReactNode;
+    tags: string[];
+    align: string;
+}
+
+const milestones: Milestone[] = [
     {
-        date: "2025",
-        title: "Upcoming: SDE at Goldman Sachs",
-        desc: "Preparing to join Goldman Sachs as a Summer Analyst. Excited to work on large-scale financial challenges.",
+        date: "JULY 2026",
+        title: "Upcoming: SDE @ DP World",
+        desc: "Preparing for the start of my professional journey as a Software Development Engineer at DP World.",
         icon: <Briefcase size={20} />,
-        tags: ["Career", "Internship"],
+        tags: ["Career", "Full-time"],
         align: "right"
     },
     {
-        date: "2024",
-        title: "Instructor @ 10xscale.ai",
-        desc: "Mentored 45+ students in DSA. It was fulfilling to help others grasp complex algorithms like Graphs and DP.",
-        icon: <Star size={20} />,
-        tags: ["Teaching", "Community"],
+        date: "JAN 2026 - PRESENT",
+        title: "Self-Taught CS",
+        desc: "Deep diving into core Computer Science fundamentals. Exploring systems, architecture, and advanced software engineering independently.",
+        icon: <Rocket size={20} />,
+        tags: ["Learning", "Growth"],
         align: "left"
     },
     {
-        date: "2024",
-        title: "Pentakod Internship",
-        desc: "dove deep into Network Security. Built a Python port scanner and learned a ton about socket programming.",
-        icon: <Code size={20} />,
-        tags: ["Internship", "Security"],
+        date: "JAN 2026",
+        title: "Placed in DP World",
+        desc: "Successfully cleared the re-interview and secured a placement at DP World. Turning rejection into redirection.",
+        icon: <Trophy size={20} />,
+        tags: ["Career", "Success"],
         align: "right"
     },
     {
-        date: "2023",
-        title: "Head of Operations @ FCC",
-        desc: "Took a leadership role at the Finance & Consulting Club. Managed corporate relations and large-scale events.",
+        date: "DEC 2025",
+        title: "Placement Setback",
+        desc: "Faced rejections in all placement interviews. A period of heavy reflection, resilience, and persistence.",
         icon: <Briefcase size={20} />,
-        tags: ["Leadership", "Management"],
+        tags: ["Career", "Hardship"],
         align: "left"
     },
     {
-        date: "2022",
-        title: "Joined IIT Hyderabad",
-        desc: "The beginning of my engineering journey. Majoring in Biomedical Engineering with a strong passion for CS.",
+        date: "NOV 2025",
+        title: "Cleared Placement Exams",
+        desc: "Cleared 7 out of 10 placement assessment tests, qualifying for multiple top-tier company interviews.",
         icon: <GraduationCap size={20} />,
-        tags: ["Education", "Milestone"],
+        tags: ["Exams", "Education"],
         align: "right"
     },
     {
-        date: "2020",
-        title: "Hello World",
-        desc: "Wrote my first line of Python code. The moment I realized I could build things from scratch.",
-        icon: <Heart size={20} />,
-        tags: ["Origin", "Coding"],
+        date: "SEPT 2025",
+        title: "Placement Preparation",
+        desc: "Intensive preparation phase for final placements, focusing on system design, OS, and core CS subjects.",
+        icon: <Code size={20} />,
+        tags: ["Prep", "Career"],
         align: "left"
+    },
+    {
+        date: "AUG 2025",
+        title: "GS Full-time Rejection",
+        desc: "Did not secure a return offer from Goldman Sachs. A tough moment, but one that paved the way for new opportunities.",
+        icon: <Briefcase size={20} />,
+        tags: ["Career", "Growth"],
+        align: "right"
+    },
+    {
+        date: "MAY 2025",
+        title: "Goldman Sachs Internship",
+        desc: "Joined Goldman Sachs as a Summer Analyst. Learned high-stakes financial engineering and corporate culture at scale.",
+        icon: <Briefcase size={20} />,
+        tags: ["Internship", "Finance"],
+        align: "left"
+    },
+    {
+        date: "JAN 2025",
+        title: "Horizon '25 (FCC)",
+        desc: "Served as Operations Head for Horizon, the flagship annual event of the Finance and Consulting Club (24-25 tenure).",
+        icon: <Star size={20} />,
+        tags: ["Leadership", "FCC"],
+        align: "right"
+    },
+    {
+        date: "AUG 2024",
+        title: "Instructor @ 10xScale.ai",
+        desc: "Started teaching DSA and mentoring students. Helping others bridge the gap from theory to code.",
+        icon: <Star size={20} />,
+        tags: ["Teaching", "Leadership"],
+        align: "left"
+    },
+    {
+        date: "AUG 2024",
+        title: "Cracked GS Interview",
+        desc: "Successfully secured a Summer Analyst role at Goldman Sachs after a rigorous and competitive selection process.",
+        icon: <Rocket size={20} />,
+        tags: ["Achievement", "Career"],
+        align: "right"
+    },
+    {
+        date: "JULY 2024",
+        title: "Pentakod Internship",
+        desc: "Interned at Pentakod, focusing on technical implementation and exploring real-world engineering challenges.",
+        icon: <Briefcase size={20} />,
+        tags: ["Internship", "Engineering"],
+        align: "left"
+    },
+    {
+        date: "MAY 2024",
+        title: "Internship Prep",
+        desc: "Intensive focus on advanced coding patterns and refining my problem-solving approach for top tier companies.",
+        icon: <Code size={20} />,
+        tags: ["Prep", "Growth"],
+        align: "right"
+    },
+    {
+        date: "JAN 2024",
+        title: "DSA Mastery",
+        desc: "Mastered complex data structures and performance-critical algorithms, building a solid engineering foundation.",
+        icon: <Code size={20} />,
+        tags: ["DSA", "Coding"],
+        align: "left"
+    },
+    {
+        date: "JULY 2023",
+        title: "Python & ML Basics",
+        desc: "Explored the power of Python and dived into Machine Learning fundamentals to understand data-driven systems.",
+        icon: <Code size={20} />,
+        tags: ["Python", "ML"],
+        align: "right"
+    },
+    {
+        date: "NOV 2022",
+        title: "Hello World in C",
+        desc: "My first real program. The point where I fell in love with logic and computer science.",
+        icon: <Heart size={20} />,
+        tags: ["Origin", "C"],
+        align: "left"
+    },
+    {
+        date: "OCT 2022",
+        title: "Joined IIT Hyderabad",
+        desc: "Began my engineering journey at IIT-H, embarking on a path of innovation and technical excellence.",
+        icon: <GraduationCap size={20} />,
+        tags: ["Education", "IITH"],
+        align: "right"
     }
 ];
 
-const TimelineItem = ({ data, index }) => {
+interface TimelineItemProps {
+    data: Milestone;
+    index: number;
+}
+
+const TimelineItem: React.FC<TimelineItemProps> = ({ data, index }) => {
     const isLeft = index % 2 === 0;
 
     return (
-        <div className={`flex flex-col md:flex-row items-center gap-8 md:gap-0 w-full relative ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+        <div className={`flex flex-col md:flex-row items-center gap-8 md:gap-0 w-full relative ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} ${index > 0 ? 'md:-mt-24' : ''}`}>
 
             {/* Content Card */}
             <div className={`w-full md:w-1/2 flex ${isLeft ? 'md:justify-end md:pr-12' : 'md:justify-start md:pl-12'}`}>
@@ -79,7 +181,7 @@ const TimelineItem = ({ data, index }) => {
                         {data.desc}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {data.tags.map((tag, i) => (
+                        {data.tags.map((tag: string, i: number) => (
                             <span key={i} className="text-[10px] font-mono text-zinc-600 bg-zinc-950/50 px-1.5 py-0.5 rounded">
                                 #{tag}
                             </span>
@@ -102,11 +204,11 @@ const TimelineItem = ({ data, index }) => {
     );
 };
 
-const Timeline = () => {
+const Timeline: React.FC = () => {
     return (
-        <div className="flex flex-col gap-10 animate-in fade-in duration-500">
+        <div className="flex flex-col animate-in fade-in duration-500">
             {/* Header */}
-            <div className="flex flex-col gap-2 pt-4">
+            <div className="flex flex-col gap-2">
                 <h1 className="font-doto text-4xl font-bold tracking-tight text-zinc-100 uppercase">
                     LEARNING LOG
                 </h1>
@@ -117,11 +219,11 @@ const Timeline = () => {
 
             <PatternDivider />
 
-            <div className="relative flex flex-col gap-12 py-8">
+            <div className="relative flex flex-col gap-4 pb-12">
                 {/* Center Vertical Line (Desktop) */}
                 <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px border-l border-dashed border-zinc-800 -translate-x-1/2 md:-translate-x-px"></div>
 
-                {milestones.map((item, index) => (
+                {milestones.map((item: Milestone, index: number) => (
                     <TimelineItem key={index} data={item} index={index} />
                 ))}
             </div>

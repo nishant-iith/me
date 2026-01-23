@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { CodeforcesData } from '../types';
+import { cacheUtils } from '../../../utils/cacheUtils';
 
 export const CODEFORCES_USERNAME = 'so-called-iitian';
+const CACHE_KEY = `codeforces_data_${CODEFORCES_USERNAME}`;
 
 export const codeforcesApi = {
     getData: async (username = CODEFORCES_USERNAME): Promise<CodeforcesData> => {
+        const cached = cacheUtils.get<CodeforcesData>(CACHE_KEY);
+        if (cached && username === CODEFORCES_USERNAME) return cached;
+
         const [statusRes, infoRes] = await Promise.all([
             axios.get(`https://codeforces.com/api/user.status?handle=${username}&from=1&count=10000`),
             axios.get(`https://codeforces.com/api/user.info?handles=${username}`)
@@ -36,6 +41,11 @@ export const codeforcesApi = {
             rank = user.rank ? user.rank.replace(/^\w/, (c: string) => c.toUpperCase()) : '';
         }
 
-        return { contributions, total, rating, rank };
+        const result = { contributions, total, rating, rank };
+
+        if (username === CODEFORCES_USERNAME) {
+            cacheUtils.set(CACHE_KEY, result);
+        }
+        return result;
     }
 };

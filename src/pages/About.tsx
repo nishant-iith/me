@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, ArrowUpRight, Copy, Check, Twitter, Linkedin, Github, Calendar, Terminal } from 'lucide-react';
+import React from 'react';
+import { Mail, Twitter, Calendar, Terminal } from 'lucide-react';
 import me from '../assets/me.jpg';
 import { PatternDivider } from './Home';
 
-const About = () => {
+const About: React.FC = () => {
     return (
         <section id="about" className="mb-20 space-y-8 animate-in fade-in duration-500">
 
@@ -93,7 +93,7 @@ const About = () => {
 
                     {/* Bio Text */}
                     <p className="text-zinc-500 font-mono text-sm leading-relaxed mt-4 pl-5 border-zinc-800 group-hover:border-zinc-700 transition-colors">
-                        Simple as that. I enjoy building things that look good and work even better. Currently at IIT Hyderabad, working on Distributed Systems and High Performance Computing. If you vibe with my work or just want to chat about tech, I'm always open.
+                        Simple as that. I enjoy building things that look good and work even better. Currently at IIT Hyderabad, love to explore new things and build cool stuff. If you vibe with my work or just want to chat about tech, I'm always open.
                     </p>
 
                     {/* Grid Pattern Overlay */}
@@ -209,7 +209,14 @@ const About = () => {
 
 /* --- COMPONENTS --- */
 
-const InfoRow = ({ index, label, value, isStatus }) => (
+interface InfoRowProps {
+    index: string;
+    label: string;
+    value: string;
+    isStatus?: boolean;
+}
+
+const InfoRow: React.FC<InfoRowProps> = ({ index, label, value, isStatus }) => (
     <div className={`group flex items-center py-2.5 px-3 ${isStatus ? '' : 'border-b border-zinc-900/50'} hover:bg-white/[0.02] transition-colors relative`}>
         {/* Left accent bar on hover */}
         <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -238,7 +245,13 @@ const InfoRow = ({ index, label, value, isStatus }) => (
     </div>
 );
 
-const HobbyItem = ({ index, title, desc }) => (
+interface HobbyItemProps {
+    index: string;
+    title: string;
+    desc: string;
+}
+
+const HobbyItem: React.FC<HobbyItemProps> = ({ index, title, desc }) => (
     <div className="group px-4 py-3 hover:bg-white/[0.02] transition-colors relative">
         {/* Left accent bar on hover */}
         <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -251,65 +264,6 @@ const HobbyItem = ({ index, title, desc }) => (
             </div>
         </div>
     </div>
-);
-
-const ActionButton = ({ label, value, icon, copyable, href }) => {
-    const [copied, setCopied] = useState(false);
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(value);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    const Wrapper = href ? 'a' : 'button';
-    const props = href ? { href, target: '_blank', rel: 'noopener noreferrer' } : { onClick: handleCopy };
-
-    return (
-        <Wrapper
-            {...props}
-            className="flex items-center justify-between p-4 w-full border border-dashed border-zinc-700 bg-zinc-950/50 hover:bg-zinc-900 hover:border-zinc-500 transition-all duration-300 rounded-sm group"
-        >
-            <div className="flex items-center gap-3">
-                <div className="text-zinc-500 group-hover:text-zinc-200 transition-colors">{icon}</div>
-                <span className="font-mono text-sm text-zinc-400 group-hover:text-zinc-200 uppercase">{label}</span>
-            </div>
-            {copyable && (
-                <div className="text-zinc-600 group-hover:text-zinc-300">
-                    {copied ? <Check size={16} /> : <Copy size={16} />}
-                </div>
-            )}
-            {href && <ArrowUpRight size={16} className="text-zinc-600 group-hover:text-zinc-300" />}
-        </Wrapper>
-    );
-};
-
-const Card = ({ title, desc, icon, href }) => {
-    const Wrapper = href ? 'a' : 'div';
-    const props = href ? { href } : {};
-
-    return (
-        <Wrapper {...props} className="p-6 border border-zinc-800 bg-zinc-900/20 rounded-sm relative group hover:border-zinc-600 transition-all duration-300 cursor-pointer block">
-            <CornerMarkers />
-            <div className="flex items-start justify-between mb-4">
-                <div className="p-2 bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:text-zinc-100 rounded-md transition-colors">
-                    {icon}
-                </div>
-                <ArrowUpRight size={18} className="text-zinc-700 group-hover:text-zinc-400 transition-colors" />
-            </div>
-            <h3 className="font-doto text-lg text-zinc-200 mb-1 px-1">{title}</h3>
-            <p className="font-mono text-xs text-zinc-500 px-1">{desc}</p>
-        </Wrapper>
-    );
-};
-
-const CornerMarkers = () => (
-    <>
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-zinc-500 transition-all duration-300 opacity-50 group-hover:opacity-100" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-zinc-500 transition-all duration-300 opacity-50 group-hover:opacity-100" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-zinc-500 transition-all duration-300 opacity-50 group-hover:opacity-100" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-zinc-500 transition-all duration-300 opacity-50 group-hover:opacity-100" />
-    </>
 );
 
 export default About;

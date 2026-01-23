@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye } from 'lucide-react';
 
 /**
  * Simple visitor counter using localStorage
  * Counts every page view (not unique visitors)
  */
-const VisitorCounter = () => {
+const VisitorCounter: React.FC = () => {
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
 

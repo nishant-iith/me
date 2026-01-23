@@ -9,7 +9,7 @@ export const SuspenseLoader: React.FC<{ children: React.ReactNode }> = ({ childr
     );
 };
 
-const Loader = () => (
+const Loader: React.FC = () => (
     <Box sx={{
         display: 'flex',
         flexDirection: 'column',

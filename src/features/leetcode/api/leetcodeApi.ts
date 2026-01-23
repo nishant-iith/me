@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { LeetCodeData } from '../types';
+import { cacheUtils } from '../../../utils/cacheUtils';
 
 export const LEETCODE_USERNAME = 'Nishant-iith';
+const CACHE_KEY = `leetcode_stats_${LEETCODE_USERNAME}`;
 
 export const leetcodeApi = {
     getStats: async (username = LEETCODE_USERNAME): Promise<LeetCodeData> => {
+        const cached = cacheUtils.get<LeetCodeData>(CACHE_KEY);
+        if (cached && username === LEETCODE_USERNAME) return cached;
+
         const [calendarRes, solvedRes] = await Promise.all([
             axios.get(`https://alfa-leetcode-api.onrender.com/${username}/calendar`),
             axios.get(`https://alfa-leetcode-api.onrender.com/${username}/solved`)
@@ -16,10 +21,15 @@ export const leetcodeApi = {
             count: Number(count)
         }));
 
-        return {
+        const result = {
             contributions,
             totalActiveDays: calendarRes.data.totalActiveDays || contributions.length,
             solvedProblem: solvedRes.data.solvedProblem || 0
         };
+
+        if (username === LEETCODE_USERNAME) {
+            cacheUtils.set(CACHE_KEY, result);
+        }
+        return result;
     }
 };

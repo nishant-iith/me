@@ -2,14 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, Book, User, Code, FileText, Github, Linkedin, Mail, ExternalLink, History } from 'lucide-react';
 
-const CommandPalette = () => {
+interface Action {
+    id: string;
+    title: string;
+    icon: React.ReactNode;
+    shortcut?: string;
+    perform: () => void;
+}
+
+const CommandPalette: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [activeIndex, setActiveIndex] = useState(0);
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
 
-    const actions = [
+    const actions: Action[] = [
         {
             id: 'home',
             title: 'Home',
@@ -97,7 +105,7 @@ const CommandPalette = () => {
     );
 
     useEffect(() => {
-        const handleKeyDown = (e) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault();
                 setIsOpen(prev => !prev);
@@ -120,12 +128,12 @@ const CommandPalette = () => {
         }
     }, [isOpen]);
 
-    const execute = (action) => {
+    const execute = (action: Action) => {
         setIsOpen(false);
         action.perform();
     };
 
-    const handleInputKey = (e) => {
+    const handleInputKey = (e: React.KeyboardEvent) => {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             setActiveIndex(prev => (prev + 1) % filteredActions.length);

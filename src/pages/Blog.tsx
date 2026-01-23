@@ -31,7 +31,7 @@ const Blog: React.FC = () => {
                 {posts.length === 0 ? (
                     <p className="font-mono text-zinc-500 text-sm">No posts yet. Check back soon!</p>
                 ) : (
-                    posts.map((post) => (
+                    posts.map((post: HashnodePost) => (
                         <BlogCard
                             key={post.id}
                             post={post}
@@ -94,7 +94,7 @@ const BlogCard: React.FC<BlogCardProps> = memo(({ post, onMouseEnter }) => {
                     {post.tags && post.tags.length > 0 && (
                         <div className="flex items-center gap-2">
                             <Tag size={12} className="text-zinc-600" />
-                            {post.tags.slice(0, 3).map((tag, i) => (
+                            {post.tags.slice(0, 3).map((tag, i: number) => (
                                 <span
                                     key={i}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-500 rounded"

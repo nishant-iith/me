@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, AlertTriangle, ArrowLeft, RefreshCw, Power } from 'lucide-react';
+import { Terminal, RefreshCw, Power } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const LOG_LINES = [
+const LOG_LINES: string[] = [
     "Initializing system diagnostics...",
     "Loading kernel modules: [vfs, net, sys]... OK",
     "Checking memory integrity... 0x0000 -> 0xFFFF... OK",
@@ -22,26 +22,24 @@ const LOG_LINES = [
     "System halted. Reboot required."
 ];
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
     const navigate = useNavigate();
-    const [lines, setLines] = useState([]);
+    const [lines, setLines] = useState<string[]>([]);
     const [isComplete, setIsComplete] = useState(false);
-    const scrollRef = useRef(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         let currentIndex = 0;
         const interval = setInterval(() => {
             if (currentIndex < LOG_LINES.length) {
                 const nextLine = LOG_LINES[currentIndex];
-                if (nextLine) {
-                    setLines(prev => [...prev, nextLine]);
-                }
+                setLines(prev => [...prev, nextLine]);
                 currentIndex++;
             } else {
                 setIsComplete(true);
                 clearInterval(interval);
             }
-        }, 100); 
+        }, 100);
 
         return () => clearInterval(interval);
     }, []);
@@ -52,17 +50,20 @@ const NotFound = () => {
         }
     }, [lines]);
 
-    const isError = (text) => text && (text.includes("ERROR") || text.includes("CRITICAL") || text.includes("WARN") || text.includes("Stack trace"));
+    const isError = (text: string): boolean => {
+        if (!text) return false;
+        return text.includes("ERROR") || text.includes("CRITICAL") || text.includes("WARN") || text.includes("Stack trace");
+    };
 
     return (
         <div className="min-h-screen bg-[#050505] text-green-500 font-mono flex flex-col items-center justify-center p-4 relative overflow-hidden">
-            
+
             {/* Background Glitch / scanlines */}
             <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif')] bg-cover mix-blend-screen"></div>
-            <div className="absolute inset-0 pointer-events-none z-10 bg-[length:100%_4px] bg-repeat-y opacity-10" style={{backgroundImage: 'linear-gradient(transparent 50%, rgba(0, 0, 0, 0.5) 50%)'}}></div>
+            <div className="absolute inset-0 pointer-events-none z-10 bg-[length:100%_4px] bg-repeat-y opacity-10" style={{ backgroundImage: 'linear-gradient(transparent 50%, rgba(0, 0, 0, 0.5) 50%)' }}></div>
 
             <div className="max-w-2xl w-full bg-[#0a0a0a] border border-zinc-800 rounded-lg shadow-2xl overflow-hidden relative z-20 animate-in zoom-in-95 duration-500">
-                
+
                 {/* Terminal Header */}
                 <div className="h-9 bg-[#18181b] border-b border-zinc-800 flex items-center px-4 gap-2 select-none">
                     <div className="flex gap-1.5">
@@ -100,15 +101,15 @@ const NotFound = () => {
 
                     {/* Action Buttons */}
                     <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-700 ${isComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                        <button 
+                        <button
                             onClick={() => navigate('/')}
                             className="bg-zinc-100 hover:bg-white text-zinc-900 py-3 rounded flex items-center justify-center gap-2 font-bold transition-all hover:scale-[1.02] shadow-xl shadow-white/5"
                         >
                             <Power size={18} />
                             <span>System Reboot</span>
                         </button>
-                        
-                        <button 
+
+                        <button
                             onClick={() => window.location.reload()}
                             className="bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 py-3 rounded flex items-center justify-center gap-2 border border-zinc-800 transition-all hover:border-zinc-700"
                         >
@@ -120,13 +121,13 @@ const NotFound = () => {
 
             </div>
 
-             {/* Footer Error Code */}
-             <div className="mt-12 text-center opacity-20 pointer-events-none select-none">
+            {/* Footer Error Code */}
+            <div className="mt-12 text-center opacity-20 pointer-events-none select-none">
                 <h1 className="text-[8rem] leading-none font-bold text-zinc-800 font-doto">
                     404
                 </h1>
                 <p className="text-zinc-700 font-mono tracking-[0.5em] text-sm uppercase mt-4">Page Not Found</p>
-             </div>
+            </div>
 
         </div>
     );

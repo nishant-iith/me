@@ -1,8 +1,15 @@
 import React from 'react';
 import { SectionTitle, PatternDivider } from './Home'; // Reusing components
-import { Code, Terminal, Monitor, Cpu, Database, Cloud, PenTool, Layout, Box } from 'lucide-react';
+import { Code, Terminal, Monitor, Cpu, Database, Cloud, Layout, Box } from 'lucide-react';
 
-const ToolItem = ({ name, description, icon, tag }) => (
+interface ToolItemProps {
+    name: string;
+    description: string;
+    icon: React.ReactNode;
+    tag?: string;
+}
+
+const ToolItem: React.FC<ToolItemProps> = ({ name, description, icon, tag }) => (
     <div className="group relative border border-zinc-800 bg-zinc-900/40 p-5 rounded-xl hover:border-zinc-700 hover:bg-zinc-900/60 transition-all duration-300">
         <div className="flex items-start justify-between mb-4">
             <div className="p-3 bg-zinc-950 rounded-lg border border-zinc-800 text-zinc-100 group-hover:scale-110 transition-transform duration-300">
@@ -21,9 +28,9 @@ const ToolItem = ({ name, description, icon, tag }) => (
     </div>
 );
 
-const Toolbox = () => {
+const Toolbox: React.FC = () => {
     return (
-        <div className="flex flex-col gap-10 animate-in fade-in duration-500">
+        <div className="flex flex-col animate-in fade-in duration-500">
             {/* Header */}
             <div className="flex flex-col gap-2 pt-4">
                 <h1 className="font-doto text-4xl font-bold tracking-tight text-zinc-100 uppercase">
@@ -37,83 +44,101 @@ const Toolbox = () => {
 
             <PatternDivider />
 
-            {/* Software / Editor */}
+            {/* Software & SaaS */}
             <section className="flex flex-col gap-6">
-                <SectionTitle title="EDITOR & TERMINAL" />
+                <SectionTitle title="SOFTWARE & SAAS" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <ToolItem
-                        name="VS Code"
-                        description="My daily driver. Lightweight, extensible, and fast. Configured with Tokyo Night theme and Fira Code."
+                        name="IntelliJ IDEA"
+                        description="Pro-grade IDE for Java and heavy-duty development. Robust refactoring and deep code analysis."
                         icon={<Code size={24} />}
                         tag="Editor"
                     />
                     <ToolItem
-                        name="Windows Terminal"
-                        description="Modern, fast, and efficient terminal. Zsh + Oh My Posh for the prompt aesthetics."
+                        name="Antigravity"
+                        description="My primary AI coding assistant. Powerful, agentic, and deeply integrated into my workflow."
+                        icon={<Box size={24} />}
+                        tag="AI Agent"
+                    />
+                    <ToolItem
+                        name="Claudecode"
+                        description="Professional CLI for AI-assisted engineering. Seamless terminal-based code generation."
                         icon={<Terminal size={24} />}
-                        tag="Terminal"
+                        tag="CLI Tool"
                     />
                     <ToolItem
-                        name="Obsidian"
-                        description="My second brain. Markdown-based note-taking for everything from daily logs to system design."
-                        icon={<PenTool size={24} />}
-                        tag="Productivity"
+                        name="Supabase"
+                        description="The open-source Firebase alternative. Handles my authentication and PostgreSQL needs."
+                        icon={<Database size={24} />}
+                        tag="Backend"
                     />
                     <ToolItem
-                        name="Postman"
-                        description="Essential for API development and testing. I use it to mock, test, and document endpoints."
+                        name="Vercel"
+                        description="Deployment platform for high-performance frontends. Zero-config CI/CD for my projects."
                         icon={<Cloud size={24} />}
-                        tag="DevOps"
+                        tag="Cloud"
+                    />
+                    <ToolItem
+                        name="Gemini"
+                        description="Advanced multimodal AI for research, documentation, and brainstorming complex features."
+                        icon={<Cpu size={24} />}
+                        tag="AI Model"
+                    />
+                    <ToolItem
+                        name="OpenCode"
+                        description="Open-source collaboration platform for hackathons and community-driven development."
+                        icon={<Layout size={24} />}
+                        tag="Platform"
                     />
                 </div>
             </section>
 
-            {/* Stack */}
+            {/* Tech Stack */}
             <section className="flex flex-col gap-6">
                 <SectionTitle title="TECH STACK" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <ToolItem
                         name="React & Next.js"
-                        description="For building interactive, scalable frontends. I love the component model and ecosystem."
+                        description="Building interactive, scalable frontends with server-side rendering and static generation."
                         icon={<Layout size={24} />}
                         tag="Frontend"
                     />
                     <ToolItem
                         name="Node.js & Express"
-                        description="My go-to for backend services. Fast event loop and massive package ecosystem."
+                        description="Fast, event-driven backend services with a massive ecosystem of middleware."
                         icon={<Cpu size={24} />}
                         tag="Backend"
                     />
                     <ToolItem
-                        name="MongoDB"
-                        description="Flexible schema design for rapid prototyping and scalable data storage."
+                        name="PostgreSQL"
+                        description="Advanced open-source relational database for complex queries and data integrity."
                         icon={<Database size={24} />}
                         tag="Database"
                     />
                     <ToolItem
                         name="Docker"
-                        description="Containerization for consistent environments across dev, staging, and prod."
+                        description="Ensuring environment consistency from local development to production deployment."
                         icon={<Box size={24} />}
                         tag="DevOps"
                     />
                 </div>
             </section>
 
-            {/* Hardware */}
+            {/* Computers & Hardware */}
             <section className="flex flex-col gap-6">
-                <SectionTitle title="HARDWARE" />
+                <SectionTitle title="COMPUTERS & HARDWARE" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <ToolItem
-                        name="Asus ROG Zephyrus"
-                        description="Primary machine. Ryzen 9, RTX 3060. Handles compilation and local LLMs easily."
+                        name="MacBook Pro M1 Pro"
+                        description="Primary powerhouse for development. Insane efficiency, battery life, and Unix-based stability."
                         icon={<Monitor size={24} />}
-                        tag="Laptop"
+                        tag="System"
                     />
                     <ToolItem
-                        name="Logitech MX Master 3S"
-                        description="The best mouse for productivity. Infinite scroll is a lifesaver for long docs."
+                        name="HP Laptop (i7 13th Gen)"
+                        description="Secondary workstation for Windows-specific tasks, testing, and multi-threaded processing."
                         icon={<Cpu size={24} />}
-                        tag="Peripheral"
+                        tag="Workstation"
                     />
                 </div>
             </section>

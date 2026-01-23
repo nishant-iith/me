@@ -1,163 +1,146 @@
 import React, { useState, memo } from 'react';
 import { Code2, Copy, Check, ChevronDown, ChevronUp, Terminal, Braces, FileCode } from 'lucide-react';
+import { PatternDivider } from './Home';
 
-// Sample code snippets - can be expanded
-const snippets = [
-    {
-        id: 1,
-        category: 'JavaScript',
-        title: 'Debounce Function',
-        description: 'Limits function execution rate for performance optimization.',
-        language: 'javascript',
-        code: `function debounce(fn, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn.apply(this, args), delay);
-  };
+interface Snippet {
+    id: number;
+    category: string;
+    title: string;
+    description: string;
+    language: string;
+    code: string;
 }
 
-// Usage
-const debouncedSearch = debounce((query) => {
-  console.log('Searching:', query);
-}, 300);`,
-    },
+// Sample code snippets - can be expanded
+const snippets: Snippet[] = [
     {
-        id: 2,
-        category: 'JavaScript',
-        title: 'Deep Clone Object',
-        description: 'Creates a deep copy of nested objects.',
-        language: 'javascript',
-        code: `function deepClone(obj) {
-  if (obj === null || typeof obj !== 'object') return obj;
-  if (Array.isArray(obj)) return obj.map(deepClone);
-  return Object.fromEntries(
-    Object.entries(obj).map(([k, v]) => [k, deepClone(v)])
-  );
-}`,
-    },
-    {
-        id: 3,
-        category: 'React',
-        title: 'useLocalStorage Hook',
-        description: 'Persist state to localStorage with auto-sync.',
-        language: 'javascript',
-        code: `function useLocalStorage(key, initialValue) {
-  const [value, setValue] = useState(() => {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : initialValue;
-  });
+        id: 1,
+        category: 'C++',
+        title: 'Codeforces Template',
+        description: 'A robust starting point for competitive programming with Helper class and fast I/O.',
+        language: 'cpp',
+        code: `#include<bits/stdc++.h>
+using namespace std;
 
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value]);
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef vector<int> vi;
+typedef map<int, int> mii;
 
-  return [value, setValue];
-}`,
-    },
-    {
-        id: 4,
-        category: 'Python',
-        title: 'Flatten Nested List',
-        description: 'Recursively flattens arbitrarily nested lists.',
-        language: 'python',
-        code: `def flatten(lst):
-    result = []
-    for item in lst:
-        if isinstance(item, list):
-            result.extend(flatten(item))
-        else:
-            result.append(item)
-    return result
+#define pb push_back
+#define all(x) (x).begin(),(x).end()
+#define loop(i, a, b) for(int i=a; i<b; i++)
+#define rloop(i, a, b) for(int i=a-1; i>=b; i--)
 
-# Usage
-nested = [1, [2, [3, 4], 5], 6]
-print(flatten(nested))  # [1, 2, 3, 4, 5, 6]`,
-    },
-    {
-        id: 5,
-        category: 'Bash',
-        title: 'Git Branch Cleanup',
-        description: 'Delete merged local branches except main/master.',
-        language: 'bash',
-        code: `#!/bin/bash
-# Delete all local branches that have been merged
-git branch --merged | grep -v "main\\|master\\|\\*" | xargs -n 1 git branch -d
+class Helper {
+protected:
+    vi arrayInput(){
+        int n;
+        cin>>n;
+        vi arr(n);
+        loop(i, 0, n) cin>>arr[i];
+        return arr;
+    }
+    vi arrayInput(int n){
+        vi arr(n);
+        loop(i, 0, n) cin>>arr[i];
+        return arr;
+    }
+    string stringInput(){
+        string s;
+        cin>>s;
+        return s;
+    }
+    void printArray(const vi &arr){
+        for(int i=0; i<arr.size(); i++){
+            cout<<arr[i]<<" ";
+        }
+        cout<<endl;
+    }
+};
 
-# Force delete unmerged branches (careful!)
-# git branch --no-merged | xargs -n 1 git branch -D`,
-    },
-    {
-        id: 6,
-        category: 'CSS',
-        title: 'Glassmorphism Card',
-        description: 'Modern frosted glass effect for UI elements.',
-        language: 'css',
-        code: `.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+class Solution : public Helper {
+public:
+    void solve(){
+        // Your code here
+    }
+};
+
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    int t;
+    if (cin >> t) {
+        while(t--){
+            Solution sol;
+            sol.solve();
+        }
+    }
+    return 0;
 }`,
     },
 ];
 
-const categoryIcons = {
-    JavaScript: <Braces size={14} />,
-    React: <Code2 size={14} />,
-    Python: <FileCode size={14} />,
-    Bash: <Terminal size={14} />,
-    CSS: <Code2 size={14} />,
-};
 
-const Snippets = () => {
-    const [expandedId, setExpandedId] = useState(null);
-    const categories = [...new Set(snippets.map(s => s.category))];
+
+const Snippets: React.FC = () => {
+    const [expandedId, setExpandedId] = useState<number | null>(null);
+    const categories = [...new Set(snippets.map((s: Snippet) => s.category))];
 
     return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col animate-in fade-in duration-500">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-dashed border-zinc-800 pb-4">
                 <h2 className="font-mono text-lg text-zinc-200">Code Snippets</h2>
-                <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest">
-                    // {snippets.length} snippets
-                </span>
+                <div className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+                    {snippets.length} active
+                </div>
             </div>
 
-            {/* Snippets by Category */}
-            {categories.map(category => (
-                <div key={category} className="flex flex-col gap-3">
-                    <h3 className="flex items-center gap-2 font-mono text-xs text-zinc-500 uppercase tracking-widest">
-                        {categoryIcons[category] || <Code2 size={14} />}
-                        {category}
-                    </h3>
+            <PatternDivider />
 
-                    <div className="flex flex-col gap-2">
-                        {snippets
-                            .filter(s => s.category === category)
-                            .map(snippet => (
-                                <SnippetCard
-                                    key={snippet.id}
-                                    snippet={snippet}
-                                    isExpanded={expandedId === snippet.id}
-                                    onToggle={() => setExpandedId(
-                                        expandedId === snippet.id ? null : snippet.id
-                                    )}
-                                />
-                            ))}
+            {/* List */}
+            <div className="flex flex-col gap-12 mb-12">
+                {categories.map((category: string) => (
+                    <div key={category} className="flex flex-col">
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="size-1.5 bg-zinc-600"></div>
+                            <span className="font-mono text-[11px] font-bold tracking-[0.3em] uppercase text-zinc-300">
+                                {category}
+                            </span>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            {snippets
+                                .filter((s: Snippet) => s.category === category)
+                                .map((snippet: Snippet) => (
+                                    <SnippetCard
+                                        key={snippet.id}
+                                        snippet={snippet}
+                                        isExpanded={expandedId === snippet.id}
+                                        onToggle={() => setExpandedId(
+                                            expandedId === snippet.id ? null : snippet.id
+                                        )}
+                                    />
+                                ))}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };
 
-const SnippetCard = memo(({ snippet, isExpanded, onToggle }) => {
+interface SnippetCardProps {
+    snippet: Snippet;
+    isExpanded: boolean;
+    onToggle: () => void;
+}
+
+const SnippetCard: React.FC<SnippetCardProps> = memo(({ snippet, isExpanded, onToggle }) => {
     const [copied, setCopied] = useState(false);
 
-    const handleCopy = async (e) => {
+    const handleCopy = async (e: React.MouseEvent) => {
         e.stopPropagation();
         await navigator.clipboard.writeText(snippet.code);
         setCopied(true);

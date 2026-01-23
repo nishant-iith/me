@@ -81,7 +81,7 @@ const BlogPost: React.FC = () => {
                     {post.tags && post.tags.length > 0 && (
                         <div className="flex items-center gap-2">
                             <Tag size={12} className="text-zinc-500" />
-                            {post.tags.map((tag: any, i: number) => (
+                            {post.tags.map((tag, i: number) => (
                                 <span
                                     key={i}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-500 rounded"

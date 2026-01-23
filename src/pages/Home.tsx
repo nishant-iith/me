@@ -13,7 +13,7 @@ import logoFCC from '~assets/logos/fcc.png';
 import logoPentakod from '~assets/logos/pentakod.png';
 import logoIITH from '~assets/logos/iith.png';
 
-const Home = () => {
+const Home: React.FC = () => {
     return (
         <div className="flex flex-col">
             {/* HERO SECTION - Updated to match uploaded image & requests */}
@@ -303,7 +303,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({ title }) => (
 );
 
 // Horizontal Pattern Divider - matches bilal.works exactly
-export const PatternDivider = () => (
+export const PatternDivider: React.FC = () => (
     <div className="relative flex bg-[#18181b] h-8 w-[calc(100%+2rem)] sm:w-[calc(100%+5rem)] -mx-4 sm:-mx-10 border-y border-dashed border-zinc-800 overflow-hidden my-8">
         <div
             className="pointer-events-none absolute inset-0 opacity-50"
@@ -332,7 +332,7 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, icon }) => (
 );
 
 // Premium Multi-Platform Contribution Graph
-const ContributionGraph = () => {
+const ContributionGraph: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'github' | 'leetcode' | 'codeforces'>('github');
     const [hoveredDay, setHoveredDay] = useState<any>(null);
 
@@ -368,25 +368,28 @@ const ContributionGraph = () => {
         });
 
         const today = new Date();
-        const weeks = [];
-        const monthLabels = [];
-        let currentMonth = -1;
+        const weeks: any[][] = [];
+        const monthLabels: { weekIndex: number; month: string }[] = [];
+        let lastMonth = -1;
 
-        for (let w = 51; w >= 0; w--) {
+        // Create 53 weeks to ensure coverage of a full year (364 days + current partial week)
+        for (let w = 0; w < 53; w++) {
             const week = [];
             for (let d = 0; d < 7; d++) {
                 const date = new Date(today);
-                date.setDate(date.getDate() - (w * 7 + (6 - d)));
+                // Calculate date backwards from today
+                date.setDate(date.getDate() - ((52 - w) * 7 + (6 - d)));
                 const dateStr = date.toISOString().split('T')[0];
                 const count = contribMap[dateStr] || 0;
                 week.push({ date: dateStr, count, level: getLevel(count) });
 
+                // If Sunday (first day of week), check if we should add a month label
                 if (d === 0) {
                     const month = date.getMonth();
-                    if (month !== currentMonth) {
+                    if (month !== lastMonth) {
                         const monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][month];
-                        monthLabels.push({ week: 51 - w, month: monthName });
-                        currentMonth = month;
+                        monthLabels.push({ weekIndex: w, month: monthName });
+                        lastMonth = month;
                     }
                 }
             }
@@ -446,16 +449,19 @@ const ContributionGraph = () => {
             {/* Calendar Container - Scrollable on mobile */}
             <div className="relative border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm rounded-xl p-4 overflow-x-auto group">
                 {/* Month Labels */}
-                <div className="flex mb-2 relative h-4 w-full">
-                    {monthLabels.map((m: { week: number; month: string }, i: number) => (
-                        <span
-                            key={i}
-                            className="text-[10px] font-mono text-zinc-500 absolute top-0"
-                            style={{ left: `${(m.week / 52) * 100}%` }}
-                        >
-                            {m.month}
-                        </span>
-                    ))}
+                <div className="relative h-6 mb-1">
+                    <svg viewBox={`0 0 ${53 * 13} 15`} className="w-full h-full block">
+                        {monthLabels.map((m: { weekIndex: number; month: string }, i: number) => (
+                            <text
+                                key={i}
+                                x={m.weekIndex * 13}
+                                y="12"
+                                className="text-[10px] font-mono fill-zinc-500 font-medium"
+                            >
+                                {m.month}
+                            </text>
+                        ))}
+                    </svg>
                 </div>
 
                 {/* Heatmap Grid */}
@@ -465,7 +471,7 @@ const ContributionGraph = () => {
                     </div>
                 ) : (
                     <div className="overflow-x-auto pb-2 scrollbar-hide">
-                        <svg viewBox={`0 0 ${52 * 13} ${7 * 13}`} className="min-w-[700px] w-full h-auto block select-none">
+                        <svg viewBox={`0 0 ${53 * 13} ${7 * 13}`} className="w-full h-auto block select-none">
                             {weeks.map((week: any[], w: number) => (
                                 <g key={w} transform={`translate(${w * 13}, 0)`}>
                                     {week.map((day: any, d: number) => (
@@ -622,8 +628,8 @@ const experienceData: Experience[] = [
 ];
 
 // Experience Section with Toggle
-const ExperienceSection = () => {
-    const [showAll, setShowAll] = useState(false);
+const ExperienceSection: React.FC = () => {
+    const [showAll, setShowAll] = useState<boolean>(false);
 
     // Sort by period (most recent first)
     const sortedExperience = [...experienceData].sort((a, b) => {

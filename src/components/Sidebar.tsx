@@ -2,7 +2,7 @@ import React from 'react';
 import { House, User, Sparkles, BookOpen, NotebookPen, Code2 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
     return (
         <>
             {/* Desktop Sidebar - Hidden on mobile */}
@@ -42,8 +42,13 @@ const Sidebar = () => {
     );
 };
 
-// Desktop Nav Item
-const NavItem = ({ to, icon, label }) => (
+interface NavItemProps {
+    to: string;
+    icon: React.ReactNode;
+    label: string;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ to, icon, label }) => (
     <NavLink
         to={to}
         className={({ isActive }) => `
@@ -67,8 +72,13 @@ const NavItem = ({ to, icon, label }) => (
     </NavLink>
 );
 
-// Mobile Nav Item
-const MobileNavItem = ({ to, icon, label }) => (
+interface MobileNavItemProps {
+    to: string;
+    icon: React.ReactNode;
+    label: string;
+}
+
+const MobileNavItem: React.FC<MobileNavItemProps> = ({ to, icon, label }) => (
     <NavLink
         to={to}
         className={({ isActive }) => `
