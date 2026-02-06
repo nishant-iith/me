@@ -120,32 +120,32 @@ const Home: React.FC = () => {
                 <SectionTitle title="PROJECTS" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <ProjectCard
-                        title="Bi-LSTM Sentiment"
-                        status="ML / NLP"
-                        desc="Deep learning model for sentiment analysis using Bi-directional LSTMs. Achieved high accuracy on IMDB dataset."
-                        tags={['Python', 'Keras', 'NLP']}
-                        href="https://github.com/nishant-iith"
+                        title="Data Structures Analysis"
+                        status="RESEARCH"
+                        desc="Comparative analysis of BST, AVL Trees, and Hashing for efficient storage and retrieval operations. Benchmarked performance with C/C++ implementations."
+                        tags={['C++', 'C', 'Algorithms']}
+                        href="https://github.com/nishant-iith/data-structure-project"
                     />
                     <ProjectCard
-                        title="CPU Scheduler"
+                        title="Job Scheduler"
                         status="SYSTEMS"
-                        desc="Visual simulation of various CPU scheduling algorithms like FCFS, SJF, and Round Robin."
+                        desc="Advanced CPU job scheduling simulator with FCFS, SJF, Round Robin, and Priority algorithms. Features interactive CLI and performance metrics visualization."
                         tags={['C++', 'OS', 'Algorithms']}
-                        href="https://github.com/nishant-iith"
+                        href="https://github.com/nishant-iith/job-scheduler"
                     />
                     <ProjectCard
-                        title="Cab Booking System"
-                        status="DESIGN"
-                        desc="Low-level system design for a cab booking platform dealing with concurrency and locking."
-                        tags={['C++', 'System Design']}
-                        href="https://github.com/nishant-iith"
+                        title="Portfolio Website"
+                        status="FRONTEND"
+                        desc="Personal portfolio website built with React, TypeScript, and Tailwind CSS. Features GitHub contributions graph and LeetCode/Codeforces stats integration."
+                        tags={['React', 'TypeScript', 'Tailwind']}
+                        href="https://github.com/nishant-iith/me"
                     />
                     <ProjectCard
-                        title="Distributed File System"
-                        status="BACKEND"
-                        desc="A simplified distributed file system implementation handling file chunking and replication."
-                        tags={['Go', 'Distributed Systems']}
-                        href="https://github.com/nishant-iith"
+                        title="ML Library"
+                        status="ML / CPP"
+                        desc="Machine learning library built from scratch in C++. Implements Linear/Logistic Regression, K-Means, and Decision Trees with custom Matrix class."
+                        tags={['C++', 'ML', 'Linear Algebra']}
+                        href="https://github.com/nishant-iith/Machine_Learning_Library"
                     />
                 </div>
             </section>
