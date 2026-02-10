@@ -55,7 +55,7 @@ const skillCategories = [
     }
 ];
 
-const Skill: React.FC = () => {
+export default function Skill() {
     return (
         <div className="relative z-10 animate-in fade-in duration-500">
             {/* Header */}
@@ -89,41 +89,41 @@ const Skill: React.FC = () => {
             <PatternDivider />
         </div>
     );
-};
+}
 
 interface SkillCardProps {
     name: string;
     icon: string;
 }
 
-const SkillCard: React.FC<SkillCardProps> = ({ name, icon }) => (
-    <div className="group relative flex flex-col items-center justify-center p-2 border border-zinc-900 border-dashed bg-black/10 transition-all hover:bg-white/[0.02] hover:border-zinc-800 aspect-square overflow-hidden">
-        {/* Corner markers */}
-        <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-zinc-600 opacity-50 group-hover:opacity-100 transition-all"></div>
-        <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-zinc-600 opacity-50 group-hover:opacity-100 transition-all"></div>
+function SkillCard({ name, icon }: SkillCardProps) {
+    return (
+        <div className="group relative flex flex-col items-center justify-center p-2 border border-zinc-900 border-dashed bg-black/10 transition-all hover:bg-white/[0.02] hover:border-zinc-800 aspect-square overflow-hidden">
+            {/* Corner markers */}
+            <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-zinc-600 opacity-50 group-hover:opacity-100 transition-all"></div>
+            <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-zinc-600 opacity-50 group-hover:opacity-100 transition-all"></div>
 
-        {/* Decorative dashes */}
-        <div className="absolute top-2 right-2 flex flex-col gap-0.5 opacity-40">
-            <div className="w-1.5 h-0.5 bg-zinc-600 group-hover:bg-zinc-400"></div>
-            <div className="w-1.5 h-0.5 bg-zinc-600 group-hover:bg-zinc-400"></div>
-            <div className="w-1.5 h-0.5 bg-zinc-800"></div>
+            {/* Decorative dashes */}
+            <div className="absolute top-2 right-2 flex flex-col gap-0.5 opacity-40">
+                <div className="w-1.5 h-0.5 bg-zinc-600 group-hover:bg-zinc-400"></div>
+                <div className="w-1.5 h-0.5 bg-zinc-600 group-hover:bg-zinc-400"></div>
+                <div className="w-1.5 h-0.5 bg-zinc-800"></div>
+            </div>
+
+            {/* Icon */}
+            <div className="relative z-10 flex items-center justify-center size-8 mb-4 group-hover:scale-110 transition-all duration-300 filter grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100">
+                <img src={icon} alt={name} className="size-full" />
+            </div>
+
+            {/* Label */}
+            <div className="relative z-10 flex flex-col items-center gap-1 px-1">
+                <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-400 group-hover:text-white transition-colors font-semibold text-center leading-tight">
+                    {name}
+                </span>
+            </div>
+
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none"></div>
         </div>
-
-        {/* Icon */}
-        <div className="relative z-10 flex items-center justify-center size-8 mb-4 group-hover:scale-110 transition-all duration-300 filter grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100">
-            <img src={icon} alt={name} className="size-full" />
-        </div>
-
-        {/* Label */}
-        <div className="relative z-10 flex flex-col items-center gap-1 px-1">
-            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-zinc-400 group-hover:text-white transition-colors font-semibold text-center leading-tight">
-                {name}
-            </span>
-        </div>
-
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none"></div>
-    </div>
-);
-
-export default Skill;
+    );
+}

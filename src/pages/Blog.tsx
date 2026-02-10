@@ -1,15 +1,15 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, Tag, Clock, ExternalLink } from 'lucide-react';
-import { useBlogPosts, usePrefetchBlogPost, HashnodePost } from '../features/blog';
+import { useBlogPosts, usePrefetchBlogPost } from '../features/blog/hooks/useBlogHooks';
+import type { HashnodePost } from '../features/blog/types';
 
 // Your Hashnode publication host
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
-const Blog: React.FC = () => {
+const Blog = () => {
     const { data: posts } = useBlogPosts(10);
     const prefetchPost = usePrefetchBlogPost();
-
 
     return (
         <div className="flex flex-col gap-8">
@@ -49,7 +49,7 @@ interface BlogCardProps {
     onMouseEnter: () => void;
 }
 
-const BlogCard: React.FC<BlogCardProps> = memo(({ post, onMouseEnter }) => {
+const BlogCard = memo(({ post, onMouseEnter }: BlogCardProps) => {
     const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -94,9 +94,9 @@ const BlogCard: React.FC<BlogCardProps> = memo(({ post, onMouseEnter }) => {
                     {post.tags && post.tags.length > 0 && (
                         <div className="flex items-center gap-2">
                             <Tag size={12} className="text-zinc-600" />
-                            {post.tags.slice(0, 3).map((tag, i: number) => (
+                            {post.tags.slice(0, 3).map((tag) => (
                                 <span
-                                    key={i}
+                                    key={tag.name}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-500 rounded"
                                 >
                                     {tag.name}

@@ -1,50 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
-const CustomCursor: React.FC = () => {
+const CustomCursor = () => {
     const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const rafId = useRef<number | null>(null);
+    const isVisibleRef = useRef(isVisible);
+
+    // Keep ref in sync with state
+    useEffect(() => {
+        isVisibleRef.current = isVisible;
+    }, [isVisible]);
+
+    const updatePosition = useCallback((e: MouseEvent) => {
+        if (rafId.current) {
+            cancelAnimationFrame(rafId.current);
+        }
+        rafId.current = requestAnimationFrame(() => {
+            setPosition({ x: e.clientX, y: e.clientY });
+            if (!isVisibleRef.current) {
+                setIsVisible(true);
+            }
+        });
+    }, []);
 
     useEffect(() => {
-        const updatePosition = (e: MouseEvent) => {
-            setPosition({ x: e.clientX, y: e.clientY });
-            if (!isVisible) setIsVisible(true);
-        };
-
         const handleMouseEnter = () => setIsHovering(true);
         const handleMouseLeave = () => setIsHovering(false);
 
-        window.addEventListener('mousemove', updatePosition);
+        window.addEventListener('mousemove', updatePosition, { passive: true });
 
         // Add listeners to clickable elements
-        const updateListeners = () => {
+        const addListeners = () => {
             const clickables = document.querySelectorAll('a, button, input, textarea, [role="button"]');
             clickables.forEach((el) => {
                 el.addEventListener('mouseenter', handleMouseEnter);
                 el.addEventListener('mouseleave', handleMouseLeave);
             });
-            return () => {
-                clickables.forEach((el) => {
-                    el.removeEventListener('mouseenter', handleMouseEnter);
-                    el.removeEventListener('mouseleave', handleMouseLeave);
-                });
-            };
+        };
+
+        const removeListeners = () => {
+            const clickables = document.querySelectorAll('a, button, input, textarea, [role="button"]');
+            clickables.forEach((el) => {
+                el.removeEventListener('mouseenter', handleMouseEnter);
+                el.removeEventListener('mouseleave', handleMouseLeave);
+            });
         };
 
         // Initial bind
-        let cleanup = updateListeners();
+        addListeners();
 
         // Re-bind on mutation (simple observer for SPA changes)
-        const observer = new MutationObserver(updateListeners);
+        const observer = new MutationObserver(() => {
+            removeListeners();
+            addListeners();
+        });
         observer.observe(document.body, { childList: true, subtree: true });
 
         return () => {
             window.removeEventListener('mousemove', updatePosition);
-            cleanup();
-            if (cleanup) cleanup();
+            removeListeners();
             observer.disconnect();
+            if (rafId.current) {
+                cancelAnimationFrame(rafId.current);
+            }
         };
-    }, [isVisible]);
+    }, [updatePosition]);
 
     if (!isVisible) return null;
 

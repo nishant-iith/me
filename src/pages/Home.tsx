@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Github, ExternalLink, ChevronDown, Linkedin, Twitter, BadgeCheck, Briefcase, GraduationCap } from 'lucide-react';
 import VisitorCounter from '~components/VisitorCounter';
-import SuspenseLoader from '~components/SuspenseLoader';
-import { useGithubContributions } from '@/features/github';
-import { useLeetCodeStats } from '@/features/leetcode';
-import { useCodeforcesData } from '@/features/codeforces';
+import { useGithubContributions } from '@/features/github/hooks/useGithubContributions';
+import { useLeetCodeStats } from '@/features/leetcode/hooks/useLeetCodeStats';
+import { useCodeforcesData } from '@/features/codeforces/hooks/useCodeforcesData';
 
 import logoGS from '~assets/logos/gs.png';
 import logoOCS from '~assets/logos/ocs.png';
@@ -13,7 +12,7 @@ import logoFCC from '~assets/logos/fcc.png';
 import logoPentakod from '~assets/logos/pentakod.png';
 import logoIITH from '~assets/logos/iith.png';
 
-const Home: React.FC = () => {
+const Home = () => {
     return (
         <div className="flex flex-col">
             {/* HERO SECTION - Updated to match uploaded image & requests */}
@@ -50,9 +49,7 @@ const Home: React.FC = () => {
             <PatternDivider />
 
             {/* CONTRIBUTION GRAPH */}
-            <SuspenseLoader>
-                <ContributionGraph />
-            </SuspenseLoader>
+            <ContributionGraph />
 
             {/* PATTERN DIVIDER - After Contribution Graph */}
             <PatternDivider />
@@ -162,7 +159,7 @@ interface EducationItemProps {
     courses?: Record<string, string[]>;
 }
 
-const EducationItem: React.FC<EducationItemProps> = ({ school, degree, period, grade, logo, courses = {} }) => {
+const EducationItem = ({ school, degree, period, grade, logo, courses = {} }: EducationItemProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Get total course count from object
@@ -175,6 +172,8 @@ const EducationItem: React.FC<EducationItemProps> = ({ school, degree, period, g
             <div className="flex flex-col items-center">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
+                    aria-label={`Toggle ${school} courses`}
                     className={`w-10 h-10 flex items-center justify-center rounded border border-dashed transition-all duration-300 overflow-hidden ${isOpen ? 'border-zinc-500 bg-zinc-900' : 'border-zinc-800 bg-black/50 hover:border-zinc-700'}`}
                 >
                     {logo ? (
@@ -189,6 +188,7 @@ const EducationItem: React.FC<EducationItemProps> = ({ school, degree, period, g
             <div className="flex-1 pb-2">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
                     className="w-full text-left"
                 >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1">
@@ -223,9 +223,9 @@ const EducationItem: React.FC<EducationItemProps> = ({ school, degree, period, g
                                             {category}
                                         </h5>
                                         <div className="flex flex-wrap gap-1.5">
-                                            {courseList.map((course: string, i: number) => (
+                                            {courseList.map((course: string) => (
                                                 <span
-                                                    key={i}
+                                                    key={course}
                                                     className="font-mono text-[10px] text-zinc-500 px-2 py-1 bg-zinc-900/30 border border-zinc-800/50 rounded hover:border-zinc-700 hover:text-zinc-400 transition-colors"
                                                 >
                                                     {course}
@@ -249,17 +249,10 @@ interface TypewriterEffectProps {
     words: string[];
 }
 
-const TypewriterEffect: React.FC<TypewriterEffectProps> = ({ words }) => {
+const TypewriterEffect = ({ words }: TypewriterEffectProps) => {
     const [index, setIndex] = useState(0);
     const [subIndex, setSubIndex] = useState(0);
     const [reverse, setReverse] = useState(false);
-    const [blink, setBlink] = useState(true);
-
-    // Blinking cursor
-    useEffect(() => {
-        const timeout = setTimeout(() => setBlink(!blink), 500);
-        return () => clearTimeout(timeout);
-    }, [blink]);
 
     // Typing logic
     useEffect(() => {
@@ -286,7 +279,7 @@ const TypewriterEffect: React.FC<TypewriterEffectProps> = ({ words }) => {
             <span className="font-mono text-zinc-400 text-sm sm:text-base">
                 {words[index].substring(0, subIndex)}
             </span>
-            <span className={`w-[2px] h-4 ml-1 bg-blue-500 ${blink ? 'opacity-100' : 'opacity-0'}`}></span>
+            <span className="w-[2px] h-4 ml-1 bg-blue-500 animate-pulse"></span>
         </div>
     );
 };
@@ -295,7 +288,7 @@ interface SectionTitleProps {
     title: string;
 }
 
-export const SectionTitle: React.FC<SectionTitleProps> = ({ title }) => (
+export const SectionTitle = ({ title }: SectionTitleProps) => (
     <h3 className="font-mono text-zinc-400 text-sm flex items-center gap-2">
         <span className="w-2 h-2 bg-zinc-700 rounded-sm"></span>
         {title}
@@ -303,7 +296,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({ title }) => (
 );
 
 // Horizontal Pattern Divider - matches bilal.works exactly
-export const PatternDivider: React.FC = () => (
+export const PatternDivider = () => (
     <div className="relative flex bg-[#18181b] h-8 w-[calc(100%+2rem)] sm:w-[calc(100%+5rem)] -mx-4 sm:-mx-10 border-y border-dashed border-zinc-800 overflow-hidden my-8">
         <div
             className="pointer-events-none absolute inset-0 opacity-50"
@@ -320,61 +313,80 @@ interface SocialLinkProps {
     icon: React.ReactNode;
 }
 
-const SocialLink: React.FC<SocialLinkProps> = ({ href, icon }) => (
+const SocialLink = ({ href, icon }: SocialLinkProps) => (
     <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={`Visit ${href}`}
         className="text-zinc-500 hover:text-zinc-200 transition-colors"
     >
         {icon}
     </a>
 );
 
+// Types for contribution data
+interface ContributionDay {
+    date: string;
+    count: number;
+    level: number;
+}
+
+interface ContributionWeek {
+    days: ContributionDay[];
+}
+
+interface MonthLabel {
+    weekIndex: number;
+    month: string;
+}
+
 // Premium Multi-Platform Contribution Graph
-const ContributionGraph: React.FC = () => {
+const ContributionGraph = () => {
     const [activeTab, setActiveTab] = useState<'github' | 'leetcode' | 'codeforces'>('github');
-    const [hoveredDay, setHoveredDay] = useState<any>(null);
+    const [hoveredDay, setHoveredDay] = useState<ContributionDay & { x: number; y: number } | null>(null);
 
     const { data: githubData } = useGithubContributions();
     const { data: leetcodeData } = useLeetCodeStats();
     const { data: codeforcesData } = useCodeforcesData();
 
     // Premium Monochrome Palette
-    const levels = ['rgba(39, 39, 42, 0.4)', '#27272a', '#52525b', '#a1a1aa', '#f4f4f5'];
+    const levels = useMemo(() => 
+        ['rgba(39, 39, 42, 0.4)', '#27272a', '#52525b', '#a1a1aa', '#f4f4f5'], 
+    []);
 
-    const platforms = {
+    const platforms = useMemo(() => ({
         github: { name: 'GitHub', icon: '⬡', username: 'nishant-iith' },
         leetcode: { name: 'LeetCode', icon: '◧', username: 'Nishant-iith' },
         codeforces: { name: 'Codeforces', icon: '◉', username: 'so-called-iitian' }
-    };
+    }), []);
 
-    const getLevel = (count: number) => {
+    const getLevel = useCallback((count: number): number => {
         if (count === 0) return 0;
         if (count === 1) return 1;
         if (count <= 4) return 2;
         if (count <= 6) return 3;
         return 4;
-    };
+    }, []);
 
-    const processContributions = (platformData: any, platform: string) => {
+    const processContributions = useCallback((platformData: { contributions?: Array<{ date: string; count: number }> } | null): { weeks: ContributionWeek[]; monthLabels: MonthLabel[] } => {
         if (!platformData) return { weeks: [], monthLabels: [] };
 
         const contribMap: Record<string, number> = {};
-        const contributions = platform === 'github' ? platformData.contributions : platformData.contributions || [];
+        const contributions = platformData.contributions || [];
 
-        contributions.forEach((day: any) => {
+        contributions.forEach((day) => {
             contribMap[day.date] = day.count;
         });
 
         const today = new Date();
-        const weeks: any[][] = [];
-        const monthLabels: { weekIndex: number; month: string }[] = [];
+        const weeks: ContributionWeek[] = [];
+        const monthLabels: MonthLabel[] = [];
         let lastMonth = -1;
 
         // Create 53 weeks to ensure coverage of a full year (364 days + current partial week)
         for (let w = 0; w < 53; w++) {
-            const week = [];
+            const week: ContributionDay[] = [];
             for (let d = 0; d < 7; d++) {
                 const date = new Date(today);
                 // Calculate date backwards from today
@@ -393,14 +405,14 @@ const ContributionGraph: React.FC = () => {
                     }
                 }
             }
-            weeks.push(week);
+            weeks.push({ days: week });
         }
 
         return { weeks, monthLabels };
-    };
+    }, [getLevel]);
 
     // Prepare platform-specific data and stats
-    const getPlatformData = () => {
+    const getPlatformData = useCallback(() => {
         switch (activeTab) {
             case 'github':
                 return {
@@ -418,11 +430,11 @@ const ContributionGraph: React.FC = () => {
                     stats: { label: 'Rating', value: codeforcesData.rating, subLabel: codeforcesData.rank }
                 };
         }
-    };
+    }, [activeTab, githubData, leetcodeData, codeforcesData]);
 
-    const { data: currentData, stats: currentStats } = getPlatformData()!;
+    const { data: currentData, stats: currentStats } = getPlatformData();
 
-    const { weeks, monthLabels } = useMemo(() => processContributions(currentData, activeTab), [currentData, activeTab]);
+    const { weeks, monthLabels } = useMemo(() => processContributions(currentData), [currentData, processContributions]);
 
     return (
         <section className="flex flex-col gap-4 relative">
@@ -433,6 +445,7 @@ const ContributionGraph: React.FC = () => {
                         <button
                             key={key}
                             onClick={() => setActiveTab(key as 'github' | 'leetcode' | 'codeforces')}
+                            aria-pressed={activeTab === key}
                             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md font-medium text-[11px] sm:text-xs transition-all duration-300 ${activeTab === key
                                 ? 'bg-zinc-800 text-zinc-100 shadow-sm'
                                 : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
@@ -451,9 +464,9 @@ const ContributionGraph: React.FC = () => {
                 {/* Month Labels */}
                 <div className="relative h-6 mb-1">
                     <svg viewBox={`0 0 ${53 * 13} 15`} className="w-full h-full block">
-                        {monthLabels.map((m: { weekIndex: number; month: string }, i: number) => (
+                        {monthLabels.map((m) => (
                             <text
-                                key={i}
+                                key={`${m.weekIndex}-${m.month}`}
                                 x={m.weekIndex * 13}
                                 y="12"
                                 className="text-[10px] font-mono fill-zinc-500 font-medium"
@@ -472,11 +485,11 @@ const ContributionGraph: React.FC = () => {
                 ) : (
                     <div className="overflow-x-auto pb-2 scrollbar-hide">
                         <svg viewBox={`0 0 ${53 * 13} ${7 * 13}`} className="w-full h-auto block select-none">
-                            {weeks.map((week: any[], w: number) => (
+                            {weeks.map((week, w) => (
                                 <g key={w} transform={`translate(${w * 13}, 0)`}>
-                                    {week.map((day: any, d: number) => (
+                                    {week.days.map((day, d) => (
                                         <rect
-                                            key={d}
+                                            key={day.date}
                                             x="0"
                                             y={d * 13}
                                             width="10"
@@ -628,22 +641,22 @@ const experienceData: Experience[] = [
 ];
 
 // Experience Section with Toggle
-const ExperienceSection: React.FC = () => {
+const ExperienceSection = () => {
     const [showAll, setShowAll] = useState<boolean>(false);
 
     // Sort by period (most recent first)
-    const sortedExperience = [...experienceData].sort((a, b) => {
+    const sortedExperience = useMemo(() => [...experienceData].sort((a, b) => {
         const getDate = (period: string) => {
             const months: Record<string, number> = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
             const match = period.match(/(\w+)\s+(\d{4})/);
             return match ? parseInt(match[2]) * 12 + (months[match[1]] || 0) : 0;
         };
         return getDate(b.period) - getDate(a.period);
-    });
+    }), []);
 
-    const filteredExperience = showAll
-        ? sortedExperience
-        : sortedExperience.filter(exp => exp.type === 'corporate');
+    const filteredExperience = useMemo(() => 
+        showAll ? sortedExperience : sortedExperience.filter(exp => exp.type === 'corporate'),
+    [showAll, sortedExperience]);
 
     return (
         <section className="flex flex-col gap-8">
@@ -657,8 +670,9 @@ const ExperienceSection: React.FC = () => {
                 {/* Toggle Switch */}
                 <button
                     onClick={() => setShowAll(!showAll)}
+                    aria-pressed={showAll}
+                    aria-label={showAll ? 'Hide college experiences' : 'Show college experiences'}
                     className="flex items-center gap-2 group"
-                    title={showAll ? 'Hide college experiences' : 'Show college experiences'}
                 >
                     <span className="font-mono text-[10px] text-zinc-600 group-hover:text-zinc-400 transition-colors">
                         + College
@@ -671,9 +685,9 @@ const ExperienceSection: React.FC = () => {
 
             {/* Experience Items */}
             <div className="flex flex-col gap-6">
-                {filteredExperience.map((exp, idx) => (
+                {filteredExperience.map((exp) => (
                     <ExperienceItem
-                        key={idx}
+                        key={`${exp.company}-${exp.period}`}
                         role={exp.role}
                         company={exp.company}
                         period={exp.period}
@@ -696,7 +710,7 @@ interface ExperienceItemProps {
     logo?: string;
 }
 
-const ExperienceItem: React.FC<ExperienceItemProps> = ({ role, company, period, description, tags, logo }) => {
+const ExperienceItem = ({ role, company, period, description, tags, logo }: ExperienceItemProps) => {
     // Default expanded as requested
     const [isOpen, setIsOpen] = useState(true);
 
@@ -706,6 +720,8 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ role, company, period, 
             <div className="flex flex-col items-center">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
+                    aria-label={`Toggle ${company} details`}
                     className={`w-10 h-10 flex items-center justify-center rounded border border-dashed transition-all duration-300 overflow-hidden ${isOpen ? 'border-zinc-500 bg-zinc-900' : 'border-zinc-800 bg-black hover:border-zinc-700'}`}
                 >
                     {logo ? (
@@ -720,6 +736,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ role, company, period, 
             <div className="flex-1 pb-2">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
                     className="w-full text-left"
                 >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1">
@@ -735,8 +752,8 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ role, company, period, 
                     <div className="overflow-hidden">
                         {/* Description as Bullet Points */}
                         <ul className="flex flex-col gap-1.5 mb-4 list-none">
-                            {Array.isArray(description) ? (description as string[]).map((item: string, i: number) => (
-                                <li key={i} className="font-mono text-zinc-500 text-[11px] leading-relaxed flex items-start gap-2">
+                            {Array.isArray(description) ? description.map((item: string) => (
+                                <li key={item} className="font-mono text-zinc-500 text-[11px] leading-relaxed flex items-start gap-2">
                                     <span className="mt-1.5 min-w-[3px] min-h-[3px] w-[3px] h-[3px] bg-zinc-600 rounded-full block"></span>
                                     {item}
                                 </li>
@@ -745,9 +762,9 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ role, company, period, 
                             )}
                         </ul>
                         <div className="flex flex-wrap gap-2">
-                            {tags && tags.map((tag: string, i: number) => (
+                            {tags && tags.map((tag: string) => (
                                 <span
-                                    key={i}
+                                    key={tag}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900/50 border border-zinc-800 text-zinc-500 rounded hover:border-zinc-700 hover:text-zinc-300 transition-colors cursor-default"
                                 >
                                     {tag}
@@ -769,7 +786,7 @@ interface ProjectCardProps {
     href: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ title, status, desc, tags, href }) => (
+const ProjectCard = ({ title, status, desc, tags, href }: ProjectCardProps) => (
     <a
         href={href}
         target="_blank"
@@ -800,8 +817,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, status, desc, tags, hr
 
                 <div className="flex items-center justify-between mt-auto pt-2">
                     <div className="flex gap-2">
-                        {tags.slice(0, 3).map((tag: string, i: number) => (
-                            <span key={i} className="text-[10px] font-mono text-zinc-600 group-hover:text-zinc-500">
+                        {tags.slice(0, 3).map((tag: string) => (
+                            <span key={tag} className="text-[10px] font-mono text-zinc-600 group-hover:text-zinc-500">
                                 #{tag}
                             </span>
                         ))}

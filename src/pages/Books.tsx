@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Book, User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight } from 'lucide-react';
 import { PatternDivider } from './Home';
 
@@ -25,12 +25,12 @@ const booksData: Book[] = [
         author: "Harold Abelson & Gerald Jay Sussman",
         tags: ["Functional", "Recursion", "Lisp"],
         date: "Archived",
-        takeaway: "Don’t be the person who “never quite understood” something like recursion. Mastering it opens doors to complex problem solving.",
+        takeaway: "Don't be the person who \"never quite understood\" something like recursion. Mastering it opens doors to complex problem solving.",
         accent: "blue",
         colorClass: "group-hover:text-blue-400 group-hover:border-blue-500/50",
         borderClass: "border-blue-500",
         bgClass: "group-hover:bg-blue-500/5",
-        content: `### Brian Harvey’s Berkeley CS 61A
+        content: `### Brian Harvey's Berkeley CS 61A
 This book is often called the "Wizard Book" and is a foundational text for computer science that teaches how to build complex systems from simple building blocks.`
     },
     {
@@ -40,7 +40,7 @@ This book is often called the "Wizard Book" and is a foundational text for compu
         author: "Randal Bryant & David O'Hallaron",
         tags: ["Binary", "Memory", "CPU"],
         date: "Archived",
-        takeaway: "If you don’t have a solid mental model of how a computer actually works, all of your higher-level abstractions will be brittle.",
+        takeaway: "If you don't have a solid mental model of how a computer actually works, all of your higher-level abstractions will be brittle.",
         accent: "green",
         colorClass: "group-hover:text-emerald-400 group-hover:border-emerald-500/50",
         borderClass: "border-emerald-500",
@@ -55,12 +55,12 @@ Understanding the hardware-software interface is critical for writing efficient 
         author: "Steven Skiena",
         tags: ["DSA", "Analysis", "Complexity"],
         date: "Archived",
-        takeaway: "If you don’t know how to use ubiquitous data structures like stacks, queues, trees, and graphs, you won’t be able to solve challenging problems.",
+        takeaway: "If you don't know how to use ubiquitous data structures like stacks, queues, trees, and graphs, you won't be able to solve challenging problems.",
         accent: "purple",
         colorClass: "group-hover:text-purple-400 group-hover:border-purple-500/50",
         borderClass: "border-purple-500",
         bgClass: "group-hover:bg-purple-500/5",
-        content: `### Steven Skiena’s lectures
+        content: `### Steven Skiena's lectures
 Algorithms are the toolkit of every programmer. This book focuses on practical design and implementation over pure mathematical proofs.`
     },
     {
@@ -75,7 +75,7 @@ Algorithms are the toolkit of every programmer. This book focuses on practical d
         colorClass: "group-hover:text-amber-400 group-hover:border-amber-500/50",
         borderClass: "border-amber-500",
         bgClass: "group-hover:bg-amber-500/5",
-        content: `### Tom Leighton’s MIT 6.042J
+        content: `### Tom Leighton's MIT 6.042J
 The language of programming is logic and mathematics. This book provides the foundational tools needed for rigorous algorithmic analysis.`
     },
     {
@@ -120,7 +120,7 @@ Starting from the Application Layer, this book unravels the mystery of how bits 
         colorClass: "group-hover:text-indigo-400 group-hover:border-indigo-500/50",
         borderClass: "border-indigo-500",
         bgClass: "group-hover:bg-indigo-500/5",
-        content: `### Joe Hellerstein’s Berkeley CS 186
+        content: `### Joe Hellerstein's Berkeley CS 186
 The "Red Book" is a collection of seminal papers that shaped the field of database systems.`
     },
     {
@@ -130,12 +130,12 @@ The "Red Book" is a collection of seminal papers that shaped the field of databa
         author: "Robert Nystrom",
         tags: ["Parsing", "AST", "VM"],
         date: "Archived",
-        takeaway: "If you understand how languages and compilers actually work, you’ll write better code and learn new languages more easily.",
+        takeaway: "If you understand how languages and compilers actually work, you'll write better code and learn new languages more easily.",
         accent: "orange",
         colorClass: "group-hover:text-orange-400 group-hover:border-orange-500/50",
         borderClass: "border-orange-500",
         bgClass: "group-hover:bg-orange-500/5",
-        content: `### Alex Aiken’s course on edX
+        content: `### Alex Aiken's course on edX
 A hands-on guide to building your own programming language from scratch. Beautifully illustrated and deeply insightful.`
     },
     {
@@ -167,111 +167,119 @@ interface BookRibbonProps {
     onClick: (book: Book) => void;
 }
 
-const BookRibbon: React.FC<BookRibbonProps> = ({ book, onClick }) => (
-    <div
-        onClick={() => onClick(book)}
-        className={`
-            group relative cursor-pointer
-            flex items-center justify-between
-            py-4 px-6 md:px-8
-            bg-[#18181b] border-l-2 border-y border-r border-zinc-800/50 
-            ${book.bgClass}
-            hover:border-l-4 hover:pl-[30px] ${book.colorClass}
-            transition-all duration-200 ease-out
-        `}
-    >
-        {/* Left colored accent line (Hover state handles this via border-l-4) */}
+function BookRibbon({ book, onClick }: BookRibbonProps) {
+    return (
+        <div
+            onClick={() => onClick(book)}
+            className={`
+                group relative cursor-pointer
+                flex items-center justify-between
+                py-4 px-6 md:px-8
+                bg-[#18181b] border-l-2 border-y border-r border-zinc-800/50 
+                ${book.bgClass}
+                hover:border-l-4 hover:pl-[30px] ${book.colorClass}
+                transition-all duration-200 ease-out
+            `}
+            role="button"
+            tabIndex={0}
+            aria-label={`Read more about ${book.title}`}
+        >
+            {/* Left colored accent line (Hover state handles this via border-l-4) */}
 
-        {/* Title Section */}
-        <div className="flex flex-col gap-1 z-10">
-            <div className="flex items-center gap-3">
-                <h3 className="font-doto font-bold text-lg text-zinc-300 group-hover:text-zinc-100 transition-colors">
-                    {book.title}
-                </h3>
+            {/* Title Section */}
+            <div className="flex flex-col gap-1 z-10">
+                <div className="flex items-center gap-3">
+                    <h3 className="font-doto font-bold text-lg text-zinc-300 group-hover:text-zinc-100 transition-colors">
+                        {book.title}
+                    </h3>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 group-hover:text-zinc-400">
+                    <span>By {book.author}</span>
+                </div>
             </div>
-            <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 group-hover:text-zinc-400">
-                <span>By {book.author}</span>
+
+            {/* Right Section (Tags & Arrow) */}
+            <div className="flex items-center gap-6 z-10">
+                <div className="hidden md:flex gap-2">
+                    {book.tags.map((tag: string) => (
+                        <span key={tag} className="text-[10px] uppercase tracking-wider text-zinc-600 bg-zinc-900 border border-zinc-800 px-2 py-1 rounded group-hover:border-zinc-700 group-hover:text-zinc-400 transition-colors">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+                <ArrowRight className="text-zinc-600 group-hover:text-zinc-300 transition-colors -ml-2 opacity-0 group-hover:opacity-100 group-hover:ml-0 duration-200" size={18} />
             </div>
         </div>
-
-        {/* Right Section (Tags & Arrow) */}
-        <div className="flex items-center gap-6 z-10">
-            <div className="hidden md:flex gap-2">
-                {book.tags.map((tag: string) => (
-                    <span key={tag} className="text-[10px] uppercase tracking-wider text-zinc-600 bg-zinc-900 border border-zinc-800 px-2 py-1 rounded group-hover:border-zinc-700 group-hover:text-zinc-400 transition-colors">
-                        {tag}
-                    </span>
-                ))}
-            </div>
-            <ArrowRight className="text-zinc-600 group-hover:text-zinc-300 transition-colors -ml-2 opacity-0 group-hover:opacity-100 group-hover:ml-0 duration-200" size={18} />
-        </div>
-    </div>
-);
+    );
+}
 
 interface ReadingPaneProps {
     book: Book;
     onBack: () => void;
 }
 
-const ReadingPane: React.FC<ReadingPaneProps> = ({ book, onBack }) => (
-    <div className="flex flex-col h-full bg-[#0a0a0a] animate-in fade-in zoom-in-95 duration-200 absolute inset-0 z-50 overflow-hidden">
+function ReadingPane({ book, onBack }: ReadingPaneProps) {
+    return (
+        <div className="flex flex-col h-full bg-[#0a0a0a] animate-in fade-in zoom-in-95 duration-200 absolute inset-0 z-50 overflow-hidden">
 
-        {/* Navigation */}
-        <div className="h-16 border-b border-zinc-800 flex items-center justify-between px-6 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-20">
-            <button
-                onClick={onBack}
-                className="hover:bg-zinc-800 p-2 -ml-2 rounded-lg text-zinc-400 hover:text-zinc-100 transition-colors flex items-center gap-2 text-sm font-medium"
-            >
-                <ArrowLeft size={18} />
-                <span className="font-mono">./stack</span>
-            </button>
-            <div className={`px-3 py-1 rounded border border-zinc-800 bg-zinc-900 text-xs font-bold uppercase tracking-wider text-zinc-400`}>
-                {book.category}
+            {/* Navigation */}
+            <div className="h-16 border-b border-zinc-800 flex items-center justify-between px-6 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-20">
+                <button
+                    onClick={onBack}
+                    className="hover:bg-zinc-800 p-2 -ml-2 rounded-lg text-zinc-400 hover:text-zinc-100 transition-colors flex items-center gap-2 text-sm font-medium"
+                    aria-label="Go back to book list"
+                >
+                    <ArrowLeft size={18} />
+                    <span className="font-mono">./stack</span>
+                </button>
+                <div className={`px-3 py-1 rounded border border-zinc-800 bg-zinc-900 text-xs font-bold uppercase tracking-wider text-zinc-400`}>
+                    {book.category}
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto w-full bg-[#0a0a0a]">
+                {/* Ambient Background Glow */}
+                <div className={`fixed top-20 right-20 w-96 h-96 ${book.bgClass.replace('group-hover:', '')} rounded-full blur-[120px] opacity-10 pointer-events-none`}></div>
+
+                <div className="max-w-3xl mx-auto px-6 py-16 relative z-10">
+                    <div className="flex items-center gap-3 mb-6">
+                        {book.tags.map((tag: string) => (
+                            <span key={tag} className="text-xs font-mono text-zinc-500 border border-zinc-800 px-2 py-1 rounded-full">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
+
+                    <h1 className="text-4xl md:text-6xl font-bold text-zinc-100 mb-6 font-doto tracking-tight leading-none">
+                        {book.title}
+                    </h1>
+
+                    <div className="flex items-center gap-3 mb-12 text-zinc-500 font-mono text-sm border-b border-zinc-800 pb-8">
+                        <User size={14} />
+                        <span>{book.author}</span>
+                        <span className="text-zinc-700">•</span>
+                        <Clock size={14} />
+                        <span>{book.date}</span>
+                    </div>
+
+                    <div className="bg-zinc-900/50 border-l-2 border-zinc-700 p-6 md:p-8 mb-12">
+                        <Quote className="text-zinc-700 mb-4" size={24} />
+                        <p className="text-xl md:text-2xl text-zinc-300 font-serif italic leading-relaxed">
+                            &ldquo;{book.takeaway}&rdquo;
+                        </p>
+                    </div>
+
+                    <article className="prose prose-invert prose-lg prose-zinc max-w-none prose-headings:font-doto prose-headings:text-zinc-100 prose-p:text-zinc-400 prose-p:leading-loose font-light">
+                        {book.content}
+                    </article>
+                </div>
             </div>
         </div>
+    );
+}
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto w-full bg-[#0a0a0a]">
-            {/* Ambient Background Glow */}
-            <div className={`fixed top-20 right-20 w-96 h-96 ${book.bgClass.replace('group-hover:', '')} rounded-full blur-[120px] opacity-10 pointer-events-none`}></div>
-
-            <div className="max-w-3xl mx-auto px-6 py-16 relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                    {book.tags.map((tag: string) => (
-                        <span key={tag} className="text-xs font-mono text-zinc-500 border border-zinc-800 px-2 py-1 rounded-full">
-                            #{tag}
-                        </span>
-                    ))}
-                </div>
-
-                <h1 className="text-4xl md:text-6xl font-bold text-zinc-100 mb-6 font-doto tracking-tight leading-none">
-                    {book.title}
-                </h1>
-
-                <div className="flex items-center gap-3 mb-12 text-zinc-500 font-mono text-sm border-b border-zinc-800 pb-8">
-                    <User size={14} />
-                    <span>{book.author}</span>
-                    <span className="text-zinc-700">•</span>
-                    <Clock size={14} />
-                    <span>{book.date}</span>
-                </div>
-
-                <div className="bg-zinc-900/50 border-l-2 border-zinc-700 p-6 md:p-8 mb-12">
-                    <Quote className="text-zinc-700 mb-4" size={24} />
-                    <p className="text-xl md:text-2xl text-zinc-300 font-serif italic leading-relaxed">
-                        "{book.takeaway}"
-                    </p>
-                </div>
-
-                <article className="prose prose-invert prose-lg prose-zinc max-w-none prose-headings:font-doto prose-headings:text-zinc-100 prose-p:text-zinc-400 prose-p:leading-loose font-light">
-                    {book.content}
-                </article>
-            </div>
-        </div>
-    </div>
-);
-
-const Books: React.FC = () => {
+export default function Books() {
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
     return (
@@ -325,6 +333,4 @@ const Books: React.FC = () => {
             </div>
         </div>
     );
-};
-
-export default Books;
+}

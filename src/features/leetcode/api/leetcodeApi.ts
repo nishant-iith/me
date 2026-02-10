@@ -47,7 +47,6 @@ export const leetcodeApi = {
                 return result;
             } catch (error) {
                 if (staleCache.data) {
-                    console.warn('LeetCode API failed, using stale cache');
                     return staleCache.data;
                 }
                 throw error;

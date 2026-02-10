@@ -1,4 +1,3 @@
-import React from 'react';
 import { PatternDivider } from './Home';
 import { Briefcase, Trophy, Code, GraduationCap, Rocket, Star, Heart } from 'lucide-react';
 
@@ -155,7 +154,7 @@ interface TimelineItemProps {
     index: number;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ data, index }) => {
+function TimelineItem({ data, index }: TimelineItemProps) {
     const isLeft = index % 2 === 0;
 
     return (
@@ -181,8 +180,8 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ data, index }) => {
                         {data.desc}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {data.tags.map((tag: string, i: number) => (
-                            <span key={i} className="text-[10px] font-mono text-zinc-600 bg-zinc-950/50 px-1.5 py-0.5 rounded">
+                        {data.tags.map((tag: string) => (
+                            <span key={tag} className="text-[10px] font-mono text-zinc-600 bg-zinc-950/50 px-1.5 py-0.5 rounded">
                                 #{tag}
                             </span>
                         ))}
@@ -204,7 +203,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ data, index }) => {
     );
 };
 
-const Timeline: React.FC = () => {
+export default function Timeline() {
     return (
         <div className="flex flex-col animate-in fade-in duration-500">
             {/* Header */}
@@ -224,7 +223,7 @@ const Timeline: React.FC = () => {
                 <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px border-l border-dashed border-zinc-800 -translate-x-1/2 md:-translate-x-px"></div>
 
                 {milestones.map((item: Milestone, index: number) => (
-                    <TimelineItem key={index} data={item} index={index} />
+                    <TimelineItem key={`${item.date}-${item.title}`} data={item} index={index} />
                 ))}
             </div>
 
@@ -233,6 +232,4 @@ const Timeline: React.FC = () => {
             </div>
         </div>
     );
-};
-
-export default Timeline;
+}

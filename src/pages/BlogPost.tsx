@@ -1,13 +1,12 @@
-import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, Tag, ExternalLink } from 'lucide-react';
 import DOMPurify from 'dompurify';
-import { useBlogPost } from '../features/blog';
+import { useBlogPost } from '../features/blog/hooks/useBlogHooks';
 
 // Your Hashnode publication host
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
-const BlogPost: React.FC = () => {
+const BlogPost = () => {
     const { slug } = useParams<{ slug: string }>();
     const { data: post } = useBlogPost(slug!);
 
@@ -25,6 +24,7 @@ const BlogPost: React.FC = () => {
             </div>
         );
     }
+
     const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -81,9 +81,9 @@ const BlogPost: React.FC = () => {
                     {post.tags && post.tags.length > 0 && (
                         <div className="flex items-center gap-2">
                             <Tag size={12} className="text-zinc-500" />
-                            {post.tags.map((tag, i: number) => (
+                            {post.tags.map((tag) => (
                                 <span
-                                    key={i}
+                                    key={tag.name}
                                     className="font-mono text-[10px] px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-500 rounded"
                                 >
                                     {tag.name}

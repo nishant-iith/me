@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, Book, User, Code, FileText, Github, Linkedin, Mail, ExternalLink, History } from 'lucide-react';
 
@@ -10,7 +10,7 @@ interface Action {
     perform: () => void;
 }
 
-const CommandPalette: React.FC = () => {
+export default function CommandPalette() {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [activeIndex, setActiveIndex] = useState(0);
@@ -232,6 +232,4 @@ const CommandPalette: React.FC = () => {
             </div>
         </div>
     );
-};
-
-export default CommandPalette;
+}

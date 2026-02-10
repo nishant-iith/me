@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Terminal, RefreshCw, Power } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ const LOG_LINES: string[] = [
     "System halted. Reboot required."
 ];
 
-const NotFound: React.FC = () => {
+export default function NotFound() {
     const navigate = useNavigate();
     const [lines, setLines] = useState<string[]>([]);
     const [isComplete, setIsComplete] = useState(false);
@@ -131,6 +131,4 @@ const NotFound: React.FC = () => {
 
         </div>
     );
-};
-
-export default NotFound;
+}

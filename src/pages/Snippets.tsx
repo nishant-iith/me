@@ -1,5 +1,5 @@
-import React, { useState, memo } from 'react';
-import { Code2, Copy, Check, ChevronDown, ChevronUp, Terminal, Braces, FileCode } from 'lucide-react';
+import { useState, memo } from 'react';
+import { Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { PatternDivider } from './Home';
 
 interface Snippet {
@@ -83,7 +83,7 @@ int main(){
 
 
 
-const Snippets: React.FC = () => {
+const Snippets = () => {
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const categories = [...new Set(snippets.map((s: Snippet) => s.category))];
 
@@ -137,7 +137,7 @@ interface SnippetCardProps {
     onToggle: () => void;
 }
 
-const SnippetCard: React.FC<SnippetCardProps> = memo(({ snippet, isExpanded, onToggle }) => {
+const SnippetCard = memo(({ snippet, isExpanded, onToggle }: SnippetCardProps) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async (e: React.MouseEvent) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { SectionTitle, PatternDivider } from './Home'; // Reusing components
 import { Code, Terminal, Monitor, Cpu, Database, Cloud, Layout, Box } from 'lucide-react';
 
@@ -9,26 +8,28 @@ interface ToolItemProps {
     tag?: string;
 }
 
-const ToolItem: React.FC<ToolItemProps> = ({ name, description, icon, tag }) => (
-    <div className="group relative border border-zinc-800 bg-zinc-900/40 p-5 rounded-xl hover:border-zinc-700 hover:bg-zinc-900/60 transition-all duration-300">
-        <div className="flex items-start justify-between mb-4">
-            <div className="p-3 bg-zinc-950 rounded-lg border border-zinc-800 text-zinc-100 group-hover:scale-110 transition-transform duration-300">
-                {icon}
+function ToolItem({ name, description, icon, tag }: ToolItemProps) {
+    return (
+        <div className="group relative border border-zinc-800 bg-zinc-900/40 p-5 rounded-xl hover:border-zinc-700 hover:bg-zinc-900/60 transition-all duration-300">
+            <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-zinc-950 rounded-lg border border-zinc-800 text-zinc-100 group-hover:scale-110 transition-transform duration-300">
+                    {icon}
+                </div>
+                {tag && (
+                    <span className="text-[10px] font-mono border border-zinc-800 bg-zinc-950/50 px-2 py-1 rounded text-zinc-500 uppercase">
+                        {tag}
+                    </span>
+                )}
             </div>
-            {tag && (
-                <span className="text-[10px] font-mono border border-zinc-800 bg-zinc-950/50 px-2 py-1 rounded text-zinc-500 uppercase">
-                    {tag}
-                </span>
-            )}
+            <h3 className="font-doto text-lg text-zinc-100 mb-1">{name}</h3>
+            <p className="text-zinc-500 text-sm leading-relaxed">
+                {description}
+            </p>
         </div>
-        <h3 className="font-doto text-lg text-zinc-100 mb-1">{name}</h3>
-        <p className="text-zinc-500 text-sm leading-relaxed">
-            {description}
-        </p>
-    </div>
-);
+    );
+}
 
-const Toolbox: React.FC = () => {
+export default function Toolbox() {
     return (
         <div className="flex flex-col animate-in fade-in duration-500">
             {/* Header */}
@@ -38,7 +39,7 @@ const Toolbox: React.FC = () => {
                 </h1>
                 <p className="text-zinc-500 font-mono text-sm max-w-md">
                     The software and hardware that powers my daily workflow.
-                    "Use what you know, but know what you use."
+                    &ldquo;Use what you know, but know what you use.&rdquo;
                 </p>
             </div>
 
@@ -148,6 +149,4 @@ const Toolbox: React.FC = () => {
             </div>
         </div>
     );
-};
-
-export default Toolbox;
+}

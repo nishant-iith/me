@@ -36,7 +36,6 @@ export const githubApi = {
                 return result;
             } catch (error) {
                 if (staleCache.data) {
-                    console.warn('GitHub API failed, using stale cache');
                     return staleCache.data;
                 }
                 throw error;

@@ -1,7 +1,6 @@
-import React from 'react';
 import { FileText } from 'lucide-react';
 
-const ResumeFAB: React.FC = () => {
+export default function ResumeFAB() {
     return (
         <div
             className="fixed bottom-8 right-8 z-[100] group flex items-center justify-center bg-zinc-950/80 backdrop-blur-md border border-dashed border-zinc-800 text-zinc-500 transition-all duration-300 rounded-full h-12 w-12 hover:w-64 overflow-hidden shadow-lg cursor-not-allowed"
@@ -18,6 +17,4 @@ const ResumeFAB: React.FC = () => {
             <div className="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
         </div>
     );
-};
-
-export default ResumeFAB;
+}
