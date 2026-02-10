@@ -1,0 +1,9 @@
+# Wrangler configuration for view counter worker
+name = "view-counter"
+main = "worker/view-counter.js"
+compatibility_date = "2024-01-01"
+
+# KV Namespace binding
+[[kv_namespaces]]
+binding = "VIEW_COUNTER"
+id = "d04be8d197084b45a9e0693b5fb10415"
