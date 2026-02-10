@@ -31,10 +31,28 @@ const BlogPost = () => {
         day: 'numeric'
     });
 
-    // Sanitize HTML content to prevent XSS
+    // Sanitize HTML content to prevent XSS with strict allowlist
+    // Note: iframe support removed for security - prevents clickjacking and malicious content injection
     const sanitizedHtml = DOMPurify.sanitize(post.content?.html || '', {
-        ADD_TAGS: ['iframe'],
-        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'],
+        ALLOWED_TAGS: [
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'hr',
+            'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
+            'a', 'strong', 'em', 'b', 'i', 'u', 's', 'del', 'ins', 'sub', 'sup',
+            'img', 'figure', 'figcaption', 'picture', 'source',
+            'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+            'div', 'span', 'section', 'article', 'details', 'summary',
+            'mark', 'abbr', 'cite', 'kbd', 'var', 'samp', 'dl', 'dt', 'dd',
+        ],
+        ALLOWED_ATTR: [
+            'href', 'target', 'rel', 'src', 'alt', 'title', 'width', 'height',
+            'class', 'id', 'loading', 'decoding',
+            'colspan', 'rowspan', 'scope',
+            'open', 'type', 'start',
+        ],
+        ALLOW_DATA_ATTR: false,
+        ADD_ATTR: ['target'],
+        FORBID_TAGS: ['style', 'script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button'],
+        FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'style'],
     });
 
     return (

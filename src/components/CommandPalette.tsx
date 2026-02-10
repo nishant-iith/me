@@ -78,19 +78,19 @@ export default function CommandPalette() {
             id: 'resume',
             title: 'Download Resume',
             icon: <FileText size={18} />,
-            perform: () => window.open('/Nishant_IITH.pdf', '_blank')
+            perform: () => window.open('/Nishant_IITH.pdf', '_blank', 'noopener,noreferrer')
         },
         {
             id: 'github',
             title: 'GitHub',
             icon: <Github size={18} />,
-            perform: () => window.open('https://github.com/nishant-iith', '_blank')
+            perform: () => window.open('https://github.com/nishant-iith', '_blank', 'noopener,noreferrer')
         },
         {
             id: 'linkedin',
             title: 'LinkedIn',
             icon: <Linkedin size={18} />,
-            perform: () => window.open('https://linkedin.com/in/nishant-iith', '_blank')
+            perform: () => window.open('https://linkedin.com/in/nishant-iith', '_blank', 'noopener,noreferrer')
         },
         {
             id: 'email',

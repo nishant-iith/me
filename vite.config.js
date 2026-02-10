@@ -9,6 +9,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    // Strip console.log/warn/error in production to prevent info leaks
+    minify: 'esbuild',
+    target: 'es2020',
+  },
+  esbuild: {
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -1,81 +1,31 @@
 import { HashnodePost } from '../types';
 
-const HASHNODE_API = 'https://gql.hashnode.com/';
-const HASHNODE_TOKEN = import.meta.env.VITE_HASHNODE_TOKEN;
-
-const GET_POSTS = `
-  query GetPosts($host: String!, $first: Int!) {
-    publication(host: $host) {
-      posts(first: $first) {
-        edges {
-          node {
-            id
-            slug
-            title
-            brief
-            publishedAt
-            readTimeInMinutes
-            tags {
-              name
-              slug
-            }
-            coverImage {
-              url
-            }
-            content {
-              html
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-const GET_POST = `
-  query GetPost($host: String!, $slug: String!) {
-    publication(host: $host) {
-      post(slug: $slug) {
-        id
-        slug
-        title
-        brief
-        publishedAt
-        readTimeInMinutes
-        tags {
-          name
-          slug
-        }
-        coverImage {
-          url
-        }
-        content {
-          html
-        }
-      }
-    }
-  }
-`;
+// Blog API requests are proxied through our Cloudflare Worker
+// The Hashnode token is stored server-side as a Worker secret — never exposed to the client
+const BLOG_PROXY_API = 'https://blog-proxy.iith-nishant.workers.dev';
 
 export const blogApi = {
     getPosts: async (host: string, first: number = 10): Promise<HashnodePost[]> => {
         try {
-            const response = await fetch(HASHNODE_API, {
+            const response = await fetch(BLOG_PROXY_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': HASHNODE_TOKEN || '',
                 },
                 body: JSON.stringify({
-                    query: GET_POSTS,
+                    operation: 'GetPosts',
                     variables: { host, first },
                 }),
             });
 
+            if (!response.ok) {
+                throw new Error(`Blog proxy returned ${response.status}`);
+            }
+
             const data = await response.json();
 
             if (data.errors) {
-                console.error('Hashnode API Error:', data.errors);
+                console.error('Blog API Error:', data.errors);
                 return [];
             }
 
@@ -88,22 +38,25 @@ export const blogApi = {
 
     getPost: async (host: string, slug: string): Promise<HashnodePost | null> => {
         try {
-            const response = await fetch(HASHNODE_API, {
+            const response = await fetch(BLOG_PROXY_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': HASHNODE_TOKEN || '',
                 },
                 body: JSON.stringify({
-                    query: GET_POST,
+                    operation: 'GetPost',
                     variables: { host, slug },
                 }),
             });
 
+            if (!response.ok) {
+                throw new Error(`Blog proxy returned ${response.status}`);
+            }
+
             const data = await response.json();
 
             if (data.errors) {
-                console.error('Hashnode API Error:', data.errors);
+                console.error('Blog API Error:', data.errors);
                 return null;
             }
 
