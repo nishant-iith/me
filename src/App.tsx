@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Analytics } from '@vercel/analytics/react';
 import Sidebar from '~components/Sidebar';
 import CustomCursor from '~components/CustomCursor';
 import ResumeFAB from '~components/ResumeFAB';
@@ -101,7 +100,6 @@ function App() {
             </div>
           </main>
         </div>
-        <Analytics />
       </div>
     </SnackbarProvider>
   );

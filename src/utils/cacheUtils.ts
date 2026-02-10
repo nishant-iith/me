@@ -104,4 +104,4 @@ export class RateLimiter {
     }
 }
 
-export const apiRateLimiter = new RateLimiter(1);
+export const apiRateLimiter = new RateLimiter(0.33); // 1 request every 3 seconds
