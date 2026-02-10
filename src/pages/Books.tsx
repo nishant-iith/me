@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Book, User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight } from 'lucide-react';
+import { Book, User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight, ExternalLink } from 'lucide-react';
 import { PatternDivider } from './Home';
 
 interface Book {
@@ -15,6 +15,7 @@ interface Book {
     borderClass: string;
     bgClass: string;
     content: string;
+    url: string;
 }
 
 const booksData: Book[] = [
@@ -31,7 +32,8 @@ const booksData: Book[] = [
         borderClass: "border-blue-500",
         bgClass: "group-hover:bg-blue-500/5",
         content: `### Brian Harvey's Berkeley CS 61A
-This book is often called the "Wizard Book" and is a foundational text for computer science that teaches how to build complex systems from simple building blocks.`
+This book is often called the "Wizard Book" and is a foundational text for computer science that teaches how to build complex systems from simple building blocks.`,
+        url: "https://raw.githubusercontent.com/CesarBallardini/sicp-spanish/master/sicp-es.pdf"
     },
     {
         id: "csapp",
@@ -46,7 +48,8 @@ This book is often called the "Wizard Book" and is a foundational text for compu
         borderClass: "border-emerald-500",
         bgClass: "group-hover:bg-emerald-500/5",
         content: `### Berkeley CS 61C
-Understanding the hardware-software interface is critical for writing efficient and secure code. This book bridges the gap between high-level code and machine reality.`
+Understanding the hardware-software interface is critical for writing efficient and secure code. This book bridges the gap between high-level code and machine reality.`,
+        url: "https://www.cs.sfu.ca/~ashriram/Courses/CS295/assets/books/CSAPP_2016.pdf"
     },
     {
         id: "adm",
@@ -61,7 +64,8 @@ Understanding the hardware-software interface is critical for writing efficient 
         borderClass: "border-purple-500",
         bgClass: "group-hover:bg-purple-500/5",
         content: `### Steven Skiena's lectures
-Algorithms are the toolkit of every programmer. This book focuses on practical design and implementation over pure mathematical proofs.`
+Algorithms are the toolkit of every programmer. This book focuses on practical design and implementation over pure mathematical proofs.`,
+        url: "https://moodle2.cs.uvigo.es/pluginfile.php/14189/mod_resource/content/1/%5BSkiena,%20Steven%5D%20The%20Algorithm%20Design%20Manual%20-%202nd%20edition.pdf"
     },
     {
         id: "mcs",
@@ -76,7 +80,8 @@ Algorithms are the toolkit of every programmer. This book focuses on practical d
         borderClass: "border-amber-500",
         bgClass: "group-hover:bg-amber-500/5",
         content: `### Tom Leighton's MIT 6.042J
-The language of programming is logic and mathematics. This book provides the foundational tools needed for rigorous algorithmic analysis.`
+The language of programming is logic and mathematics. This book provides the foundational tools needed for rigorous algorithmic analysis.`,
+        url: "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf"
     },
     {
         id: "ostep",
@@ -91,7 +96,8 @@ The language of programming is logic and mathematics. This book provides the fou
         borderClass: "border-rose-500",
         bgClass: "group-hover:bg-rose-500/5",
         content: `### Berkeley CS 162
-Virtualized CPUs, memory, and concurrency. This book explains the magic that happens between your code and the hardware.`
+Virtualized CPUs, memory, and concurrency. This book explains the magic that happens between your code and the hardware.`,
+        url: "https://techiefood4u.files.wordpress.com/2020/02/operating_systems_three_easy_pieces.pdf"
     },
     {
         id: "networking",
@@ -106,7 +112,8 @@ Virtualized CPUs, memory, and concurrency. This book explains the magic that hap
         borderClass: "border-teal-500",
         bgClass: "group-hover:bg-teal-500/5",
         content: `### Stanford CS 144
-Starting from the Application Layer, this book unravels the mystery of how bits move across the globe in milliseconds.`
+Starting from the Application Layer, this book unravels the mystery of how bits move across the globe in milliseconds.`,
+        url: "https://qige.io/network/Kurose-7.pdf"
     },
     {
         id: "dbms",
@@ -121,7 +128,8 @@ Starting from the Application Layer, this book unravels the mystery of how bits 
         borderClass: "border-indigo-500",
         bgClass: "group-hover:bg-indigo-500/5",
         content: `### Joe Hellerstein's Berkeley CS 186
-The "Red Book" is a collection of seminal papers that shaped the field of database systems.`
+The "Red Book" is a collection of seminal papers that shaped the field of database systems.`,
+        url: "http://www.redbook.io/pdf/redbook-5th-edition.pdf"
     },
     {
         id: "compilers",
@@ -136,7 +144,8 @@ The "Red Book" is a collection of seminal papers that shaped the field of databa
         borderClass: "border-orange-500",
         bgClass: "group-hover:bg-orange-500/5",
         content: `### Alex Aiken's course on edX
-A hands-on guide to building your own programming language from scratch. Beautifully illustrated and deeply insightful.`
+A hands-on guide to building your own programming language from scratch. Beautifully illustrated and deeply insightful.`,
+        url: "https://craftinginterpreters.com/contents.html"
     },
     {
         id: "distributed",
@@ -151,7 +160,8 @@ A hands-on guide to building your own programming language from scratch. Beautif
         borderClass: "border-pink-500",
         bgClass: "group-hover:bg-pink-500/5",
         content: `### MIT 6.824
-The definitive guide to the architecture of modern data systems. Bridges the gap between theory and real-world implementation.`
+The definitive guide to the architecture of modern data systems. Bridges the gap between theory and real-world implementation.`,
+        url: "https://unidel.edu.ng/focelibrary/books/Designing%20Data-Intensive%20Applications%20The%20Big%20Ideas%20Behind%20Reliable,%20Scalable,%20and%20Maintainable%20Systems%20by%20Martin%20Kleppmann%20(z-lib.org).pdf"
     }
 ];
 
@@ -232,8 +242,20 @@ function ReadingPane({ book, onBack }: ReadingPaneProps) {
                     <ArrowLeft size={18} />
                     <span className="font-mono">./stack</span>
                 </button>
-                <div className={`px-3 py-1 rounded border border-zinc-800 bg-zinc-900 text-xs font-bold uppercase tracking-wider text-zinc-400`}>
-                    {book.category}
+                <div className="flex items-center gap-3">
+                    <a
+                        href={book.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg text-sm font-medium transition-colors"
+                        aria-label={`Open ${book.title} in new tab`}
+                    >
+                        <ExternalLink size={14} />
+                        <span>Read Book</span>
+                    </a>
+                    <div className={`px-3 py-1 rounded border border-zinc-800 bg-zinc-900 text-xs font-bold uppercase tracking-wider text-zinc-400`}>
+                        {book.category}
+                    </div>
                 </div>
             </div>
 
