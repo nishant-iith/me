@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Home, Book, User, Code, FileText, Github, Linkedin, Mail, ExternalLink, History } from 'lucide-react';
+import { Search, Home, Book, User, Code, FileText, Github, Linkedin, Mail, ExternalLink, History, MessageSquare } from 'lucide-react';
 
 interface Action {
     id: string;
@@ -73,6 +73,12 @@ export default function CommandPalette() {
             icon: <Code size={18} />,
             shortcut: 'C',
             perform: () => navigate('/snippets')
+        },
+        {
+            id: 'chat',
+            title: 'Chat with Nishant',
+            icon: <MessageSquare size={18} />,
+            perform: () => navigate('/chat')
         },
         {
             id: 'resume',

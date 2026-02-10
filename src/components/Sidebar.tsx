@@ -1,4 +1,4 @@
-import { House, User, Sparkles, BookOpen, NotebookPen, Code2 } from 'lucide-react';
+import { House, User, Sparkles, BookOpen, NotebookPen, Code2, MessageSquare } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 export default function Sidebar() {
@@ -23,6 +23,7 @@ export default function Sidebar() {
                     <NavItem to="/blog" icon={<NotebookPen size={20} />} label="Blog" />
                     <NavItem to="/books" icon={<BookOpen size={20} />} label="Books" />
                     <NavItem to="/snippets" icon={<Code2 size={20} />} label="Snippets" />
+                    <NavItem to="/chat" icon={<MessageSquare size={20} />} label="Chat" />
                 </nav>
             </aside>
 
@@ -35,6 +36,7 @@ export default function Sidebar() {
                     <MobileNavItem to="/blog" icon={<NotebookPen size={20} />} label="Blog" />
                     <MobileNavItem to="/books" icon={<BookOpen size={18} />} label="Books" />
                     <MobileNavItem to="/snippets" icon={<Code2 size={18} />} label="Snippets" />
+                    <MobileNavItem to="/chat" icon={<MessageSquare size={18} />} label="Chat" />
                 </div>
             </nav>
         </>

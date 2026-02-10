@@ -1,0 +1,12 @@
+# Wrangler configuration for chatbot API worker
+name = "chatbot-api"
+main = "worker/chatbot-api.js"
+compatibility_date = "2024-01-01"
+
+# KV Namespace binding for rate limiting
+[[kv_namespaces]]
+binding = "CHATBOT_KV"
+id = "f78cda9e55b94bc89564ccd7ec0139c1"
+
+# Secrets (set via: wrangler secret put GEMINI_API_KEY --config wrangler-chatbot.toml)
+# - GEMINI_API_KEY: Google Gemini API key

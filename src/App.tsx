@@ -2,10 +2,11 @@ import { lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from '~components/Sidebar';
 import CustomCursor from '~components/CustomCursor';
-import ResumeFAB from '~components/ResumeFAB';
+import ChatWidget from '~components/ChatWidget';
 import CommandPalette from '~components/CommandPalette';
 import SuspenseLoader from '~components/SuspenseLoader';
 import { SnackbarProvider } from './providers/SnackbarProvider';
+import { ChatProvider } from '@/features/chat';
 
 // Eager load: Home (critical path)
 import Home from '~pages/Home';
@@ -19,12 +20,14 @@ const Toolbox = lazy(() => import('~pages/Toolbox'));
 const Timeline = lazy(() => import('~pages/Timeline'));
 const Books = lazy(() => import('~pages/Books'));
 const Snippets = lazy(() => import('~pages/Snippets'));
+const Chat = lazy(() => import('~pages/Chat'));
 const NotFound = lazy(() => import('~pages/NotFound'));
 
 
 function App() {
   return (
     <SnackbarProvider>
+      <ChatProvider>
       <div className="relative min-h-screen text-zinc-100 font-sans selection:bg-zinc-800 selection:text-zinc-200 bg-[#18181b]">
         {/* ... existing layout ... */}
         {/* Skipping patterns for brevity in ReplacementContent, but I will provide the full block in target */}
@@ -53,7 +56,7 @@ function App() {
 
         {/* GLOBAL EFFECTS */}
         <CustomCursor />
-        <ResumeFAB />
+        <ChatWidget />
         <CommandPalette />
         <div className="aura-overlay fixed inset-0 pointer-events-none z-50"></div>
         <div className="scanlines fixed inset-0 pointer-events-none z-40"></div>
@@ -90,6 +93,7 @@ function App() {
                   <Route path="/timeline" element={<Timeline />} />
                   <Route path="/books" element={<Books />} />
                   <Route path="/snippets" element={<Snippets />} />
+                  <Route path="/chat" element={<Chat />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </SuspenseLoader>
@@ -101,6 +105,7 @@ function App() {
           </main>
         </div>
       </div>
+      </ChatProvider>
     </SnackbarProvider>
   );
 }
