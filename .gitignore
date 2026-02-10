@@ -30,3 +30,11 @@ dist-ssr
 
 .vercel
 .env*.local
+
+# Agent/AI assistant directories
+.agent
+.agents
+.claude
+.gemini
+.kiro
+.opencode
