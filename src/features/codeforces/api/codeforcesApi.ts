@@ -1,15 +1,13 @@
 import axios from 'axios';
 import { CodeforcesData } from '../types';
-import { cacheUtils } from '../../../utils/cacheUtils';
+import { cacheUtils, requestDeduplicator, apiRateLimiter } from '../../../utils/cacheUtils';
 
 export const CODEFORCES_USERNAME = 'so-called-iitian';
 const CACHE_KEY = `codeforces_data_${CODEFORCES_USERNAME}`;
+const REQUEST_KEY = 'codeforces_api_request';
 
-export const codeforcesApi = {
-    getData: async (username = CODEFORCES_USERNAME): Promise<CodeforcesData> => {
-        const cached = cacheUtils.get<CodeforcesData>(CACHE_KEY);
-        if (cached && username === CODEFORCES_USERNAME) return cached;
-
+const fetchCodeforcesData = async (username: string): Promise<CodeforcesData> => {
+    return apiRateLimiter.throttle(async () => {
         const [statusRes, infoRes] = await Promise.all([
             axios.get(`https://codeforces.com/api/user.status?handle=${username}&from=1&count=10000`),
             axios.get(`https://codeforces.com/api/user.info?handles=${username}`)
@@ -41,11 +39,35 @@ export const codeforcesApi = {
             rank = user.rank ? user.rank.replace(/^\w/, (c: string) => c.toUpperCase()) : '';
         }
 
-        const result = { contributions, total, rating, rank };
+        return { contributions, total, rating, rank };
+    });
+};
 
-        if (username === CODEFORCES_USERNAME) {
-            cacheUtils.set(CACHE_KEY, result);
+export const codeforcesApi = {
+    getData: async (username = CODEFORCES_USERNAME): Promise<CodeforcesData> => {
+        const cached = cacheUtils.get<CodeforcesData>(CACHE_KEY);
+        if (cached && username === CODEFORCES_USERNAME) {
+            return cached;
         }
-        return result;
+
+        if (username !== CODEFORCES_USERNAME) {
+            return fetchCodeforcesData(username);
+        }
+
+        return requestDeduplicator.dedupe(REQUEST_KEY, async () => {
+            const staleCache = cacheUtils.getWithStaleFallback<CodeforcesData>(CACHE_KEY);
+            
+            try {
+                const result = await fetchCodeforcesData(username);
+                cacheUtils.set(CACHE_KEY, result, 24, 168);
+                return result;
+            } catch (error) {
+                if (staleCache.data) {
+                    console.warn('Codeforces API failed, using stale cache');
+                    return staleCache.data;
+                }
+                throw error;
+            }
+        });
     }
 };

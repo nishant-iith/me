@@ -1,15 +1,13 @@
 import axios from 'axios';
 import { LeetCodeData } from '../types';
-import { cacheUtils } from '../../../utils/cacheUtils';
+import { cacheUtils, requestDeduplicator, apiRateLimiter } from '../../../utils/cacheUtils';
 
 export const LEETCODE_USERNAME = 'Nishant-iith';
 const CACHE_KEY = `leetcode_stats_${LEETCODE_USERNAME}`;
+const REQUEST_KEY = 'leetcode_api_request';
 
-export const leetcodeApi = {
-    getStats: async (username = LEETCODE_USERNAME): Promise<LeetCodeData> => {
-        const cached = cacheUtils.get<LeetCodeData>(CACHE_KEY);
-        if (cached && username === LEETCODE_USERNAME) return cached;
-
+const fetchLeetCodeData = async (username: string): Promise<LeetCodeData> => {
+    return apiRateLimiter.throttle(async () => {
         const [calendarRes, solvedRes] = await Promise.all([
             axios.get(`https://alfa-leetcode-api.onrender.com/${username}/calendar`),
             axios.get(`https://alfa-leetcode-api.onrender.com/${username}/solved`)
@@ -21,15 +19,39 @@ export const leetcodeApi = {
             count: Number(count)
         }));
 
-        const result = {
+        return {
             contributions,
             totalActiveDays: calendarRes.data.totalActiveDays || contributions.length,
             solvedProblem: solvedRes.data.solvedProblem || 0
         };
+    });
+};
 
-        if (username === LEETCODE_USERNAME) {
-            cacheUtils.set(CACHE_KEY, result);
+export const leetcodeApi = {
+    getStats: async (username = LEETCODE_USERNAME): Promise<LeetCodeData> => {
+        const cached = cacheUtils.get<LeetCodeData>(CACHE_KEY);
+        if (cached && username === LEETCODE_USERNAME) {
+            return cached;
         }
-        return result;
+
+        if (username !== LEETCODE_USERNAME) {
+            return fetchLeetCodeData(username);
+        }
+
+        return requestDeduplicator.dedupe(REQUEST_KEY, async () => {
+            const staleCache = cacheUtils.getWithStaleFallback<LeetCodeData>(CACHE_KEY);
+            
+            try {
+                const result = await fetchLeetCodeData(username);
+                cacheUtils.set(CACHE_KEY, result, 24, 168);
+                return result;
+            } catch (error) {
+                if (staleCache.data) {
+                    console.warn('LeetCode API failed, using stale cache');
+                    return staleCache.data;
+                }
+                throw error;
+            }
+        });
     }
 };
