@@ -134,10 +134,12 @@ export default {
       // Rate limiting via KV (optional - continue if KV not available)
       let minuteCount = 0;
       let hourCount = 0;
+      let minuteKey = '';
+      let hourKey = '';
       try {
         if (env.CHATBOT_KV) {
-          const minuteKey = `chat_rate:${clientIP}:min`;
-          const hourKey = `chat_rate:${clientIP}:hour`;
+          minuteKey = `chat_rate:${clientIP}:min`;
+          hourKey = `chat_rate:${clientIP}:hour`;
           minuteCount = parseInt(await env.CHATBOT_KV.get(minuteKey) || '0');
           hourCount = parseInt(await env.CHATBOT_KV.get(hourKey) || '0');
 
@@ -154,7 +156,7 @@ export default {
             });
           }
         }
-      } catch (e) {
+      } catch {
         console.log('KV not available, skipping rate limiting');
       }
 
@@ -236,11 +238,11 @@ export default {
 
       // Update rate limit counters (if KV available)
       try {
-        if (env.CHATBOT_KV) {
+        if (env.CHATBOT_KV && minuteKey && hourKey) {
           await env.CHATBOT_KV.put(minuteKey, (minuteCount + 1).toString(), { expirationTtl: 60 });
           await env.CHATBOT_KV.put(hourKey, (hourCount + 1).toString(), { expirationTtl: 3600 });
         }
-      } catch (e) {
+      } catch {
         // Ignore KV write errors
       }
 

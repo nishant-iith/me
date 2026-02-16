@@ -1,5 +1,11 @@
 AGENTS
 
+IMPORTANT: Agent-only document — DO NOT DEPLOY
+
+This file is intended only for developer/agent use (automated coding assistants such as OpenCode).
+Keep it in the repository root so agents can read it, but do NOT include it in production deployments.
+A `.vercelignore` file is added to ensure this file and other agent-only artifacts are excluded from Vercel deployments.
+
 This document is written for automated/agentic coding assistants that will operate in this repository.
 It collects the most important commands, repository conventions, and coding-style rules so agents can make safe, consistent changes.
 
