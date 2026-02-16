@@ -152,7 +152,7 @@ const ChatMessageRow = memo(function ChatMessageRow({
           ) : (
             <StreamingMessage 
               content={message.content} 
-              isStreaming={isStreaming}
+              isStreaming={!!isStreaming}
             />
           )}
         </div>
