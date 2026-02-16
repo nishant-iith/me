@@ -1,19 +1,9 @@
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { Send, Square, Trash2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useChat } from '@/features/chat';
+import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
 import { PatternDivider } from './Home';
-
-// ── Suggested Prompts ───────────────────────────────────────────
-const SUGGESTIONS = [
-  "What's your tech stack?",
-  "Tell me about Goldman Sachs",
-  "Are you open to work?",
-  "What projects have you built?",
-  "What courses have you taken?",
-  "Tell me about yourself"
-];
 
 // ── Full-page message row ───────────────────────────────────────
 const ChatMessageRow = memo(function ChatMessageRow({ message }: { message: ChatMessage }) {
@@ -132,7 +122,7 @@ function ChatPage() {
         {/* Suggested Prompts */}
         {showSuggestions && (
           <div className="flex flex-wrap gap-2 mt-3">
-            {SUGGESTIONS.map(s => (
+            {SUGGESTED_PROMPTS.map((s: string) => (
               <button
                 key={s}
                 onClick={() => handleSuggestion(s)}

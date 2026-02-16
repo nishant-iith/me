@@ -1,16 +1,11 @@
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { MessageSquare, X, Trash2, Send, Square, ArrowUpRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useChat } from '@/features/chat';
+import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
 
-// ── Suggested Prompts ───────────────────────────────────────────
-const SUGGESTIONS = [
-  "What's your tech stack?",
-  "Tell me about Goldman Sachs",
-  "Are you open to work?",
-  "What projects have you built?"
-];
+// Use first 4 suggestions for widget
+const WIDGET_SUGGESTIONS = SUGGESTED_PROMPTS.slice(0, 4);
 
 // ── Message Bubble ──────────────────────────────────────────────
 const ChatBubble = memo(function ChatBubble({ message }: { message: ChatMessage }) {
@@ -181,7 +176,7 @@ export default function ChatWidget() {
             {/* Suggested Prompts */}
             {showSuggestions && (
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {SUGGESTIONS.map(s => (
+                {WIDGET_SUGGESTIONS.map((s: string) => (
                   <button
                     key={s}
                     onClick={() => handleSuggestion(s)}

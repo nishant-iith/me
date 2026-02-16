@@ -1,14 +1,7 @@
 import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react';
 import type { ChatMessage } from '../types';
 import { streamChat } from '../api/chatApi';
-
-const INITIAL_MESSAGE: ChatMessage = {
-  id: 'welcome',
-  role: 'assistant',
-  content: "Hey! I'm Nishant — or well, an AI version of me. Ask me anything about my work, skills, or just say hi.",
-  timestamp: Date.now(),
-  isStreaming: false
-};
+import { INITIAL_MESSAGE } from '../constants';
 
 interface ChatContextValue {
   messages: ChatMessage[];
