@@ -1,4 +1,4 @@
-import { PatternDivider } from './Home';
+import { PatternDivider } from '~components/SharedLayout';
 
 // Skills data organized by category
 const skillCategories = [

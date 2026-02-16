@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, Tag, ExternalLink } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { useBlogPost } from '../features/blog/hooks/useBlogHooks';
+import { BlogPostSEO } from '~components/SEO';
 
 // Your Hashnode publication host
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
@@ -57,6 +58,16 @@ const BlogPost = () => {
 
     return (
         <div className="flex flex-col gap-6">
+            {/* Dynamic SEO for this blog post */}
+            <BlogPostSEO
+                title={post.title}
+                description={post.brief || `Read ${post.title} by Nishant Verma`}
+                slug={post.slug}
+                publishedAt={post.publishedAt}
+                coverImage={post.coverImage?.url}
+                tags={post.tags?.map((t: { name: string }) => t.name)}
+            />
+
             {/* Back Link */}
             <div className="flex items-center justify-between">
                 <Link

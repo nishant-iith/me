@@ -13,6 +13,22 @@ export default defineConfig({
     // Strip console.log/warn/error in production to prevent info leaks
     minify: 'esbuild',
     target: 'es2020',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor: core React runtime (shared by all routes)
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // React Query (used by data-fetching pages)
+          'vendor-query': ['@tanstack/react-query'],
+          // MUI (only used by SnackbarProvider - isolate to avoid bloating main bundle)
+          'vendor-mui': ['@mui/material'],
+          // SEO (react-helmet-async)
+          'vendor-seo': ['react-helmet-async'],
+          // DOMPurify (only used by BlogPost)
+          'vendor-sanitize': ['dompurify'],
+        }
+      }
+    }
   },
   esbuild: {
     drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],

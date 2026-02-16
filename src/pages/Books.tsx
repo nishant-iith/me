@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Book, User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight, ExternalLink } from 'lucide-react';
-import { PatternDivider } from './Home';
+import { PatternDivider } from '~components/SharedLayout';
 
 interface Book {
     id: string;

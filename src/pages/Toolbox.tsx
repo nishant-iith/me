@@ -1,4 +1,4 @@
-import { SectionTitle, PatternDivider } from './Home'; // Reusing components
+import { SectionTitle, PatternDivider } from '~components/SharedLayout';
 import { Code, Terminal, Monitor, Cpu, Database, Cloud, Layout, Box } from 'lucide-react';
 
 interface ToolItemProps {

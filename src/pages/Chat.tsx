@@ -3,7 +3,7 @@ import { Send, Square, Trash2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
-import { PatternDivider } from './Home';
+import { PatternDivider } from '~components/SharedLayout';
 
 // ── Full-page message row ───────────────────────────────────────
 const ChatMessageRow = memo(function ChatMessageRow({ message }: { message: ChatMessage }) {

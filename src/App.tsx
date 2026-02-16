@@ -7,6 +7,18 @@ import CommandPalette from '~components/CommandPalette';
 import SuspenseLoader from '~components/SuspenseLoader';
 import { SnackbarProvider } from './providers/SnackbarProvider';
 import { ChatProvider } from '@/features/chat';
+import {
+  HomeSEO,
+  AboutSEO,
+  SkillSEO,
+  BlogSEO,
+  ToolboxSEO,
+  TimelineSEO,
+  BooksSEO,
+  SnippetsSEO,
+  ChatSEO,
+  NotFoundSEO
+} from '~components/SEO';
 
 // Eager load: Home (critical path)
 import Home from '~pages/Home';
@@ -84,17 +96,17 @@ function App() {
             <div className="relative min-h-[85vh] border-x border-dashed border-zinc-800 px-4 sm:px-10 py-12">
               <SuspenseLoader>
                 <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/skill" element={<Skills />} />
-                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/" element={<><HomeSEO /><Home /></>} />
+                  <Route path="/about" element={<><AboutSEO /><About /></>} />
+                  <Route path="/skill" element={<><SkillSEO /><Skills /></>} />
+                  <Route path="/blog" element={<><BlogSEO /><Blog /></>} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/toolbox" element={<Toolbox />} />
-                  <Route path="/timeline" element={<Timeline />} />
-                  <Route path="/books" element={<Books />} />
-                  <Route path="/snippets" element={<Snippets />} />
-                  <Route path="/chat" element={<Chat />} />
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="/toolbox" element={<><ToolboxSEO /><Toolbox /></>} />
+                  <Route path="/timeline" element={<><TimelineSEO /><Timeline /></>} />
+                  <Route path="/books" element={<><BooksSEO /><Books /></>} />
+                  <Route path="/snippets" element={<><SnippetsSEO /><Snippets /></>} />
+                  <Route path="/chat" element={<><ChatSEO /><Chat /></>} />
+                  <Route path="*" element={<><NotFoundSEO /><NotFound /></>} />
                 </Routes>
               </SuspenseLoader>
             </div>

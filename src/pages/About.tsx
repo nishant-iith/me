@@ -1,6 +1,6 @@
 import { Mail, Twitter, Calendar, Terminal } from 'lucide-react';
 import me from '../assets/me.jpg';
-import { PatternDivider } from './Home';
+import { PatternDivider } from '~components/SharedLayout';
 
 export default function About() {
     return (

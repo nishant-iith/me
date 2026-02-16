@@ -1,4 +1,4 @@
-import { PatternDivider } from './Home';
+import { PatternDivider } from '~components/SharedLayout';
 import { Briefcase, Trophy, Code, GraduationCap, Rocket, Star, Heart } from 'lucide-react';
 
 interface Milestone {

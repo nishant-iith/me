@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://nishant-sde.pages.dev/sitemap.xml
+
+# Crawl delay for polite bots
+Crawl-delay: 1
+
+# Disallow patterns (none for now - all public)
+# Disallow: /admin
+# Disallow: /private
+
+# Allow specific bots full access
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Block known bad bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /

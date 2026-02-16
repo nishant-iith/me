@@ -1,6 +1,6 @@
 import { useState, memo } from 'react';
 import { Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
-import { PatternDivider } from './Home';
+import { PatternDivider } from '~components/SharedLayout';
 
 interface Snippet {
     id: number;
