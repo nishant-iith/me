@@ -19,7 +19,7 @@ export function useTypewriter({ text, speed = 15, enabled = true }: TypewriterOp
   const [isComplete, setIsComplete] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const indexRef = useRef(0);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Initialize audio context on first user interaction
   const initAudio = useCallback(() => {

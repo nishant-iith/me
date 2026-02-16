@@ -49,7 +49,7 @@ const TypingMessage = memo(function TypingMessage({
   const [displayText, setDisplayText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
   const indexRef = useRef(0);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (!isTyping) {
@@ -147,7 +147,7 @@ const ChatMessageRow = memo(function ChatMessageRow({
           ) : (
             <TypingMessage 
               content={message.content} 
-              isTyping={isStreaming}
+              isTyping={!!isStreaming}
               audioContext={audioContext}
             />
           )}
