@@ -131,23 +131,31 @@ export default {
         });
       }
 
-      // Rate limiting via KV
-      const minuteKey = `chat_rate:${clientIP}:min`;
-      const hourKey = `chat_rate:${clientIP}:hour`;
-      const minuteCount = parseInt(await env.CHATBOT_KV.get(minuteKey) || '0');
-      const hourCount = parseInt(await env.CHATBOT_KV.get(hourKey) || '0');
+      // Rate limiting via KV (optional - continue if KV not available)
+      let minuteCount = 0;
+      let hourCount = 0;
+      try {
+        if (env.CHATBOT_KV) {
+          const minuteKey = `chat_rate:${clientIP}:min`;
+          const hourKey = `chat_rate:${clientIP}:hour`;
+          minuteCount = parseInt(await env.CHATBOT_KV.get(minuteKey) || '0');
+          hourCount = parseInt(await env.CHATBOT_KV.get(hourKey) || '0');
 
-      if (minuteCount >= 10) {
-        return new Response(JSON.stringify({ error: 'Too many messages. Please wait a moment.' }), {
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' }
-        });
-      }
-      if (hourCount >= 50) {
-        return new Response(JSON.stringify({ error: 'Hourly limit reached. Try again later.' }), {
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' }
-        });
+          if (minuteCount >= 10) {
+            return new Response(JSON.stringify({ error: 'Too many messages. Please wait a moment.' }), {
+              status: 429,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' }
+            });
+          }
+          if (hourCount >= 50) {
+            return new Response(JSON.stringify({ error: 'Hourly limit reached. Try again later.' }), {
+              status: 429,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' }
+            });
+          }
+        }
+      } catch (e) {
+        console.log('KV not available, skipping rate limiting');
       }
 
       // Parse and validate request body
@@ -226,9 +234,15 @@ export default {
         });
       }
 
-      // Update rate limit counters
-      await env.CHATBOT_KV.put(minuteKey, (minuteCount + 1).toString(), { expirationTtl: 60 });
-      await env.CHATBOT_KV.put(hourKey, (hourCount + 1).toString(), { expirationTtl: 3600 });
+      // Update rate limit counters (if KV available)
+      try {
+        if (env.CHATBOT_KV) {
+          await env.CHATBOT_KV.put(minuteKey, (minuteCount + 1).toString(), { expirationTtl: 60 });
+          await env.CHATBOT_KV.put(hourKey, (hourCount + 1).toString(), { expirationTtl: 3600 });
+        }
+      } catch (e) {
+        // Ignore KV write errors
+      }
 
       // Stream Gemini response back to client as SSE
       const { readable, writable } = new TransformStream();

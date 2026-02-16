@@ -47,14 +47,12 @@ const TypingMessage = memo(function TypingMessage({
   audioContext: AudioContext | null;
 }) {
   const [displayText, setDisplayText] = useState('');
-  const [showCursor, setShowCursor] = useState(true);
   const indexRef = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (!isTyping) {
       setDisplayText(content);
-      setShowCursor(false);
       return;
     }
 
@@ -89,24 +87,10 @@ const TypingMessage = memo(function TypingMessage({
     };
   }, [content, isTyping, audioContext]);
 
-  // Cursor blink effect when not typing
-  useEffect(() => {
-    if (isTyping) {
-      setShowCursor(true);
-      return;
-    }
-    
-    const interval = setInterval(() => {
-      setShowCursor(prev => !prev);
-    }, 530);
-    
-    return () => clearInterval(interval);
-  }, [isTyping]);
-
   return (
     <span className="whitespace-pre-wrap break-words">
       {displayText}
-      <BlinkingCursor visible={showCursor} />
+      {isTyping && <BlinkingCursor visible={true} />}
     </span>
   );
 });
