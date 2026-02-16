@@ -6,7 +6,7 @@ import type { ChatMessage } from '@/features/chat';
 import { PatternDivider } from '~components/SharedLayout';
 
 // ── Mechanical Keyboard Sound Effect ────────────────────────────
-const KEY_FREQUENCIES = [750, 800, 850, 900, 820, 780, 860, 880];
+const KEY_FREQUENCIES = [600, 650, 700, 750, 800, 850];
 
 function playMechanicalKeySound(audioContext: AudioContext | null) {
   if (!audioContext) return;
@@ -18,14 +18,15 @@ function playMechanicalKeySound(audioContext: AudioContext | null) {
   oscillator.frequency.value = freq;
   oscillator.type = 'square';
   
-  gainNode.gain.setValueAtTime(0.04, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.04);
+  // Longer, clearer key press sound (50ms)
+  gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
   
   oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
   
   oscillator.start(audioContext.currentTime);
-  oscillator.stop(audioContext.currentTime + 0.04);
+  oscillator.stop(audioContext.currentTime + 0.05);
 }
 
 // ── Blinking Cursor Component ───────────────────────────────────
@@ -74,8 +75,8 @@ const TypingMessage = memo(function TypingMessage({
         
         indexRef.current++;
         
-        // Variable speed for realism (12-20ms)
-        const speed = 12 + Math.random() * 8;
+        // Variable speed for realism (50-100ms per character - like a real fast typer)
+        const speed = 50 + Math.random() * 50;
         timeoutRef.current = setTimeout(typeNextChar, speed);
       }
     };
