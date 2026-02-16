@@ -38,3 +38,6 @@ dist-ssr
 .gemini
 .kiro
 .opencode
+
+# System files
+nul

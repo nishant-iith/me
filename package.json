@@ -1,8 +1,17 @@
 {
-  "name": "me",
+  "name": "portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Personal portfolio website of Nishant Verma",
+  "author": "Nishant Verma <nishant@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nishant-iith/me.git"
+  },
+  "keywords": ["portfolio", "react", "typescript", "tailwind"],
+  "homepage": "https://nishant.dev",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

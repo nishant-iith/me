@@ -55,7 +55,6 @@ export default {
         const now = Date.now();
         const clientIP = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
         const userAgent = request.headers.get('User-Agent') || '';
-        const referer = request.headers.get('Referer') || '';
         const country = request.headers.get('CF-IPCountry') || '';
 
         // Track total requests (for monitoring)
