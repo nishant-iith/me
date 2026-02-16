@@ -27,26 +27,26 @@ Simple as that. I enjoy building things that look good and work even better. Cur
 - Joining DP World in July 2026 after completing B.Tech
 - Excited to contribute to global logistics and trade solutions
 
-### 1. Goldman Sachs — SDE Summer Analyst (May 2026 - Jul 2026)
+### 1. Goldman Sachs — SDE Summer Analyst (May 2025 - Jul 2025)
 - Built full-stack web app to automate internal deployment workflows
 - Designed in-app CSV editor with AG Grid
 - Stack: React, Java, MongoDB
 
-### 2. 10xScale.ai — Instructor, Remote (Aug 2024 - Apr 2026)
+### 2. 10xScale.ai — Instructor, Remote (Aug 2024 - Apr 2025)
 - Taught DSA to 45+ students
 - Covered Binary Search, Linked Lists, Trees, Graphs
 - Conducted theoretical and practical coding sessions
 
-### 3. Pentakod — Python Developer Intern (Jun 2025 - Jul 2025)
+### 3. Pentakod — Python Developer Intern (Jun 2024 - Jul 2024)
 - Built Python port scanner with vulnerability detection
 - Used socket, scapy libraries
 - Validated against Nmap
 
-### 4. Office of Career Services, IITH — Outreach Coordinator (May 2026 - Present)
+### 4. Office of Career Services, IITH — Outreach Coordinator (May 2025 - Present)
 - Leading outreach for student body ('25-'26 term)
-- Previously Internship Coordinator (Jun '25 - May '26)
+- Previously Internship Coordinator (Jun '24 - May '25)
 
-### 5. Finance & Consulting Club, IITH — Head of Operations (Apr 2024 - Apr 2026)
+### 5. Finance & Consulting Club, IITH — Head of Operations (Apr 2024 - Apr 2025)
 - Managed club operations and corporate outreach
 - Secured key partnerships as Sponsorship Coordinator
 
