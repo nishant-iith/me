@@ -53,7 +53,7 @@ export function SEO({
       {/* Article-specific OG tags */}
       {article?.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
       {article?.author && <meta property="article:author" content={article.author} />}
-      {article?.tags?.map(tag => <meta key={tag} property="article:tag" content={tag} />)}
+      {article?.tags?.map((tag, index) => <meta key={`tag-${index}-${tag}`} property="article:tag" content={tag} />)}
       
       {/* Additional SEO */}
       <meta name="author" content="Nishant Verma" />

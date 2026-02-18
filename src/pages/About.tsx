@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Mail, Twitter, Calendar, Terminal } from 'lucide-react';
 import me from '../assets/me.jpg';
 import { PatternDivider } from '~components/SharedLayout';
@@ -123,25 +124,34 @@ export default function About() {
 
                         {/* Right: Nav buttons */}
                         <div className="flex flex-wrap gap-2">
-                            <a href="/toolbox" aria-label="View my toolbox" className="group relative flex items-center gap-2 px-3 py-1.5 border-zinc-800 bg-black/10 hover:bg-white/[0.03] hover:border-zinc-600 transition-all overflow-hidden">
+                            <Link
+                                to="/toolbox"
+                                className="group relative flex items-center gap-2 px-3 py-1.5 border-zinc-800 bg-black/10 hover:bg-white/[0.03] hover:border-zinc-600 transition-all overflow-hidden"
+                            >
                                 <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-zinc-700 opacity-40 group-hover:opacity-100 group-hover:border-white/50 transition-all"></div>
                                 <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-zinc-700 opacity-40 group-hover:opacity-100 group-hover:border-white/50 transition-all"></div>
                                 <Terminal size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                                 <span className="font-mono text-xs text-zinc-500 group-hover:text-white transition-colors">Toolbox</span>
-                            </a>
-                            <a href="/timeline" aria-label="View timeline" className="group relative flex items-center gap-2 px-3 py-1.5 border-zinc-800 bg-black/10 hover:bg-white/[0.03] hover:border-zinc-600 transition-all overflow-hidden">
+                            </Link>
+                            <Link
+                                to="/timeline"
+                                className="group relative flex items-center gap-2 px-3 py-1.5 border-zinc-800 bg-black/10 hover:bg-white/[0.03] hover:border-zinc-600 transition-all overflow-hidden"
+                            >
                                 <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-zinc-700 opacity-40 group-hover:opacity-100 group-hover:border-white/50 transition-all"></div>
                                 <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-zinc-700 opacity-40 group-hover:opacity-100 group-hover:border-white/50 transition-all"></div>
                                 <Calendar size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                                 <span className="font-mono text-xs text-zinc-500 group-hover:text-white transition-colors">Timeline</span>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
 
                 {/* Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-0">
-                    <a href="/timeline" aria-label="View timeline" className="relative block p-3 border border-zinc-900 bg-black/10 hover:bg-zinc-900/50 hover:border-zinc-700 transition-all group overflow-hidden">
+                    <Link
+                        to="/timeline"
+                        className="relative block p-3 border border-zinc-900 bg-black/10 hover:bg-zinc-900/50 hover:border-zinc-700 transition-all group overflow-hidden"
+                    >
                         <div className="absolute bottom-0 left-0 w-8 h-8 pointer-events-none">
                             <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-zinc-600 transition-colors group-hover:border-white"></div>
                         </div>
@@ -155,8 +165,11 @@ export default function About() {
                                 <span className="font-mono text-xs text-zinc-500 group-hover:text-zinc-400">My journey through projects, milestones, and achievements</span>
                             </div>
                         </div>
-                    </a>
-                    <a href="/toolbox" aria-label="View toolbox" className="relative block p-3 border border-zinc-900 bg-black/10 hover:bg-zinc-900/50 hover:border-zinc-700 transition-all group overflow-hidden">
+                    </Link>
+                    <Link
+                        to="/toolbox"
+                        className="relative block p-3 border border-zinc-900 bg-black/10 hover:bg-zinc-900/50 hover:border-zinc-700 transition-all group overflow-hidden"
+                    >
                         <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
                             <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-zinc-600 transition-colors group-hover:border-white"></div>
                         </div>
@@ -170,7 +183,7 @@ export default function About() {
                                 <span className="font-mono text-xs text-zinc-500 group-hover:text-zinc-400">The software and hardware I use daily</span>
                             </div>
                         </div>
-                    </a>
+                    </Link>
                 </div>
             </div>
 

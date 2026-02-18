@@ -5,129 +5,131 @@ import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
 import { PatternDivider } from '~components/SharedLayout';
 
-// ── Audio Context ─────────────────────────────────────────────────
-let audioContextRef: AudioContext | null = null;
-let audioInitialized = false;
+let audioCtx: AudioContext | null = null;
 
-// ── Mechanical Keyboard Sound ────────────────────────────────────
-function initAudio() {
-  if (audioInitialized) return;
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    audioContextRef = new AudioContextClass();
-    if (audioContextRef.state === 'suspended') {
-      audioContextRef.resume();
+function getAudioContext(): AudioContext | null {
+    if (!audioCtx) {
+        try {
+            const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+            audioCtx = new Ctor();
+        } catch {
+            return null;
+        }
     }
-    audioInitialized = true;
-  } catch {
-    // Audio not supported
-  }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+    }
+    if (audioCtx.state === 'closed') {
+        try {
+            const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+            audioCtx = new Ctor();
+        } catch {
+            return null;
+        }
+    }
+    return audioCtx;
 }
 
-function playKeySound() {
-  if (!audioContextRef) return;
-  
-  const frequencies = [500, 550, 600, 650, 700, 750];
-  const freq = frequencies[Math.floor(Math.random() * frequencies.length)];
-  
-  const oscillator = audioContextRef.createOscillator();
-  const gainNode = audioContextRef.createGain();
-  
-  oscillator.frequency.value = freq;
-  oscillator.type = 'square';
-  
-  gainNode.gain.setValueAtTime(0.1, audioContextRef.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, audioContextRef.currentTime + 0.06);
-  
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContextRef.destination);
-  
-  oscillator.start(audioContextRef.currentTime);
-  oscillator.stop(audioContextRef.currentTime + 0.06);
+function playKeySound(): void {
+    const ctx = getAudioContext();
+    if (!ctx || ctx.state !== 'running') return;
+    try {
+        const now = ctx.currentTime;
+        const freq = 400 + Math.random() * 300;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.value = freq;
+
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.04);
+    } catch {
+        // Ignore audio errors
+    }
 }
 
-// ── Cursor Component ───────────────────────────────────────────
-const Cursor = () => (
-  <span className="inline-block w-[2px] h-4 bg-blue-500 ml-[2px] align-middle animate-pulse" />
-);
-
-// ── Streaming Message Display ─────────────────────────────────────
-const StreamingMessage = memo(function StreamingMessage({ 
-  content, 
-  isStreaming 
-}: { 
-  content: string; 
+// ── Streaming Message ─────────────────────────────────────────────
+const StreamingMessage = memo(function StreamingMessage({
+  content,
+  isStreaming
+}: {
+  content: string;
   isStreaming: boolean;
 }) {
-  const [displayIndex, setDisplayIndex] = useState(0);
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const prevContentRef = useRef(content);
+  const [displayLen, setDisplayLen] = useState(0);
+  const contentRef = useRef(content);
+  const displayLenRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    // If content grew (new chunk arrived), continue typing from where we left off
-    if (content.length > prevContentRef.current.length) {
-      // New content arrived - continue typing from current position
-      const startTyping = () => {
-        if (displayIndex < content.length) {
-          const char = content[displayIndex];
-          
-          // Play sound for non-whitespace
-          if (char && char !== ' ' && char !== '\n') {
-            playKeySound();
-          }
-          
-          setDisplayIndex(prev => prev + 1);
-          
-          // Typing speed: 40-80ms per character
-          const delay = 40 + Math.random() * 40;
-          timeoutRef.current = setTimeout(startTyping, delay);
-        }
-      };
-      
-      startTyping();
-    } else if (content.length > 0 && displayIndex === 0) {
-      // Fresh content - start typing from beginning
-      setDisplayIndex(1);
-      if (content[0] && content[0] !== ' ' && content[0] !== '\n') {
-        playKeySound();
-      }
-    }
-    
-    prevContentRef.current = content;
+  contentRef.current = content;
 
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [content, displayIndex]);
-
-  // Reset when content is cleared
   useEffect(() => {
     if (content.length === 0) {
-      setDisplayIndex(0);
-      prevContentRef.current = '';
+      displayLenRef.current = 0;
+      setDisplayLen(0);
     }
   }, [content]);
 
-  const visibleContent = content.slice(0, displayIndex);
+  useEffect(() => {
+    const tick = () => {
+      const cur = displayLenRef.current;
+      const target = contentRef.current;
+
+      if (cur < target.length) {
+        const ch = target[cur];
+        if (ch && ch !== ' ' && ch !== '\n') playKeySound();
+
+        displayLenRef.current = cur + 1;
+        setDisplayLen(cur + 1);
+
+        const delay = 30 + Math.random() * 30;
+        timerRef.current = setTimeout(tick, delay);
+      }
+    };
+
+    if (contentRef.current.length > displayLenRef.current && !timerRef.current) {
+      tick();
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [content, displayLen]);
+
+  const visible = content.slice(0, displayLen);
+  const showCursor = isStreaming || displayLen < content.length;
 
   return (
     <span className="whitespace-pre-wrap break-words">
-      {visibleContent}
-      {isStreaming && displayIndex <= content.length && <Cursor />}
+      {visible}
+      {showCursor && (
+        <span className="inline-block w-[2px] h-[1em] bg-blue-500 ml-[1px] align-text-bottom animate-pulse" />
+      )}
     </span>
   );
 });
 
-// ── Chat Message Row ────────────────────────────────────────────
-const ChatMessageRow = memo(function ChatMessageRow({ 
-  message, 
-  isLatest 
-}: { 
-  message: ChatMessage; 
+// ── Chat Message Row ──────────────────────────────────────────────
+const ChatMessageRow = memo(function ChatMessageRow({
+  message,
+  isLatest
+}: {
+  message: ChatMessage;
   isLatest: boolean;
 }) {
   const isUser = message.role === 'user';
-  const isStreaming = message.isStreaming && isLatest;
+  const shouldStream = !!message.isStreaming && isLatest;
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -149,11 +151,10 @@ const ChatMessageRow = memo(function ChatMessageRow({
         >
           {isUser ? (
             <span className="whitespace-pre-wrap break-words">{message.content}</span>
+          ) : shouldStream ? (
+            <StreamingMessage content={message.content} isStreaming />
           ) : (
-            <StreamingMessage 
-              content={message.content} 
-              isStreaming={!!isStreaming}
-            />
+            <span className="whitespace-pre-wrap break-words">{message.content}</span>
           )}
         </div>
       </div>
@@ -161,7 +162,7 @@ const ChatMessageRow = memo(function ChatMessageRow({
   );
 });
 
-// ── Chat Page ───────────────────────────────────────────────────
+// ── Chat Page ─────────────────────────────────────────────────────
 function ChatPage() {
   const { messages, isLoading, error, sendMessage, stopStreaming, clearChat } = useChat();
   const [input, setInput] = useState('');
@@ -181,7 +182,7 @@ function ChatPage() {
 
   const handleSend = useCallback(() => {
     if (!input.trim() || isLoading) return;
-    initAudio();
+    getAudioContext();
     sendMessage(input);
     setInput('');
   }, [input, isLoading, sendMessage]);
@@ -194,14 +195,14 @@ function ChatPage() {
   }, [handleSend]);
 
   const handleSuggestion = useCallback((text: string) => {
-    initAudio();
+    getAudioContext();
     sendMessage(text);
   }, [sendMessage]);
 
   return (
-    <div 
+    <div
       className="flex flex-col h-[calc(100vh-12rem)] animate-in fade-in duration-500"
-      onClick={initAudio}
+      onClick={() => getAudioContext()}
     >
       {/* Header */}
       <div className="flex items-center justify-between shrink-0">
@@ -252,9 +253,9 @@ function ChatPage() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-5 pr-2 min-h-0 scrollbar-thin">
         {messages.map((msg, index) => (
-          <ChatMessageRow 
-            key={msg.id} 
-            message={msg} 
+          <ChatMessageRow
+            key={msg.id}
+            message={msg}
             isLatest={index === messages.length - 1}
           />
         ))}

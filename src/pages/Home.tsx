@@ -798,8 +798,8 @@ const ProjectCard = ({ title, status, desc, tags, href }: ProjectCardProps) => (
 
                 <div className="flex items-center justify-between mt-auto pt-2">
                     <div className="flex gap-2">
-                        {tags.slice(0, 3).map((tag: string) => (
-                            <span key={tag} className="text-[10px] font-mono text-zinc-600 group-hover:text-zinc-500">
+                        {tags.slice(0, 3).map((tag: string, index: number) => (
+                            <span key={`${tag}-${index}`} className="text-[10px] font-mono text-zinc-600 group-hover:text-zinc-500">
                                 #{tag}
                             </span>
                         ))}

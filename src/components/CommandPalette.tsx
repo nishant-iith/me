@@ -64,7 +64,7 @@ export default function CommandPalette() {
             id: 'books',
             title: 'Book Shelf',
             icon: <Book size={18} />,
-            shortcut: 'B',
+            shortcut: 'K',
             perform: () => navigate('/books')
         },
         {
@@ -127,10 +127,10 @@ export default function CommandPalette() {
 
     useEffect(() => {
         if (isOpen && inputRef.current) {
-            // Tiny delay to ensure rendering
-            setTimeout(() => inputRef.current?.focus(), 10);
+            const timeoutId = setTimeout(() => inputRef.current?.focus(), 10);
             setQuery('');
             setActiveIndex(0);
+            return () => clearTimeout(timeoutId);
         }
     }, [isOpen]);
 

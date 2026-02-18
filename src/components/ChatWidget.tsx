@@ -4,10 +4,26 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
 
-// Use first 4 suggestions for widget
 const WIDGET_SUGGESTIONS = SUGGESTED_PROMPTS.slice(0, 4);
 
-// ── Message Bubble ──────────────────────────────────────────────
+const StreamingBubble = memo(function StreamingBubble({
+  content,
+  isStreaming
+}: {
+  content: string;
+  isStreaming: boolean;
+}) {
+  const showCursor = isStreaming || (!isStreaming && content === '');
+  return (
+    <span className="whitespace-pre-wrap break-words">
+      {content}
+      {showCursor && (
+        <span className="inline-block w-1.5 h-3 bg-blue-500 ml-0.5 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+      )}
+    </span>
+  );
+});
+
 const ChatBubble = memo(function ChatBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
 
@@ -20,40 +36,35 @@ const ChatBubble = memo(function ChatBubble({ message }: { message: ChatMessage 
             : 'text-zinc-400'
         }`}
       >
-        <span className="whitespace-pre-wrap break-words">{message.content}</span>
-        {message.isStreaming && (
-          <span className="inline-block w-1.5 h-3 bg-blue-500 ml-0.5 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+        {message.isStreaming ? (
+          <StreamingBubble content={message.content} isStreaming />
+        ) : (
+          <span className="whitespace-pre-wrap break-words">{message.content}</span>
         )}
       </div>
     </div>
   );
 });
-ChatBubble.displayName = 'ChatBubble';
 
-// ── Main Widget ─────────────────────────────────────────────────
-export default function ChatWidget() {
+function ChatWidgetInner() {
   const [isOpen, setIsOpen] = useState(false);
-  const { messages, isLoading, error, sendMessage, stopStreaming, clearChat } = useChat();
+  const { messages, isLoading, error, sendMessage, stopStreaming, clearChat, resetError } = useChat();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Hide widget on /chat page
-  if (location.pathname === '/chat') return null;
-
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when opened
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      const timeoutId = setTimeout(() => inputRef.current?.focus(), 100);
+      resetError();
+      return () => clearTimeout(timeoutId);
     }
-  }, [isOpen]);
+  }, [isOpen, resetError]);
 
   // Global keyboard shortcut: Ctrl+. to toggle
   useEffect(() => {
@@ -138,6 +149,9 @@ export default function ChatWidget() {
               <span className="font-doto text-[11px] text-zinc-400 tracking-widest uppercase">
                 Chat://Nishant
               </span>
+              {isLoading && (
+                <span className="text-[9px] font-mono text-blue-400 animate-pulse ml-1">typing...</span>
+              )}
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -245,4 +259,14 @@ export default function ChatWidget() {
       </div>
     </>
   );
+}
+
+export default function ChatWidget() {
+  const location = useLocation();
+  
+  if (location.pathname === '/chat') {
+    return null;
+  }
+  
+  return <ChatWidgetInner />;
 }

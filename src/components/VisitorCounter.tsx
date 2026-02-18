@@ -19,16 +19,17 @@ export default function VisitorCounter() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchViews = async () => {
       try {
-        // Check if we've already incremented in this session
         const hasIncremented = sessionStorage.getItem('view-incremented');
         
         if (!hasIncremented) {
-          // Increment the counter
           const incrementRes = await fetch(`${WORKER_URL}/api/views/increment`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal
           });
           
           if (incrementRes.ok) {
@@ -39,9 +40,9 @@ export default function VisitorCounter() {
             throw new Error('Failed to increment');
           }
         } else {
-          // Just fetch current count
           const getRes = await fetch(`${WORKER_URL}/api/views`, {
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal
           });
           
           if (getRes.ok) {
@@ -52,17 +53,19 @@ export default function VisitorCounter() {
           }
         }
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') return;
         console.error('View counter error:', err);
         setError(true);
-        // Fallback to localStorage
         const stored = localStorage.getItem('portfolio-visits') || '1240';
-        setCount(parseInt(stored));
+        setCount(parseInt(stored, 10));
       } finally {
         setLoading(false);
       }
     };
 
     fetchViews();
+    
+    return () => controller.abort();
   }, []);
 
   const formatCount = (num: number | null) => {

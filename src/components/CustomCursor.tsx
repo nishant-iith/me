@@ -5,12 +5,8 @@ const CustomCursor = () => {
     const [isHovering, setIsHovering] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const rafId = useRef<number | null>(null);
-    const isVisibleRef = useRef(isVisible);
-
-    // Keep ref in sync with state
-    useEffect(() => {
-        isVisibleRef.current = isVisible;
-    }, [isVisible]);
+    const boundElementsRef = useRef<Set<Element>>(new Set());
+    const observerRef = useRef<MutationObserver | null>(null);
 
     const updatePosition = useCallback((e: MouseEvent) => {
         if (rafId.current) {
@@ -18,54 +14,64 @@ const CustomCursor = () => {
         }
         rafId.current = requestAnimationFrame(() => {
             setPosition({ x: e.clientX, y: e.clientY });
-            if (!isVisibleRef.current) {
-                setIsVisible(true);
-            }
+            setIsVisible(true);
         });
     }, []);
 
-    useEffect(() => {
-        const handleMouseEnter = () => setIsHovering(true);
-        const handleMouseLeave = () => setIsHovering(false);
+    const handleMouseEnter = useCallback(() => setIsHovering(true), []);
+    const handleMouseLeave = useCallback(() => setIsHovering(false), []);
 
+    const bindElement = useCallback((el: Element) => {
+        if (!boundElementsRef.current.has(el)) {
+            boundElementsRef.current.add(el);
+            el.addEventListener('mouseenter', handleMouseEnter);
+            el.addEventListener('mouseleave', handleMouseLeave);
+        }
+    }, [handleMouseEnter, handleMouseLeave]);
+
+    const unbindElement = useCallback((el: Element) => {
+        if (boundElementsRef.current.has(el)) {
+            boundElementsRef.current.delete(el);
+            el.removeEventListener('mouseenter', handleMouseEnter);
+            el.removeEventListener('mouseleave', handleMouseLeave);
+        }
+    }, [handleMouseEnter, handleMouseLeave]);
+
+    useEffect(() => {
         window.addEventListener('mousemove', updatePosition, { passive: true });
 
-        // Add listeners to clickable elements
-        const addListeners = () => {
+        const bindAllClickables = () => {
             const clickables = document.querySelectorAll('a, button, input, textarea, [role="button"]');
-            clickables.forEach((el) => {
-                el.addEventListener('mouseenter', handleMouseEnter);
-                el.addEventListener('mouseleave', handleMouseLeave);
-            });
+            clickables.forEach(bindElement);
         };
 
-        const removeListeners = () => {
-            const clickables = document.querySelectorAll('a, button, input, textarea, [role="button"]');
-            clickables.forEach((el) => {
-                el.removeEventListener('mouseenter', handleMouseEnter);
-                el.removeEventListener('mouseleave', handleMouseLeave);
-            });
+        const unbindAll = () => {
+            boundElementsRef.current.forEach(unbindElement);
+            boundElementsRef.current.clear();
         };
 
-        // Initial bind
-        addListeners();
+        bindAllClickables();
 
-        // Re-bind on mutation (simple observer for SPA changes)
-        const observer = new MutationObserver(() => {
-            removeListeners();
-            addListeners();
+        let debounceTimer: ReturnType<typeof setTimeout>;
+        observerRef.current = new MutationObserver(() => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                unbindAll();
+                bindAllClickables();
+            }, 100);
         });
-        observer.observe(document.body, { childList: true, subtree: true });
+        observerRef.current.observe(document.body, { childList: true, subtree: true });
 
         return () => {
             window.removeEventListener('mousemove', updatePosition);
-            removeListeners();
-            observer.disconnect();
+            unbindAll();
+            observerRef.current?.disconnect();
+            clearTimeout(debounceTimer);
             if (rafId.current) {
                 cancelAnimationFrame(rafId.current);
             }
         };
-    }, [updatePosition]);
+    }, [updatePosition, bindElement, unbindElement]);
 
     if (!isVisible) return null;
 

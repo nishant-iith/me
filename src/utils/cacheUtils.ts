@@ -6,19 +6,29 @@ export interface CacheItem<T> {
 }
 
 class RequestDeduplicator {
-    private inFlightRequests = new Map<string, Promise<any>>();
+    private inFlightRequests = new Map<string, Promise<unknown>>();
 
     async dedupe<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
-        if (this.inFlightRequests.has(key)) {
-            return this.inFlightRequests.get(key)!;
+        const existing = this.inFlightRequests.get(key);
+        if (existing) {
+            return existing as Promise<T>;
         }
 
-        const promise = requestFn().finally(() => {
-            this.inFlightRequests.delete(key);
-        });
+        const promise = requestFn()
+            .catch((error) => {
+                this.inFlightRequests.delete(key);
+                throw error;
+            })
+            .finally(() => {
+                this.inFlightRequests.delete(key);
+            });
 
         this.inFlightRequests.set(key, promise);
         return promise;
+    }
+
+    clear(): void {
+        this.inFlightRequests.clear();
     }
 }
 

@@ -1,17 +1,36 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, Tag, ExternalLink } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { useBlogPost } from '../features/blog/hooks/useBlogHooks';
 import { BlogPostSEO } from '~components/SEO';
 
-// Your Hashnode publication host
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
 const BlogPost = () => {
     const { slug } = useParams<{ slug: string }>();
-    const { data: post } = useBlogPost(slug!);
+    const { data: post, error, isFetching } = useBlogPost(slug ?? '');
+    
+    if (!slug) {
+        return <Navigate to="/blog" replace />;
+    }
 
-    if (!post) {
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center gap-4 py-20">
+                <h2 className="font-mono text-xl text-zinc-300">Failed to load post</h2>
+                <p className="text-zinc-500 text-sm">The post may have been removed or is temporarily unavailable.</p>
+                <Link
+                    to="/blog"
+                    className="font-mono text-sm text-blue-400 hover:text-blue-300 flex items-center gap-2"
+                >
+                    <ArrowLeft size={14} />
+                    Back to Blog
+                </Link>
+            </div>
+        );
+    }
+
+    if (!post && !isFetching) {
         return (
             <div className="flex flex-col items-center justify-center gap-4 py-20">
                 <h2 className="font-mono text-xl text-zinc-300">Post not found</h2>
@@ -26,14 +45,20 @@ const BlogPost = () => {
         );
     }
 
+    if (!post) {
+        return (
+            <div className="flex flex-col items-center justify-center gap-4 py-20">
+                <div className="animate-pulse text-zinc-500">Loading...</div>
+            </div>
+        );
+    }
+
     const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
 
-    // Sanitize HTML content to prevent XSS with strict allowlist
-    // Note: iframe support removed for security - prevents clickjacking and malicious content injection
     const sanitizedHtml = DOMPurify.sanitize(post.content?.html || '', {
         ALLOWED_TAGS: [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'hr',
@@ -58,7 +83,6 @@ const BlogPost = () => {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Dynamic SEO for this blog post */}
             <BlogPostSEO
                 title={post.title}
                 description={post.brief || `Read ${post.title} by Nishant Verma`}
@@ -68,7 +92,6 @@ const BlogPost = () => {
                 tags={post.tags?.map((t: { name: string }) => t.name)}
             />
 
-            {/* Back Link */}
             <div className="flex items-center justify-between">
                 <Link
                     to="/blog"
@@ -87,26 +110,22 @@ const BlogPost = () => {
                 </a>
             </div>
 
-            {/* Post Header */}
             <header className="border-b border-dashed border-zinc-800 pb-6">
                 <h1 className="font-doto text-2xl sm:text-3xl font-bold text-zinc-100 mb-4">
                     {post.title}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    {/* Date */}
                     <div className="flex items-center gap-1.5 text-zinc-500">
                         <Calendar size={12} />
                         <span className="font-mono text-[10px]">{date}</span>
                     </div>
 
-                    {/* Read Time */}
                     <div className="flex items-center gap-1.5 text-zinc-500">
                         <Clock size={12} />
                         <span className="font-mono text-[10px]">{post.readTimeInMinutes} min read</span>
                     </div>
 
-                    {/* Tags */}
                     {post.tags && post.tags.length > 0 && (
                         <div className="flex items-center gap-2">
                             <Tag size={12} className="text-zinc-500" />
@@ -123,7 +142,6 @@ const BlogPost = () => {
                 </div>
             </header>
 
-            {/* Cover Image */}
             {post.coverImage?.url && (
                 <img
                     src={post.coverImage.url}
@@ -132,7 +150,6 @@ const BlogPost = () => {
                 />
             )}
 
-            {/* Sanitized HTML Content */}
             <article
                 className="blog-content"
                 dangerouslySetInnerHTML={{ __html: sanitizedHtml }}

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import type { ChatMessage } from '../types';
 import { streamChat } from '../api/chatApi';
 import { INITIAL_MESSAGE } from '../constants';
@@ -10,6 +11,7 @@ interface ChatContextValue {
   sendMessage: (content: string) => Promise<void>;
   stopStreaming: () => void;
   clearChat: () => void;
+  resetError: () => void;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -19,6 +21,25 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const messagesRef = useRef<ChatMessage[]>(messages);
+  const location = useLocation();
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  useEffect(() => {
+    if (location.pathname !== '/chat') {
+      abortRef.current?.abort();
+      setIsLoading(false);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || isLoading) return;
@@ -43,9 +64,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     setError(null);
 
-    // Build history for API (exclude welcome message and the new empty assistant message)
     const history = [
-      ...messages.filter(m => m.id !== 'welcome'),
+      ...messagesRef.current.filter(m => m.id !== 'welcome'),
       userMessage
     ].map(m => ({
       role: m.role,
@@ -89,7 +109,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       },
       controller.signal
     );
-  }, [messages, isLoading]);
+  }, [isLoading]);
 
   const stopStreaming = useCallback(() => {
     abortRef.current?.abort();
@@ -109,8 +129,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setError(null);
   }, []);
 
+  const resetError = useCallback(() => {
+    setError(null);
+  }, []);
+
   return (
-    <ChatContext.Provider value={{ messages, isLoading, error, sendMessage, stopStreaming, clearChat }}>
+    <ChatContext.Provider value={{ messages, isLoading, error, sendMessage, stopStreaming, clearChat, resetError }}>
       {children}
     </ChatContext.Provider>
   );
