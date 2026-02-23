@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App'
+import { Analytics } from '@vercel/analytics/react'
 import ErrorBoundary from '~components/ErrorBoundary'
 
 const queryClient = new QueryClient({
@@ -28,6 +29,7 @@ const AppTree = (
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <App />
+            <Analytics />
           </BrowserRouter>
         </QueryClientProvider>
       </HelmetProvider>

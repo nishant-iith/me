@@ -1,4 +1,23 @@
-import { useState, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
+import { createHighlighter, type Highlighter } from 'shiki';
+
+// Singleton highlighter — created once, reused for all snippets
+let highlighterInstance: Highlighter | null = null;
+let highlighterPromise: Promise<Highlighter> | null = null;
+
+const getHighlighter = (): Promise<Highlighter> => {
+    if (highlighterInstance) return Promise.resolve(highlighterInstance);
+    if (!highlighterPromise) {
+        highlighterPromise = createHighlighter({
+            themes: ['github-dark'],
+            langs: ['cpp', 'typescript', 'python', 'bash', 'javascript'],
+        }).then((h) => {
+            highlighterInstance = h;
+            return h;
+        });
+    }
+    return highlighterPromise;
+};
 import { Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { PatternDivider } from '~components/SharedLayout';
 
@@ -139,6 +158,18 @@ interface SnippetCardProps {
 
 const SnippetCard = memo(({ snippet, isExpanded, onToggle }: SnippetCardProps) => {
     const [copied, setCopied] = useState(false);
+    const [highlightedHtml, setHighlightedHtml] = useState<string>('');
+
+    useEffect(() => {
+        if (!isExpanded || highlightedHtml) return;
+        getHighlighter().then((h) => {
+            const html = h.codeToHtml(snippet.code, {
+                lang: snippet.language,
+                theme: 'github-dark',
+            });
+            setHighlightedHtml(html);
+        }).catch(() => setHighlightedHtml(''));
+    }, [isExpanded, snippet.code, snippet.language, highlightedHtml]);
 
     const handleCopy = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -180,9 +211,16 @@ const SnippetCard = memo(({ snippet, isExpanded, onToggle }: SnippetCardProps) =
                     >
                         {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                     </button>
-                    <pre className="p-4 overflow-x-auto text-xs font-mono text-zinc-400 bg-zinc-950/50">
-                        <code>{snippet.code}</code>
-                    </pre>
+                    {highlightedHtml ? (
+                        <div
+                            className="shiki-wrapper overflow-x-auto text-xs"
+                            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+                        />
+                    ) : (
+                        <pre className="p-4 overflow-x-auto text-xs font-mono text-zinc-400 bg-zinc-950/50">
+                            <code>{snippet.code}</code>
+                        </pre>
+                    )}
                 </div>
             )}
         </div>

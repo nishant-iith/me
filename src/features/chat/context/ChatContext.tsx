@@ -4,6 +4,22 @@ import type { ChatMessage } from '../types';
 import { streamChat } from '../api/chatApi';
 import { INITIAL_MESSAGE } from '../constants';
 
+const STORAGE_KEY = 'portfolio-chat-history';
+const MAX_STORED_MESSAGES = 50;
+
+const loadMessages = (): ChatMessage[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return [INITIAL_MESSAGE];
+    const parsed: ChatMessage[] = JSON.parse(stored);
+    if (!Array.isArray(parsed) || parsed.length === 0) return [INITIAL_MESSAGE];
+    // Clear any in-progress streaming flags left over from a previous session
+    return parsed.map(m => m.isStreaming ? { ...m, isStreaming: false } : m);
+  } catch {
+    return [INITIAL_MESSAGE];
+  }
+};
+
 interface ChatContextValue {
   messages: ChatMessage[];
   isLoading: boolean;
@@ -17,7 +33,7 @@ interface ChatContextValue {
 const ChatContext = createContext<ChatContextValue | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
+  const [messages, setMessages] = useState<ChatMessage[]>(loadMessages);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -26,6 +42,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     messagesRef.current = messages;
+  }, [messages]);
+
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    const toStore = messages.slice(-MAX_STORED_MESSAGES);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+    } catch {
+      // Ignore storage errors (e.g. private browsing quota exceeded)
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -121,6 +147,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const clearChat = useCallback(() => {
     abortRef.current?.abort();
+    localStorage.removeItem(STORAGE_KEY);
     setMessages([{
       ...INITIAL_MESSAGE,
       timestamp: Date.now()

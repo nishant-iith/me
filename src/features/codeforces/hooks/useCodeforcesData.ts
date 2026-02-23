@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { codeforcesApi, CODEFORCES_USERNAME } from '../api/codeforcesApi';
 import type { CodeforcesData } from '../types';
 
@@ -10,17 +10,21 @@ const DEFAULT_DATA: CodeforcesData = {
 };
 
 export const useCodeforcesData = (username = CODEFORCES_USERNAME) => {
-    const { data, isError, isLoading } = useQuery({
+    const { data } = useSuspenseQuery({
         queryKey: ['codeforces', 'data', username],
-        queryFn: () => codeforcesApi.getData(username),
+        queryFn: async () => {
+            try {
+                return await codeforcesApi.getData(username);
+            } catch {
+                return DEFAULT_DATA;
+            }
+        },
         staleTime: 1000 * 60 * 60,
         gcTime: 1000 * 60 * 60 * 24,
-        retry: 1,
+        retry: 0,
     });
 
     return {
-        data: isError ? DEFAULT_DATA : (data ?? DEFAULT_DATA),
-        isLoading,
-        isError
+        data: data ?? DEFAULT_DATA,
     };
 };

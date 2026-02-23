@@ -310,3 +310,15 @@ body::-webkit-scrollbar,
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
 }
+/* Shiki syntax highlighting */
+.shiki-wrapper .shiki {
+  background: transparent !important;
+  padding: 1rem;
+  margin: 0;
+}
+.shiki-wrapper .shiki code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  counter-reset: none;
+}

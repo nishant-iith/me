@@ -1,6 +1,6 @@
 import type { ChatRequestMessage } from '../types';
 
-const WORKER_URL = 'https://chatbot-api.iith-nishant.workers.dev';
+const WORKER_URL = import.meta.env.VITE_CHATBOT_API_URL ?? 'https://chatbot-api.iith-nishant.workers.dev';
 
 /**
  * Stream chat response from the chatbot Cloudflare Worker.

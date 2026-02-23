@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Eye } from 'lucide-react';
 
-const WORKER_URL = 'https://view-counter.iith-nishant.workers.dev';
+const WORKER_URL = import.meta.env.VITE_VIEW_COUNTER_URL ?? 'https://view-counter.iith-nishant.workers.dev';
 
 interface ViewResponse {
   views: number;

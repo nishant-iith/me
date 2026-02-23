@@ -1,4 +1,5 @@
 {
+  "_comment": "NOTE: This file is kept for reference only. The site deploys to Cloudflare Pages, not Vercel. Security headers are configured in public/_headers and the SPA redirect is in public/_redirects.",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],

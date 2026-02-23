@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { githubApi, GITHUB_USERNAME } from '../api/githubApi';
 import type { GithubContributions } from '../types';
 
@@ -8,17 +8,21 @@ const DEFAULT_DATA: GithubContributions = {
 };
 
 export const useGithubContributions = (username = GITHUB_USERNAME) => {
-    const { data, isError, isLoading } = useQuery({
+    const { data } = useSuspenseQuery({
         queryKey: ['github', 'contributions', username],
-        queryFn: () => githubApi.getContributions(username),
+        queryFn: async () => {
+            try {
+                return await githubApi.getContributions(username);
+            } catch {
+                return DEFAULT_DATA;
+            }
+        },
         staleTime: 1000 * 60 * 60,
         gcTime: 1000 * 60 * 60 * 24,
-        retry: 1,
+        retry: 0,
     });
 
     return {
-        data: isError ? DEFAULT_DATA : (data ?? DEFAULT_DATA),
-        isLoading,
-        isError
+        data: data ?? DEFAULT_DATA,
     };
 };

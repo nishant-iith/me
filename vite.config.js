@@ -20,8 +20,6 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           // React Query (used by data-fetching pages)
           'vendor-query': ['@tanstack/react-query'],
-          // MUI (only used by SnackbarProvider - isolate to avoid bloating main bundle)
-          'vendor-mui': ['@mui/material'],
           // SEO (react-helmet-async)
           'vendor-seo': ['react-helmet-async'],
           // DOMPurify (only used by BlogPost)

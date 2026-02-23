@@ -2,7 +2,7 @@ import { HashnodePost } from '../types';
 
 // Blog API requests are proxied through our Cloudflare Worker
 // The Hashnode token is stored server-side as a Worker secret — never exposed to the client
-const BLOG_PROXY_API = 'https://blog-proxy.iith-nishant.workers.dev';
+const BLOG_PROXY_API = import.meta.env.VITE_BLOG_PROXY_URL ?? 'https://blog-proxy.iith-nishant.workers.dev';
 
 export const blogApi = {
     getPosts: async (host: string, first: number = 10): Promise<HashnodePost[]> => {

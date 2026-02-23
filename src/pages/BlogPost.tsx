@@ -8,7 +8,7 @@ const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
 const BlogPost = () => {
     const { slug } = useParams<{ slug: string }>();
-    const { data: post, error, isFetching } = useBlogPost(slug ?? '');
+    const { data: post, error } = useBlogPost(slug ?? '');
     
     if (!slug) {
         return <Navigate to="/blog" replace />;
@@ -30,7 +30,7 @@ const BlogPost = () => {
         );
     }
 
-    if (!post && !isFetching) {
+    if (!post) {
         return (
             <div className="flex flex-col items-center justify-center gap-4 py-20">
                 <h2 className="font-mono text-xl text-zinc-300">Post not found</h2>

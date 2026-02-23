@@ -34,3 +34,12 @@ jobs:
         with:
           name: dist
           path: dist
+
+      # Deploys to Cloudflare Pages on push to main only.
+      # Required: set CLOUDFLARE_API_TOKEN in GitHub repo Settings → Secrets.
+      - name: Deploy to Cloudflare Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy dist --project-name nishant-sde

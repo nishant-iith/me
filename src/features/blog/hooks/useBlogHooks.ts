@@ -1,10 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
 import { blogApi } from '../api/blogApi';
 
 const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
 export const useBlogPosts = (first: number = 10) => {
-    const { data, isError, isLoading } = useQuery({
+    const { data, isError } = useSuspenseQuery({
         queryKey: ['blog', 'posts', HASHNODE_HOST, first],
         queryFn: () => blogApi.getPosts(HASHNODE_HOST, first),
         staleTime: 1000 * 60 * 30,
@@ -14,13 +14,12 @@ export const useBlogPosts = (first: number = 10) => {
 
     return {
         data: isError ? [] : (data ?? []),
-        isLoading,
         isError
     };
 };
 
 export const useBlogPost = (slug: string) => {
-    const { data, isError, isFetching, error } = useQuery({
+    const { data, isError, error } = useSuspenseQuery({
         queryKey: ['blog', 'post', HASHNODE_HOST, slug],
         queryFn: () => blogApi.getPost(HASHNODE_HOST, slug),
         staleTime: 1000 * 60 * 30,
@@ -31,7 +30,6 @@ export const useBlogPost = (slug: string) => {
 
     return {
         data: isError ? null : data,
-        isFetching,
         error: isError ? error : null
     };
 };

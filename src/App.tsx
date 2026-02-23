@@ -41,9 +41,6 @@ function App() {
     <SnackbarProvider>
       <ChatProvider>
       <div className="relative min-h-screen text-zinc-100 font-sans selection:bg-zinc-800 selection:text-zinc-200 bg-[#18181b]">
-        {/* ... existing layout ... */}
-        {/* Skipping patterns for brevity in ReplacementContent, but I will provide the full block in target */}
-
         {/* SIDE PATTERN - LEFT */}
         <div className="bg-[#18181b] h-full w-8 border-zinc-800 border-dashed overflow-hidden fixed left-0 top-0 bottom-0 z-0 hidden border-r md:flex">
           <div
