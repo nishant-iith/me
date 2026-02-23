@@ -1,124 +1,9 @@
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { Send, Square, Trash2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
+import { useChat, SUGGESTED_PROMPTS, StreamingMessage, initAudioContext } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
 import { PatternDivider } from '~components/SharedLayout';
-
-let audioCtx: AudioContext | null = null;
-
-function getAudioContext(): AudioContext | null {
-    if (!audioCtx) {
-        try {
-            const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-            audioCtx = new Ctor();
-        } catch {
-            return null;
-        }
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(() => {});
-    }
-    if (audioCtx.state === 'closed') {
-        try {
-            const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-            audioCtx = new Ctor();
-        } catch {
-            return null;
-        }
-    }
-    return audioCtx;
-}
-
-function playKeySound(): void {
-    const ctx = getAudioContext();
-    if (!ctx || ctx.state !== 'running') return;
-    try {
-        const now = ctx.currentTime;
-        const freq = 400 + Math.random() * 300;
-
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = 'square';
-        osc.frequency.value = freq;
-
-        gain.gain.setValueAtTime(0.06, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.04);
-    } catch {
-        // Ignore audio errors
-    }
-}
-
-// ── Streaming Message ─────────────────────────────────────────────
-const StreamingMessage = memo(function StreamingMessage({
-  content,
-  isStreaming
-}: {
-  content: string;
-  isStreaming: boolean;
-}) {
-  const [displayLen, setDisplayLen] = useState(0);
-  const contentRef = useRef(content);
-  const displayLenRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  contentRef.current = content;
-
-  useEffect(() => {
-    if (content.length === 0) {
-      displayLenRef.current = 0;
-      setDisplayLen(0);
-    }
-  }, [content]);
-
-  useEffect(() => {
-    const tick = () => {
-      const cur = displayLenRef.current;
-      const target = contentRef.current;
-
-      if (cur < target.length) {
-        const ch = target[cur];
-        if (ch && ch !== ' ' && ch !== '\n') playKeySound();
-
-        displayLenRef.current = cur + 1;
-        setDisplayLen(cur + 1);
-
-        const delay = 30 + Math.random() * 30;
-        timerRef.current = setTimeout(tick, delay);
-      }
-    };
-
-    if (contentRef.current.length > displayLenRef.current && !timerRef.current) {
-      tick();
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [content, displayLen]);
-
-  const visible = content.slice(0, displayLen);
-  const showCursor = isStreaming || displayLen < content.length;
-
-  return (
-    <span className="whitespace-pre-wrap break-words">
-      {visible}
-      {showCursor && (
-        <span className="inline-block w-[2px] h-[1em] bg-blue-500 ml-[1px] align-text-bottom animate-pulse" />
-      )}
-    </span>
-  );
-});
 
 // ── Chat Message Row ──────────────────────────────────────────────
 const ChatMessageRow = memo(function ChatMessageRow({
@@ -182,7 +67,7 @@ function ChatPage() {
 
   const handleSend = useCallback(() => {
     if (!input.trim() || isLoading) return;
-    getAudioContext();
+    initAudioContext();
     sendMessage(input);
     setInput('');
   }, [input, isLoading, sendMessage]);
@@ -195,14 +80,14 @@ function ChatPage() {
   }, [handleSend]);
 
   const handleSuggestion = useCallback((text: string) => {
-    getAudioContext();
+    initAudioContext();
     sendMessage(text);
   }, [sendMessage]);
 
   return (
     <div
       className="flex flex-col h-[calc(100vh-12rem)] animate-in fade-in duration-500"
-      onClick={() => getAudioContext()}
+      onClick={() => initAudioContext()}
     >
       {/* Header */}
       <div className="flex items-center justify-between shrink-0">

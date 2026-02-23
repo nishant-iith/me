@@ -1,31 +1,20 @@
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { MessageSquare, X, Trash2, Send, Square, ArrowUpRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useChat, SUGGESTED_PROMPTS } from '@/features/chat';
+import { useChat, SUGGESTED_PROMPTS, StreamingMessage, initAudioContext } from '@/features/chat';
 import type { ChatMessage } from '@/features/chat';
 
 const WIDGET_SUGGESTIONS = SUGGESTED_PROMPTS.slice(0, 4);
 
-const StreamingBubble = memo(function StreamingBubble({
-  content,
-  isStreaming
+const ChatBubble = memo(function ChatBubble({
+  message,
+  isLatest,
 }: {
-  content: string;
-  isStreaming: boolean;
+  message: ChatMessage;
+  isLatest: boolean;
 }) {
-  const showCursor = isStreaming || (!isStreaming && content === '');
-  return (
-    <span className="whitespace-pre-wrap break-words">
-      {content}
-      {showCursor && (
-        <span className="inline-block w-1.5 h-3 bg-blue-500 ml-0.5 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
-      )}
-    </span>
-  );
-});
-
-const ChatBubble = memo(function ChatBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
+  const shouldStream = !!message.isStreaming && isLatest;
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
@@ -36,8 +25,8 @@ const ChatBubble = memo(function ChatBubble({ message }: { message: ChatMessage 
             : 'text-zinc-400'
         }`}
       >
-        {message.isStreaming ? (
-          <StreamingBubble content={message.content} isStreaming />
+        {shouldStream ? (
+          <StreamingMessage content={message.content} isStreaming />
         ) : (
           <span className="whitespace-pre-wrap break-words">{message.content}</span>
         )}
@@ -83,6 +72,7 @@ function ChatWidgetInner() {
 
   const handleSend = useCallback(() => {
     if (!input.trim() || isLoading) return;
+    initAudioContext();
     sendMessage(input);
     setInput('');
   }, [input, isLoading, sendMessage]);
@@ -95,6 +85,7 @@ function ChatWidgetInner() {
   }, [handleSend]);
 
   const handleSuggestion = useCallback((text: string) => {
+    initAudioContext();
     sendMessage(text);
   }, [sendMessage]);
 
@@ -109,7 +100,7 @@ function ChatWidgetInner() {
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => { initAudioContext(); setIsOpen(true); }}
         className="fixed bottom-8 right-8 z-[100] group flex items-center justify-center bg-zinc-950/80 backdrop-blur-md border border-dashed border-zinc-800 text-zinc-500 transition-[border-color,color,box-shadow] duration-300 rounded-full h-12 w-12 hover:border-zinc-600 hover:text-zinc-300 shadow-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         aria-label="Open chat (Ctrl+.)"
         title="Chat with Nishant (Ctrl+.)"
@@ -183,8 +174,8 @@ function ChatWidgetInner() {
 
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto px-4 py-3">
-            {messages.map(msg => (
-              <ChatBubble key={msg.id} message={msg} />
+            {messages.map((msg, index) => (
+              <ChatBubble key={msg.id} message={msg} isLatest={index === messages.length - 1} />
             ))}
 
             {/* Suggested Prompts */}
