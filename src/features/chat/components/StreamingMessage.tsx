@@ -110,9 +110,9 @@ export const StreamingMessage = memo(function StreamingMessage({
     displayLenRef.current = cur + 1;
     setDisplayLen(cur + 1);
 
-    // Adaptive speed: catch up fast when the buffer has grown large
+    // Adaptive speed: catch up when buffer has grown large, natural pace otherwise
     const lag = target.length - (cur + 1);
-    const delay = lag > 80 ? 6 + Math.random() * 8 : 38 + Math.random() * 28;
+    const delay = lag > 120 ? 18 + Math.random() * 12 : 65 + Math.random() * 45;
     timerRef.current = setTimeout(tick, delay);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
