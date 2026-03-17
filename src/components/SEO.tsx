@@ -6,11 +6,31 @@ interface SEOProps {
   pathname?: string;
   image?: string;
   type?: string;
+  robots?: string;
   article?: {
     publishedTime?: string;
     author?: string;
     tags?: string[];
   };
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export function BreadcrumbSEO({ items }: { items: BreadcrumbItem[] }) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name,
+      "item": item.url
+    }))
+  };
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
 }
 
 const BASE_URL = 'https://nishant-sde.pages.dev';
@@ -22,17 +42,19 @@ export function SEO({
   pathname = '',
   image = DEFAULT_IMAGE,
   type = 'website',
+  robots = 'index, follow',
   article
 }: SEOProps) {
   const canonicalUrl = `${BASE_URL}${pathname}`;
+  const isNoIndex = robots.includes('noindex');
 
   return (
     <Helmet>
       {/* Basic Meta Tags */}
       <title>{title}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={canonicalUrl} />
-      
+      {!isNoIndex && <link rel="canonical" href={canonicalUrl} />}
+
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
@@ -41,7 +63,7 @@ export function SEO({
       <meta property="og:image" content={image} />
       <meta property="og:site_name" content="Nishant Verma Portfolio" />
       <meta property="og:locale" content="en_US" />
-      
+
       {/* Twitter Card */}
       <meta name="twitter:card" content={image !== DEFAULT_IMAGE ? 'summary_large_image' : 'summary'} />
       <meta name="twitter:url" content={canonicalUrl} />
@@ -49,16 +71,16 @@ export function SEO({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
       <meta name="twitter:creator" content="@nishant_iith" />
-      
+
       {/* Article-specific OG tags */}
       {article?.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
       {article?.author && <meta property="article:author" content={article.author} />}
       {article?.tags?.map((tag, index) => <meta key={`tag-${index}-${tag}`} property="article:tag" content={tag} />)}
-      
+
       {/* Additional SEO */}
       <meta name="author" content="Nishant Verma" />
-      <meta name="robots" content="index, follow" />
-      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+      <meta name="robots" content={robots} />
+      {!isNoIndex && <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />}
     </Helmet>
   );
 }
@@ -77,11 +99,18 @@ export const HomeSEO = () => (
         "@type": "Person",
         "name": "Nishant Verma",
         "url": "https://nishant-sde.pages.dev",
-        "jobTitle": "Software Engineer",
+        "email": "nishant.iith@gmail.com",
+        "image": "https://nishant-sde.pages.dev/og-image.png",
+        "jobTitle": "Software Engineering Student",
         "worksFor": { "@type": "Organization", "name": "DP World" },
+        "affiliation": { "@type": "EducationalOrganization", "name": "IIT Hyderabad", "sameAs": "https://www.iith.ac.in" },
         "alumniOf": { "@type": "EducationalOrganization", "name": "IIT Hyderabad", "sameAs": "https://www.iith.ac.in" },
-        "sameAs": ["https://github.com/nishant-iith", "https://linkedin.com/in/nishant-iith"],
-        "knowsAbout": ["Software Engineering", "React", "TypeScript", "Node.js", "C++", "Python", "Competitive Programming"],
+        "sameAs": [
+          "https://github.com/nishant-iith",
+          "https://linkedin.com/in/nishant-iith",
+          "https://codeforces.com/profile/so-called-iitian"
+        ],
+        "knowsAbout": ["Software Engineering", "Competitive Programming", "Web Development", "Machine Learning", "React", "TypeScript", "Node.js", "C++", "Python"],
         "description": "Software Engineer joining DP World in July 2026. B.Tech at IIT Hyderabad with experience at Goldman Sachs."
       })}</script>
       <script type="application/ld+json">{JSON.stringify({
@@ -98,8 +127,8 @@ export const HomeSEO = () => (
 
 export const AboutSEO = () => (
   <SEO
-    title="About Nishant Verma | Software Engineer"
-    description="Learn about Nishant Verma - Software Engineer from IIT Hyderabad. Passionate about building things that look good and work even better."
+    title="About Nishant Verma — IITH Student | Software Engineer"
+    description="About Nishant Verma, IIT Hyderabad student and Software Engineer. Joining DP World in July 2026 after a Goldman Sachs internship. Passionate about building things that look good and work even better."
     pathname="/about"
   />
 );
@@ -113,11 +142,17 @@ export const SkillSEO = () => (
 );
 
 export const BlogSEO = () => (
-  <SEO
-    title="Blog | Nishant Verma"
-    description="Technical articles and insights on software engineering, competitive programming, and system design."
-    pathname="/blog"
-  />
+  <>
+    <SEO
+      title="Blog | Nishant Verma"
+      description="Technical articles and insights on software engineering, competitive programming, and system design."
+      pathname="/blog"
+    />
+    <BreadcrumbSEO items={[
+      { name: "Home", url: BASE_URL },
+      { name: "Blog", url: `${BASE_URL}/blog` }
+    ]} />
+  </>
 );
 
 export interface BlogPostSEOProps {
@@ -143,20 +178,25 @@ export const BlogPostSEO = ({ title, description, slug, publishedAt, coverImage,
         tags
       }}
     />
+    <BreadcrumbSEO items={[
+      { name: "Home", url: BASE_URL },
+      { name: "Blog", url: `${BASE_URL}/blog` },
+      { name: title, url: `${BASE_URL}/blog/${slug}` }
+    ]} />
     <Helmet>
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "headline": title,
         "description": description,
-        "url": `https://nishant-sde.pages.dev/blog/${slug}`,
+        "url": `${BASE_URL}/blog/${slug}`,
         "datePublished": publishedAt,
-        "author": { "@type": "Person", "name": "Nishant Verma" },
+        "author": { "@type": "Person", "name": "Nishant Verma", "url": BASE_URL },
         ...(coverImage && { "image": coverImage }),
         "publisher": {
           "@type": "Person",
           "name": "Nishant Verma",
-          "url": "https://nishant-sde.pages.dev"
+          "url": BASE_URL
         }
       })}</script>
     </Helmet>
@@ -200,6 +240,7 @@ export const ChatSEO = () => (
     title="Chat with AI Nishant | Nishant Verma"
     description="Chat with an AI version of me. Ask about my experience, skills, or just say hi!"
     pathname="/chat"
+    robots="noindex, nofollow"
   />
 );
 
@@ -208,5 +249,6 @@ export const NotFoundSEO = () => (
     title="404 - Page Not Found | Nishant Verma"
     description="The page you're looking for doesn't exist."
     pathname=""
+    robots="noindex, follow"
   />
 );

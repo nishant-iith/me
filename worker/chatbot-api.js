@@ -93,7 +93,9 @@ function getApiKeys(env) {
   return keys;
 }
 
-// Call Gemini API with a specific key — returns the fetch Response
+// Call Gemini API with a specific key — returns the fetch Response.
+// A 25-second AbortSignal timeout prevents the worker from hanging if
+// Gemini is unresponsive (Cloudflare Workers have a 30-second CPU limit).
 async function callGemini(apiKey, geminiContents) {
   return fetch(`${GEMINI_STREAM_URL}?alt=sse&key=${apiKey}`, {
     method: 'POST',
@@ -106,7 +108,8 @@ async function callGemini(apiKey, geminiContents) {
         topK: 40,
         maxOutputTokens: 512
       }
-    })
+    }),
+    signal: AbortSignal.timeout(25000) // 25-second timeout
   });
 }
 
@@ -118,7 +121,25 @@ async function callGeminiWithFailover(env, geminiContents) {
   }
 
   for (let i = 0; i < keys.length; i++) {
-    const response = await callGemini(keys[i], geminiContents);
+    let response;
+    try {
+      response = await callGemini(keys[i], geminiContents);
+    } catch (err) {
+      // Handle AbortError (timeout) — surface a 504 Gateway Timeout
+      if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+        console.error(`Gemini key ${i + 1} timed out after 25s`);
+        // If there are more keys, try them; otherwise return 504
+        if (i < keys.length - 1) {
+          console.log(`Trying key ${i + 2} after timeout on key ${i + 1}...`);
+          continue;
+        }
+        return { ok: false, status: 504, errorMsg: 'AI service timed out. Please try again.' };
+      }
+      // Unexpected network error
+      console.error(`Gemini key ${i + 1} fetch error:`, err);
+      return { ok: false, status: 502, errorMsg: 'AI service unavailable. Please try again shortly.' };
+    }
+
     if (response.ok) {
       return { ok: true, response };
     }
@@ -175,15 +196,15 @@ export default {
     }
 
     // Health check endpoint — tests Gemini API connectivity
+    // NOTE: never include API keys, raw error bodies, or sensitive config in this response.
     if (url.pathname === '/health' && request.method === 'GET') {
       const keys = getApiKeys(env);
       const checks = {
         worker: 'ok',
         model: GEMINI_MODEL,
-        keysAvailable: keys.length,
+        keysConfigured: keys.length,
         kvAvailable: !!env.CHATBOT_KV,
         geminiApi: 'untested',
-        geminiError: null,
         timestamp: new Date().toISOString()
       };
 
@@ -197,26 +218,27 @@ export default {
               body: JSON.stringify({
                 contents: [{ role: 'user', parts: [{ text: 'Say hi in 3 words' }] }],
                 generationConfig: { maxOutputTokens: 10 }
-              })
+              }),
+              signal: AbortSignal.timeout(10000) // 10-second timeout for health checks
             }
           );
           if (testResponse.ok) {
             checks.geminiApi = `ok (key ${i + 1})`;
-            checks.geminiError = null;
             break;
           }
-          const errText = await testResponse.text().catch(() => '');
+          // Only expose the HTTP status code, not the raw error body (may contain request details)
           checks.geminiApi = `key${i + 1}:error:${testResponse.status}`;
-          checks.geminiError = errText.slice(0, 500);
-        } catch (e) {
-          checks.geminiApi = `key${i + 1}:fetch_failed`;
-          checks.geminiError = e.message;
+        } catch (err) {
+          if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+            checks.geminiApi = `key${i + 1}:timeout`;
+          } else {
+            checks.geminiApi = `key${i + 1}:fetch_failed`;
+          }
         }
       }
 
       if (keys.length === 0) {
-        checks.geminiApi = 'no_keys';
-        checks.geminiError = 'No API keys configured';
+        checks.geminiApi = 'no_keys_configured';
       }
 
       const allOk = keys.length > 0 && checks.geminiApi.startsWith('ok');
@@ -432,8 +454,9 @@ export default {
         }
       };
 
-      // Run stream processing (Workers handle this correctly via waitUntil-like semantics)
-      processStream();
+      // Run stream processing — must be awaited so the TransformStream stays open
+      // until all data is written before the Response is returned to the runtime.
+      await processStream();
 
       return new Response(readable, {
         headers: {

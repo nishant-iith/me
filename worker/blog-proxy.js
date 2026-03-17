@@ -67,6 +67,20 @@ export default {
       });
     }
 
+    // NOTE: KV-based IP rate limiting (e.g. 20 req/min) would go here, but this
+    // worker currently has no KV binding configured. To enable it, bind a KV
+    // namespace (e.g. BLOG_KV) in wrangler.toml and add the rate limiting block
+    // using env.BLOG_KV similarly to how view-counter.js uses env.VIEW_COUNTER.
+
+    // Limit request body size to prevent abuse (GraphQL queries are small)
+    const contentLength = parseInt(request.headers.get('content-length') || '0');
+    if (contentLength > 10000) {
+      return new Response(JSON.stringify({ error: 'Request too large' }), {
+        status: 413,
+        headers: corsHeaders
+      });
+    }
+
     try {
       const body = await request.json();
 

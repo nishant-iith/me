@@ -1,15 +1,35 @@
-import { memo } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, Tag, Clock, ExternalLink } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useBlogPosts, usePrefetchBlogPost } from '../features/blog/hooks/useBlogHooks';
+import { blogApi } from '../features/blog/api/blogApi';
+import { HASHNODE_HOST } from '../features/blog/constants';
 import type { HashnodePost } from '../features/blog/types';
-
-// Your Hashnode publication host
-const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
 const Blog = () => {
     const { data: posts } = useBlogPosts(10);
     const prefetchPost = usePrefetchBlogPost();
+    const queryClient = useQueryClient();
+
+    // Prefetch first 3 posts in background after page loads
+    useEffect(() => {
+        if (!posts?.length) return;
+        posts.slice(0, 3).forEach(post => {
+            queryClient.prefetchQuery({
+                queryKey: ['blog', 'post', HASHNODE_HOST, post.slug],
+                queryFn: () => blogApi.getPost(HASHNODE_HOST, post.slug),
+                staleTime: 1000 * 60 * 30,
+            });
+        });
+    }, [posts, queryClient]);
+
+    // Stable callback — prefetchPost is already stable (returned from useQueryClient),
+    // so this useCallback avoids creating a new function reference each render.
+    const handleMouseEnter = useCallback(
+        (slug: string) => prefetchPost(slug),
+        [prefetchPost]
+    );
 
     return (
         <div className="flex flex-col gap-8">
@@ -35,7 +55,8 @@ const Blog = () => {
                         <BlogCard
                             key={post.id}
                             post={post}
-                            onMouseEnter={() => prefetchPost(post.slug)}
+                            slug={post.slug}
+                            onMouseEnter={handleMouseEnter}
                         />
                     ))
                 )}
@@ -46,20 +67,23 @@ const Blog = () => {
 
 interface BlogCardProps {
     post: HashnodePost;
-    onMouseEnter: () => void;
+    slug: string;
+    onMouseEnter: (slug: string) => void;
 }
 
-const BlogCard = memo(({ post, onMouseEnter }: BlogCardProps) => {
+const BlogCard = memo(({ post, slug, onMouseEnter }: BlogCardProps) => {
     const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
     });
 
+    const handleMouseEnter = useCallback(() => onMouseEnter(slug), [onMouseEnter, slug]);
+
     return (
         <Link
             to={`/blog/${post.slug}`}
-            onMouseEnter={onMouseEnter}
+            onMouseEnter={handleMouseEnter}
             className="group block p-5 border border-dashed border-zinc-800 rounded-sm bg-black/20 hover:border-zinc-700 hover:bg-zinc-900/30 transition-all duration-300"
         >
             <div className="flex flex-col gap-3">

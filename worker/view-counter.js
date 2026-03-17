@@ -13,10 +13,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
-    
+
     // Get the origin from request
     const requestOrigin = request.headers.get('Origin');
-    
+
     // Strict CORS: reject unknown origins entirely
     if (requestOrigin && !ALLOWED_ORIGINS.includes(requestOrigin)) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), {
@@ -57,8 +57,14 @@ export default {
         const userAgent = request.headers.get('User-Agent') || '';
         const country = request.headers.get('CF-IPCountry') || '';
 
+        // W4: Batch the initial stats reads in parallel
+        const [totalRequestsRaw, totalViewsRaw] = await Promise.all([
+          env.VIEW_COUNTER.get('stats:total_requests'),
+          env.VIEW_COUNTER.get('total_views')
+        ]);
+
         // Track total requests (for monitoring)
-        const totalRequests = parseInt(await env.VIEW_COUNTER.get('stats:total_requests') || '0');
+        const totalRequests = parseInt(totalRequestsRaw || '0');
         await env.VIEW_COUNTER.put('stats:total_requests', (totalRequests + 1).toString());
 
         // Layer 1: Basic validation checks
@@ -78,11 +84,10 @@ export default {
 
         if (suspiciousPatterns.some(pattern => pattern.test(userAgent))) {
           console.log(`Blocked suspicious User-Agent: ${userAgent} from ${clientIP}`);
-          const views = await env.VIEW_COUNTER.get('total_views') || '0';
           const blockedCount = parseInt(await env.VIEW_COUNTER.get('stats:blocked') || '0');
           await env.VIEW_COUNTER.put('stats:blocked', (blockedCount + 1).toString());
           return new Response(JSON.stringify({
-            views: parseInt(views),
+            views: parseInt(totalViewsRaw || '0'),
             timestamp: now
           }), { headers: corsHeaders });
         }
@@ -91,11 +96,10 @@ export default {
         const blockedCountries = ['T1', 'XX']; // T1 = Tor, XX = Unknown
         if (blockedCountries.includes(country)) {
           console.log(`Blocked request from ${country}: ${clientIP}`);
-          const views = await env.VIEW_COUNTER.get('total_views') || '0';
           const blockedCount = parseInt(await env.VIEW_COUNTER.get('stats:blocked') || '0');
           await env.VIEW_COUNTER.put('stats:blocked', (blockedCount + 1).toString());
           return new Response(JSON.stringify({
-            views: parseInt(views),
+            views: parseInt(totalViewsRaw || '0'),
             timestamp: now
           }), { headers: corsHeaders });
         }
@@ -115,22 +119,27 @@ export default {
           { key: rateLimitKeys[3], maxRequests: 100, windowMs: 60000 }     // 100 per minute global
         ];
 
-        // Check all rate limits
-        for (const limit of limits) {
-          const currentCount = parseInt(await env.VIEW_COUNTER.get(limit.key) || '0');
-          if (currentCount >= limit.maxRequests) {
-            const views = await env.VIEW_COUNTER.get('total_views') || '0';
+        // W4: Batch all four rate limit KV reads in parallel
+        const rateLimitCounts = await Promise.all(
+          rateLimitKeys.map(key => env.VIEW_COUNTER.get(key))
+        );
+
+        // Check all rate limits using the batched results
+        for (let i = 0; i < limits.length; i++) {
+          const currentCount = parseInt(rateLimitCounts[i] || '0');
+          if (currentCount >= limits[i].maxRequests) {
+            // W1: Increment the blocked stats counter BEFORE returning 429
             const blockedCount = parseInt(await env.VIEW_COUNTER.get('stats:blocked') || '0');
             await env.VIEW_COUNTER.put('stats:blocked', (blockedCount + 1).toString());
-            console.log(`Rate limit exceeded for ${limit.key}: ${currentCount}/${limit.maxRequests}`);
+            console.log(`Rate limit exceeded for ${limits[i].key}: ${currentCount}/${limits[i].maxRequests}`);
             return new Response(JSON.stringify({
-              views: parseInt(views),
+              views: parseInt(totalViewsRaw || '0'),
               timestamp: now
             }), {
               status: 429,
               headers: {
                 ...corsHeaders,
-                'Retry-After': Math.ceil(limit.windowMs / 1000).toString()
+                'Retry-After': Math.ceil(limits[i].windowMs / 1000).toString()
               }
             });
           }
@@ -156,11 +165,10 @@ export default {
           // If more than 3 requests in 10 seconds, suspicious
           if (requestCount > 3 && timeDiff < 10000) {
             console.log(`Suspicious fingerprint pattern: ${requestCount} requests in ${timeDiff}ms`);
-            const views = await env.VIEW_COUNTER.get('total_views') || '0';
             const blockedCount = parseInt(await env.VIEW_COUNTER.get('stats:blocked') || '0');
             await env.VIEW_COUNTER.put('stats:blocked', (blockedCount + 1).toString());
             return new Response(JSON.stringify({
-              views: parseInt(views),
+              views: parseInt(totalViewsRaw || '0'),
               timestamp: now
             }), { headers: corsHeaders });
           }
@@ -178,19 +186,21 @@ export default {
           }), { expirationTtl: 300 });
         }
 
-        // All checks passed - increment counter
-        const currentViews = await env.VIEW_COUNTER.get('total_views') || '0';
-        const newViews = parseInt(currentViews) + 1;
+        // All checks passed - increment view counter
+        const currentViews = parseInt(totalViewsRaw || '0');
+        const newViews = currentViews + 1;
 
-        // Update KV
-        await env.VIEW_COUNTER.put('total_views', newViews.toString());
-
-        // Update rate limit counters
-        for (let i = 0; i < rateLimitKeys.length; i++) {
-          const currentCount = parseInt(await env.VIEW_COUNTER.get(rateLimitKeys[i]) || '0');
-          const ttl = limits[i].windowMs / 1000;
-          await env.VIEW_COUNTER.put(rateLimitKeys[i], (currentCount + 1).toString(), { expirationTtl: ttl });
-        }
+        // W1: Increment rate limit counters BEFORE returning the response,
+        // so a client that disconnects early still consumes their quota.
+        // W4: Fire all rate-limit writes + the view count write in parallel.
+        await Promise.all([
+          env.VIEW_COUNTER.put('total_views', newViews.toString()),
+          ...rateLimitKeys.map((key, i) => {
+            const currentCount = parseInt(rateLimitCounts[i] || '0');
+            const ttl = limits[i].windowMs / 1000;
+            return env.VIEW_COUNTER.put(key, (currentCount + 1).toString(), { expirationTtl: ttl });
+          })
+        ]);
 
         // Log successful increment
         console.log(`View incremented: ${newViews} from ${clientIP} (${country})`);
@@ -202,22 +212,22 @@ export default {
       }
 
       // 404 for unknown paths
-      return new Response(JSON.stringify({ error: 'Not found' }), { 
-        status: 404, 
-        headers: corsHeaders 
+      return new Response(JSON.stringify({ error: 'Not found' }), {
+        status: 404,
+        headers: corsHeaders
       });
 
     } catch (error) {
       // Log error internally (in production, use proper logging)
       console.error('Worker error:', error);
-      
+
       // Return generic error message
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Internal server error',
         code: 'INTERNAL_ERROR'
-      }), { 
-        status: 500, 
-        headers: corsHeaders 
+      }), {
+        status: 500,
+        headers: corsHeaders
       });
     }
   }

@@ -1,5 +1,9 @@
 import { HashnodePost } from '../types';
 
+interface HashnodeEdge {
+    node: HashnodePost;
+}
+
 // Blog API requests are proxied through our Cloudflare Worker
 // The Hashnode token is stored server-side as a Worker secret — never exposed to the client
 const BLOG_PROXY_API = import.meta.env.VITE_BLOG_PROXY_URL ?? 'https://blog-proxy.iith-nishant.workers.dev';
@@ -29,7 +33,7 @@ export const blogApi = {
                 return [];
             }
 
-            return data.data?.publication?.posts?.edges?.map((edge: any) => edge.node) || [];
+            return data.data?.publication?.posts?.edges?.map((edge: HashnodeEdge) => edge.node) || [];
         } catch (error) {
             console.error('Failed to fetch posts:', error);
             return [];

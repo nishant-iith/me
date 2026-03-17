@@ -125,7 +125,7 @@ function ChatWidgetInner() {
       />
 
       <div className="fixed z-[100] sm:bottom-8 sm:right-8 sm:w-[380px] sm:max-w-[calc(100vw-2rem)] inset-0 sm:inset-auto animate-in fade-in duration-200">
-        <div className="relative bg-[#18181b] sm:border sm:border-dashed sm:border-zinc-800 sm:rounded-xl shadow-2xl overflow-hidden flex flex-col h-full sm:h-[500px] sm:max-h-[calc(100vh-6rem)]">
+        <div className="relative bg-[#18181b] sm:border sm:border-dashed sm:border-zinc-800 sm:rounded-xl shadow-2xl overflow-hidden flex flex-col h-dvh sm:h-[500px] sm:max-h-[calc(100vh-6rem)]">
 
           {/* Corner Accents (desktop only) */}
           <div className="hidden sm:block absolute top-0 left-0 w-2 h-2 border-t border-l border-zinc-600 z-10" />
@@ -181,7 +181,7 @@ function ChatWidgetInner() {
             {/* Suggested Prompts */}
             {showSuggestions && (
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {WIDGET_SUGGESTIONS.map((s: string) => (
+                {WIDGET_SUGGESTIONS.map((s) => (
                   <button
                     key={s}
                     onClick={() => handleSuggestion(s)}
@@ -211,7 +211,7 @@ function ChatWidgetInner() {
                 onChange={e => setInput(e.target.value.slice(0, 500))}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask me anything\u2026"
-                className="flex-1 bg-transparent border-none text-zinc-200 placeholder-zinc-600 text-[12px] font-mono focus-visible:outline-none"
+                className="flex-1 bg-transparent border-none text-zinc-200 placeholder-zinc-600 text-base sm:text-[12px] font-mono focus-visible:outline-none"
                 disabled={isLoading}
                 maxLength={500}
                 aria-label="Chat message input"

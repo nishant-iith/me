@@ -19,7 +19,7 @@ const ChatMessageRow = memo(function ChatMessageRow({
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[85%] ${isUser ? 'items-end' : 'items-start'}`}>
-        <div className="text-[9px] font-mono text-zinc-600 mb-1 flex items-center gap-1">
+        <div className="text-[9px] font-mono text-zinc-400 mb-1 flex items-center gap-1">
           {isUser ? '// you' : (
             <>
               <span className="w-1.5 h-1.5 rounded-full bg-green-500/70" />
@@ -95,7 +95,7 @@ function ChatPage() {
           <h1 className="font-doto text-2xl md:text-3xl text-zinc-100 tracking-tight uppercase">
             Chat://Nishant
           </h1>
-          <p className="text-[11px] font-mono text-zinc-600 mt-1">
+          <p className="text-[11px] font-mono text-zinc-400 mt-1">
             // ask me anything — powered by AI, trained on my actual info
           </p>
         </div>
@@ -126,7 +126,7 @@ function ChatPage() {
       {/* Status */}
       <div className="flex items-center gap-2 mb-4 shrink-0">
         <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-        <span className="text-[10px] font-mono text-zinc-600">online now</span>
+        <span className="text-[10px] font-mono text-zinc-400">online now</span>
         {isLoading && (
           <>
             <span className="text-zinc-700">·</span>
@@ -183,7 +183,7 @@ function ChatPage() {
             onChange={e => setInput(e.target.value.slice(0, 500))}
             onKeyDown={handleKeyDown}
             placeholder={isLoading ? "Nishant is typing..." : "Type your message..."}
-            className="flex-1 bg-transparent border-none text-zinc-200 placeholder-zinc-600 text-[12px] font-mono focus-visible:outline-none"
+            className="flex-1 bg-transparent border-none text-zinc-200 placeholder-zinc-600 text-base sm:text-[12px] font-mono focus-visible:outline-none"
             disabled={isLoading}
             maxLength={500}
             autoComplete="off"

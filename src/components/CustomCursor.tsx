@@ -1,5 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 
+const shouldDisableCursor = () =>
+    window.matchMedia('(hover: none)').matches ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 const CustomCursor = () => {
     const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
@@ -38,6 +42,9 @@ const CustomCursor = () => {
     }, [handleMouseEnter, handleMouseLeave]);
 
     useEffect(() => {
+        // Don't attach any listeners on touch devices or when motion is reduced
+        if (shouldDisableCursor()) return;
+
         window.addEventListener('mousemove', updatePosition, { passive: true });
 
         const bindAllClickables = () => {
@@ -73,7 +80,7 @@ const CustomCursor = () => {
         };
     }, [updatePosition, bindElement, unbindElement]);
 
-    if (!isVisible) return null;
+    if (!isVisible || shouldDisableCursor()) return null;
 
     return (
         <div

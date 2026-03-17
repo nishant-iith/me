@@ -3,6 +3,8 @@ import { Eye } from 'lucide-react';
 
 const WORKER_URL = import.meta.env.VITE_VIEW_COUNTER_URL ?? 'https://view-counter.iith-nishant.workers.dev';
 
+const DEFAULT_VISITOR_COUNT = '1240'; // fallback when API is unavailable
+
 interface ViewResponse {
   views: number;
   timestamp: number;
@@ -56,7 +58,7 @@ export default function VisitorCounter() {
         if (err instanceof Error && err.name === 'AbortError') return;
         console.error('View counter error:', err);
         setError(true);
-        const stored = localStorage.getItem('portfolio-visits') || '1240';
+        const stored = localStorage.getItem('portfolio-visits') || DEFAULT_VISITOR_COUNT;
         setCount(parseInt(stored, 10));
       } finally {
         setLoading(false);

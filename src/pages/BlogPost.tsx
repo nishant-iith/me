@@ -1,14 +1,15 @@
+import { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, Tag, ExternalLink } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { useBlogPost } from '../features/blog/hooks/useBlogHooks';
+import { HASHNODE_HOST } from '../features/blog/constants';
 import { BlogPostSEO } from '~components/SEO';
-
-const HASHNODE_HOST = 'lets-learn-cs.hashnode.dev';
 
 const BlogPost = () => {
     const { slug } = useParams<{ slug: string }>();
     const { data: post, error } = useBlogPost(slug ?? '');
+    const [copied, setCopied] = useState(false);
     
     if (!slug) {
         return <Navigate to="/blog" replace />;
@@ -41,14 +42,6 @@ const BlogPost = () => {
                     <ArrowLeft size={14} />
                     Back to Blog
                 </Link>
-            </div>
-        );
-    }
-
-    if (!post) {
-        return (
-            <div className="flex flex-col items-center justify-center gap-4 py-20">
-                <div className="animate-pulse text-zinc-500">Loading...</div>
             </div>
         );
     }
@@ -142,11 +135,43 @@ const BlogPost = () => {
                 </div>
             </header>
 
+            {/* Share */}
+            <div className="flex items-center gap-2 pt-2 pb-4 border-b border-dashed border-zinc-800">
+                <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">share://</span>
+                <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 border border-dashed border-zinc-800 hover:border-zinc-600 rounded-sm"
+                    aria-label="Share on Twitter/X"
+                >
+                    twitter
+                </a>
+                <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 border border-dashed border-zinc-800 hover:border-zinc-600 rounded-sm"
+                    aria-label="Share on LinkedIn"
+                >
+                    linkedin
+                </a>
+                <button
+                    onClick={() => navigator.clipboard.writeText(window.location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); })}
+                    className="text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors px-2 py-1 border border-dashed border-zinc-800 hover:border-zinc-600 rounded-sm cursor-pointer"
+                    aria-label="Copy link to clipboard"
+                >
+                    {copied ? 'copied!' : 'copy link'}
+                </button>
+            </div>
+
             {post.coverImage?.url && (
                 <img
                     src={post.coverImage.url}
                     alt={post.title}
                     className="w-full rounded-lg border border-zinc-800"
+                    loading="lazy"
+                    decoding="async"
                 />
             )}
 

@@ -24,6 +24,8 @@ export default defineConfig({
           'vendor-seo': ['react-helmet-async'],
           // DOMPurify (only used by BlogPost)
           'vendor-sanitize': ['dompurify'],
+          // lucide-react icon library (large, used across all pages)
+          'vendor-lucide': ['lucide-react'],
         }
       }
     }

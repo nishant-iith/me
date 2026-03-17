@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { leetcodeApi, LEETCODE_USERNAME } from '../api/leetcodeApi';
 import type { LeetCodeData } from '../types';
 
@@ -9,21 +9,17 @@ const DEFAULT_DATA: LeetCodeData = {
 };
 
 export const useLeetCodeStats = (username = LEETCODE_USERNAME) => {
-    const { data } = useSuspenseQuery({
+    const { data, isLoading, error } = useQuery({
         queryKey: ['leetcode', 'stats', username],
-        queryFn: async () => {
-            try {
-                return await leetcodeApi.getStats(username);
-            } catch {
-                return DEFAULT_DATA;
-            }
-        },
+        queryFn: () => leetcodeApi.getStats(username),
         staleTime: 1000 * 60 * 60,
         gcTime: 1000 * 60 * 60 * 24,
-        retry: 0,
+        retry: 2,
     });
 
     return {
         data: data ?? DEFAULT_DATA,
+        isLoading,
+        error,
     };
 };

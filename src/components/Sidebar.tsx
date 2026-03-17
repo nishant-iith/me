@@ -54,10 +54,10 @@ function NavItem({ to, icon, label }: NavItemProps) {
         <NavLink
             to={to}
             className={({ isActive }) => `
-                relative flex items-center justify-center w-10 h-10 rounded-sm transition-all duration-300 group
+                relative flex items-center justify-center min-w-[44px] min-h-[44px] rounded-sm transition-all duration-300 group
                 ${isActive
                     ? 'bg-zinc-800 text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]'
-                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'}
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'}
             `}
             aria-label={label}
             title={label}
@@ -90,7 +90,7 @@ function MobileNavItem({ to, icon, label }: MobileNavItemProps) {
                 flex flex-col items-center justify-center gap-0.5 px-2 py-1 rounded-lg transition-all duration-200
                 ${isActive
                     ? 'text-zinc-100'
-                    : 'text-zinc-500 active:text-zinc-300'}
+                    : 'text-zinc-400 active:text-zinc-200'}
             `}
             aria-label={label}
         >
@@ -99,7 +99,7 @@ function MobileNavItem({ to, icon, label }: MobileNavItemProps) {
                     <div className={`p-1.5 rounded-lg transition-colors ${isActive ? 'bg-zinc-800' : ''}`}>
                         {icon}
                     </div>
-                    <span className={`text-[9px] font-mono tracking-tight ${isActive ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                    <span className={`text-[9px] font-mono tracking-tight ${isActive ? 'text-zinc-300' : 'text-zinc-400'}`}>
                         {label}
                     </span>
                 </>

@@ -114,6 +114,9 @@ export const StreamingMessage = memo(function StreamingMessage({
     const lag = target.length - (cur + 1);
     const delay = lag > 120 ? 18 + Math.random() * 12 : 65 + Math.random() * 45;
     timerRef.current = setTimeout(tick, delay);
+  // Safe: tick reads only refs (displayLenRef, contentRef, timerRef) and never closes over
+  // state directly — the empty dep array is intentional; adding deps would recreate the timer
+  // function on each character render, which would cancel and restart the typewriter timer.
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Only run when content changes — NOT on every displayLen update.

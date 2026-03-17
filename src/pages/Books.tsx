@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { Book, User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight, ExternalLink } from 'lucide-react';
 import { PatternDivider } from '~components/SharedLayout';
 
@@ -177,15 +177,16 @@ interface BookRibbonProps {
     onClick: (book: Book) => void;
 }
 
-function BookRibbon({ book, onClick }: BookRibbonProps) {
+const BookRibbon = memo(function BookRibbon({ book, onClick }: BookRibbonProps) {
     return (
         <div
             onClick={() => onClick(book)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(book); } }}
             className={`
                 group relative cursor-pointer
                 flex items-center justify-between
                 py-4 px-6 md:px-8
-                bg-[#18181b] border-l-2 border-y border-r border-zinc-800/50 
+                bg-[#18181b] border-l-2 border-y border-r border-zinc-800/50
                 ${book.bgClass}
                 hover:border-l-4 hover:pl-[30px] ${book.colorClass}
                 transition-all duration-200 ease-out
@@ -221,7 +222,7 @@ function BookRibbon({ book, onClick }: BookRibbonProps) {
             </div>
         </div>
     );
-}
+});
 
 interface ReadingPaneProps {
     book: Book;
@@ -229,15 +230,37 @@ interface ReadingPaneProps {
 }
 
 function ReadingPane({ book, onBack }: ReadingPaneProps) {
+    const backButtonRef = useRef<HTMLButtonElement>(null);
+
+    // Focus the back button when the pane opens
+    useEffect(() => {
+        backButtonRef.current?.focus();
+    }, []);
+
+    // Close on Escape key
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onBack();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onBack]);
+
     return (
-        <div className="flex flex-col h-full bg-[#0a0a0a] animate-in fade-in zoom-in-95 duration-200 absolute inset-0 z-50 overflow-hidden">
+        <div
+            className="flex flex-col h-full bg-[#0a0a0a] animate-in fade-in zoom-in-95 duration-200 absolute inset-0 z-50 overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label={book.title}
+        >
 
             {/* Navigation */}
             <div className="h-16 border-b border-zinc-800 flex items-center justify-between px-6 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-20">
                 <button
+                    ref={backButtonRef}
                     onClick={onBack}
                     className="hover:bg-zinc-800 p-2 -ml-2 rounded-lg text-zinc-400 hover:text-zinc-100 transition-colors flex items-center gap-2 text-sm font-medium"
-                    aria-label="Go back to book list"
+                    aria-label="Close book detail and go back to book list"
                 >
                     <ArrowLeft size={18} />
                     <span className="font-mono">./stack</span>

@@ -1,0 +1,20 @@
+{
+  "name": "Nishant Verma — Portfolio",
+  "short_name": "Nishant",
+  "description": "Portfolio of Nishant Verma, Software Engineering student at IIT Hyderabad",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["portfolio", "technology"],
+  "lang": "en"
+}

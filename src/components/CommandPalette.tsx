@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, Book, User, Code, FileText, Github, Linkedin, Mail, ExternalLink, History, MessageSquare } from 'lucide-react';
 
@@ -10,14 +10,46 @@ interface Action {
     perform: () => void;
 }
 
+// Module-level constant — static actions that don't depend on navigate.
+// Created once at module load time, never recreated.
+const STATIC_ACTIONS: Action[] = [
+    {
+        id: 'resume',
+        title: 'Download Resume',
+        icon: <FileText size={18} />,
+        perform: () => window.open('/Nishant_IITH.pdf', '_blank', 'noopener,noreferrer')
+    },
+    {
+        id: 'github',
+        title: 'GitHub',
+        icon: <Github size={18} />,
+        perform: () => window.open('https://github.com/nishant-iith', '_blank', 'noopener,noreferrer')
+    },
+    {
+        id: 'linkedin',
+        title: 'LinkedIn',
+        icon: <Linkedin size={18} />,
+        perform: () => window.open('https://linkedin.com/in/nishant-iith', '_blank', 'noopener,noreferrer')
+    },
+    {
+        id: 'email',
+        title: 'Send Email',
+        icon: <Mail size={18} />,
+        perform: () => { window.location.href = 'mailto:ee22btech11038@iith.ac.in'; }
+    },
+];
+
 export default function CommandPalette() {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [activeIndex, setActiveIndex] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
-    const actions: Action[] = [
+    // Only navigate-dependent actions live in useMemo.
+    // STATIC_ACTIONS are appended from the module-level constant.
+    const actions: Action[] = useMemo(() => [
         {
             id: 'home',
             title: 'Home',
@@ -80,31 +112,8 @@ export default function CommandPalette() {
             icon: <MessageSquare size={18} />,
             perform: () => navigate('/chat')
         },
-        {
-            id: 'resume',
-            title: 'Download Resume',
-            icon: <FileText size={18} />,
-            perform: () => window.open('/Nishant_IITH.pdf', '_blank', 'noopener,noreferrer')
-        },
-        {
-            id: 'github',
-            title: 'GitHub',
-            icon: <Github size={18} />,
-            perform: () => window.open('https://github.com/nishant-iith', '_blank', 'noopener,noreferrer')
-        },
-        {
-            id: 'linkedin',
-            title: 'LinkedIn',
-            icon: <Linkedin size={18} />,
-            perform: () => window.open('https://linkedin.com/in/nishant-iith', '_blank', 'noopener,noreferrer')
-        },
-        {
-            id: 'email',
-            title: 'Send Email',
-            icon: <Mail size={18} />,
-            perform: () => window.location.href = 'mailto:ee22btech11038@iith.ac.in'
-        }
-    ];
+        ...STATIC_ACTIONS,
+    ], [navigate]);
 
     const filteredActions = actions.filter(action =>
         action.title.toLowerCase().includes(query.toLowerCase())
@@ -165,7 +174,27 @@ export default function CommandPalette() {
             ></div>
 
             {/* Modal */}
-            <div className="relative w-full max-w-lg bg-[#18181b] border border-dashed border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div
+                ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Command palette"
+                className="relative w-full max-w-lg bg-[#18181b] border border-dashed border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                onKeyDown={(e) => {
+                    if (e.key === 'Tab' && modalRef.current) {
+                        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+                            'button, input, a[href], [tabindex]:not([tabindex="-1"])'
+                        );
+                        const first = focusable[0];
+                        const last = focusable[focusable.length - 1];
+                        if (e.shiftKey) {
+                            if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+                        } else {
+                            if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+                        }
+                    }
+                }}
+            >
                 {/* Search Bar */}
                 <div className="flex items-center px-4 py-3 border-b border-dashed border-zinc-800">
                     <Search size={18} className="text-zinc-600 mr-3" />

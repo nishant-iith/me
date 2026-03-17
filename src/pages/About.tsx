@@ -7,6 +7,9 @@ export default function About() {
     return (
         <section id="about" className="mb-20 space-y-8 animate-in fade-in duration-500">
 
+            {/* Visually-hidden H1 for SEO */}
+            <h1 className="sr-only">About Nishant Verma — IITH Student</h1>
+
             {/* 1. TOP SECTION: IDENTITY */}
             <div className="flex flex-col md:flex-row gap-12 items-center">
 
@@ -92,7 +95,7 @@ export default function About() {
                     </h2>
 
                     {/* Bio Text */}
-                    <p className="text-zinc-500 font-mono text-sm leading-relaxed mt-4 pl-5 border-zinc-800 group-hover:border-zinc-700 transition-colors">
+                    <p className="text-zinc-400 font-mono text-sm leading-relaxed mt-4 pl-5 border-zinc-800 group-hover:border-zinc-700 transition-colors">
                         Simple as that. I enjoy building things that look good and work even better. Currently at IIT Hyderabad, love to explore new things and build cool stuff. If you vibe with my work or just want to chat about tech, I'm always open.
                     </p>
 
@@ -162,7 +165,7 @@ export default function About() {
                             </div>
                             <div>
                                 <span className="font-mono text-base text-zinc-300 group-hover:text-white transition-colors block">Timeline</span>
-                                <span className="font-mono text-xs text-zinc-500 group-hover:text-zinc-400">My journey through projects, milestones, and achievements</span>
+                                <span className="font-mono text-xs text-zinc-400 group-hover:text-zinc-300">My journey through projects, milestones, and achievements</span>
                             </div>
                         </div>
                     </Link>
@@ -180,7 +183,7 @@ export default function About() {
                             </div>
                             <div>
                                 <span className="font-mono text-base text-zinc-300 group-hover:text-white transition-colors block">My Toolbox</span>
-                                <span className="font-mono text-xs text-zinc-500 group-hover:text-zinc-400">The software and hardware I use daily</span>
+                                <span className="font-mono text-xs text-zinc-400 group-hover:text-zinc-300">The software and hardware I use daily</span>
                             </div>
                         </div>
                     </Link>
@@ -238,7 +241,7 @@ function InfoRow({ index, label, value, isStatus }: InfoRowProps) {
             <span className="font-mono text-[8px] text-zinc-700 group-hover:text-zinc-500 mr-3 transition-colors">{index}</span>
 
             {/* Label */}
-            <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest min-w-[70px] shrink-0 group-hover:text-zinc-400 transition-colors">{label}</span>
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest min-w-[70px] shrink-0 group-hover:text-zinc-300 transition-colors">{label}</span>
 
             {/* Dotted separator */}
             <div className="h-px flex-1 bg-zinc-900 group-hover:bg-zinc-800 transition-colors mx-3"></div>
@@ -275,7 +278,7 @@ function HobbyItem({ index, title, desc }: HobbyItemProps) {
                 <span className="font-mono text-[9px] text-zinc-700 mt-0.5 shrink-0">{index}</span>
                 <div className="flex-1">
                     <h4 className="font-mono text-sm text-zinc-400 group-hover:text-white transition-colors">{title}</h4>
-                    <p className="font-mono text-[11px] text-zinc-600 group-hover:text-zinc-500 mt-0.5 leading-relaxed transition-colors">{desc}</p>
+                    <p className="font-mono text-[11px] text-zinc-500 group-hover:text-zinc-400 mt-0.5 leading-relaxed transition-colors">{desc}</p>
                 </div>
             </div>
         </div>

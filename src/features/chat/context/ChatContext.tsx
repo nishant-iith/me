@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import type { ChatMessage } from '../types';
 import { streamChat } from '../api/chatApi';
 import { INITIAL_MESSAGE } from '../constants';
@@ -7,14 +8,29 @@ import { INITIAL_MESSAGE } from '../constants';
 const STORAGE_KEY = 'portfolio-chat-history';
 const MAX_STORED_MESSAGES = 50;
 
+function sanitizeUserInput(str: string): string {
+  return DOMPurify.sanitize(str, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+}
+
+function isValidChatMessage(msg: unknown): msg is ChatMessage {
+  return (
+    typeof msg === 'object' && msg !== null &&
+    'id' in msg && typeof (msg as Record<string, unknown>).id === 'string' &&
+    'role' in msg && ['user', 'assistant'].includes((msg as Record<string, unknown>).role as string) &&
+    'content' in msg && typeof (msg as Record<string, unknown>).content === 'string'
+  );
+}
+
 const loadMessages = (): ChatMessage[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return [INITIAL_MESSAGE];
-    const parsed: ChatMessage[] = JSON.parse(stored);
+    const parsed: unknown = JSON.parse(stored);
     if (!Array.isArray(parsed) || parsed.length === 0) return [INITIAL_MESSAGE];
+    const valid = parsed.filter(isValidChatMessage);
+    if (valid.length === 0) return [INITIAL_MESSAGE];
     // Clear any in-progress streaming flags left over from a previous session
-    return parsed.map(m => m.isStreaming ? { ...m, isStreaming: false } : m);
+    return valid.map(m => m.isStreaming ? { ...m, isStreaming: false } : m);
   } catch {
     return [INITIAL_MESSAGE];
   }
@@ -70,10 +86,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || isLoading) return;
 
+    const sanitizedContent = sanitizeUserInput(content.trim());
+    if (!sanitizedContent) return;
+
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: 'user',
-      content: content.trim(),
+      content: sanitizedContent,
       timestamp: Date.now()
     };
 
