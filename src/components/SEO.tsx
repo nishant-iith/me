@@ -33,7 +33,7 @@ export function BreadcrumbSEO({ items }: { items: BreadcrumbItem[] }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
 }
 
-const BASE_URL = 'https://nishant-sde.pages.dev';
+const BASE_URL = import.meta.env.VITE_BASE_URL ?? 'https://nishant-sde.pages.dev';
 const DEFAULT_IMAGE = `${BASE_URL}/favicon.svg`;
 
 export function SEO({

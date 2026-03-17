@@ -8,7 +8,7 @@ import { HASHNODE_HOST } from '../features/blog/constants';
 import type { HashnodePost } from '../features/blog/types';
 
 const Blog = () => {
-    const { data: posts } = useBlogPosts(10);
+    const { data: posts, isLoading } = useBlogPosts(10);
     const prefetchPost = usePrefetchBlogPost();
     const queryClient = useQueryClient();
 
@@ -48,7 +48,24 @@ const Blog = () => {
 
             {/* Blog Posts List */}
             <div className="flex flex-col gap-4">
-                {posts.length === 0 ? (
+                {isLoading ? (
+                    Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="p-5 border border-dashed border-zinc-800 rounded-sm animate-pulse">
+                            <div className="flex flex-col gap-3">
+                                <div className="flex justify-between gap-4">
+                                    <div className="h-4 bg-zinc-800 rounded w-3/4"></div>
+                                    <div className="h-4 w-4 bg-zinc-800 rounded shrink-0 mt-0.5"></div>
+                                </div>
+                                <div className="h-3 bg-zinc-800/60 rounded w-full"></div>
+                                <div className="h-3 bg-zinc-800/60 rounded w-2/3"></div>
+                                <div className="flex gap-4 pt-2">
+                                    <div className="h-3 w-20 bg-zinc-800/40 rounded"></div>
+                                    <div className="h-3 w-16 bg-zinc-800/40 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : posts.length === 0 ? (
                     <p className="font-mono text-zinc-500 text-sm">No posts yet. Check back soon!</p>
                 ) : (
                     posts.map((post: HashnodePost) => (

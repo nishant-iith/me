@@ -19,7 +19,7 @@ const Home = () => {
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div className="flex flex-col gap-2">
                         <span className="font-mono text-zinc-400 text-sm flex items-center gap-2">
-                            Hi, I'm <span className="animate-pulse">👋</span>
+                            Hi, I'm <span className="motion-safe:animate-pulse">👋</span>
                         </span>
                         <div className="flex items-center gap-3">
                             <h1 className="font-doto text-5xl sm:text-6xl font-bold tracking-tight text-zinc-100 uppercase">
@@ -278,7 +278,7 @@ const TypewriterEffect = ({ words }: TypewriterEffectProps) => {
             <span className="font-mono text-zinc-400 text-sm sm:text-base">
                 {words[index].substring(0, subIndex)}
             </span>
-            <span className="w-[2px] h-4 ml-1 bg-blue-500 animate-pulse"></span>
+            <span className="w-[2px] h-4 ml-1 bg-blue-500 motion-safe:animate-pulse"></span>
         </div>
     );
 };

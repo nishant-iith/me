@@ -6,7 +6,6 @@ import ChatWidget from '~components/ChatWidget';
 import CommandPalette from '~components/CommandPalette';
 import SuspenseLoader from '~components/SuspenseLoader';
 import { BackToTop } from './components/BackToTop';
-import { SvgFilters } from './components/SvgFilters';
 import { SnackbarProvider } from './providers/SnackbarProvider';
 import { ChatProvider } from '@/features/chat';
 import {
@@ -43,6 +42,12 @@ function App() {
     <SnackbarProvider>
       <ChatProvider>
       <div className="relative min-h-screen text-zinc-100 font-sans selection:bg-zinc-800 selection:text-zinc-200 bg-[#18181b]">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-[200] focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-zinc-900 focus:text-zinc-100 focus:border focus:border-zinc-600 focus:rounded-md focus:font-mono focus:text-sm"
+        >
+          Skip to content
+        </a>
         {/* SIDE PATTERN - LEFT */}
         <div className="bg-[#18181b] h-full w-8 border-zinc-800 border-dashed overflow-hidden fixed left-0 top-0 bottom-0 z-0 hidden border-r md:flex">
           <div
@@ -72,13 +77,12 @@ function App() {
         <div className="aura-overlay fixed inset-0 pointer-events-none z-50"></div>
         <div className="scanlines fixed inset-0 pointer-events-none z-40"></div>
 
-        <SvgFilters />
         <BackToTop />
 
         <Sidebar />
 
         <div className="flex justify-center items-start min-h-screen px-4 lg:px-8 py-8 pb-24 lg:pb-8 relative z-10">
-          <main className="w-full max-w-2xl">
+          <main id="main-content" className="w-full max-w-2xl">
             <div className="relative min-h-[85vh] border-x border-dashed border-zinc-800 px-4 sm:px-10 py-12">
               <SuspenseLoader>
                 <Routes>

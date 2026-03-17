@@ -90,7 +90,7 @@ export default function About() {
 
                     {/* Heading */}
                     <h2 className="text-xl font-mono font-medium text-zinc-400 tracking-tight flex items-center gap-3 transition-colors">
-                        <span className="w-2 h-2 bg-zinc-600 animate-pulse transition-colors"></span>
+                        <span className="w-2 h-2 bg-zinc-600 motion-safe:animate-pulse transition-colors"></span>
                         I love what I do.
                     </h2>
 
