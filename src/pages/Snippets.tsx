@@ -1,16 +1,26 @@
 import { useState, useEffect, memo } from 'react';
-import { createHighlighter, type Highlighter } from 'shiki';
+import { createHighlighterCore, type HighlighterCore } from 'shiki/core';
+import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 
-// Singleton highlighter — created once, reused for all snippets
-let highlighterInstance: Highlighter | null = null;
-let highlighterPromise: Promise<Highlighter> | null = null;
+// Singleton highlighter — created once, reused for all snippets.
+// Uses shiki/core with explicit language imports so ONLY the languages we use are bundled
+// (the full `shiki` entry otherwise emits grammar chunks for every language).
+let highlighterInstance: HighlighterCore | null = null;
+let highlighterPromise: Promise<HighlighterCore> | null = null;
 
-const getHighlighter = (): Promise<Highlighter> => {
+const getHighlighter = (): Promise<HighlighterCore> => {
     if (highlighterInstance) return Promise.resolve(highlighterInstance);
     if (!highlighterPromise) {
-        highlighterPromise = createHighlighter({
-            themes: ['github-dark'],
-            langs: ['cpp', 'typescript', 'python', 'bash', 'javascript'],
+        highlighterPromise = createHighlighterCore({
+            themes: [import('shiki/themes/github-dark.mjs')],
+            langs: [
+                import('shiki/langs/cpp.mjs'),
+                import('shiki/langs/typescript.mjs'),
+                import('shiki/langs/python.mjs'),
+                import('shiki/langs/bash.mjs'),
+                import('shiki/langs/javascript.mjs'),
+            ],
+            engine: createOnigurumaEngine(import('shiki/wasm')),
         }).then((h) => {
             highlighterInstance = h;
             return h;
