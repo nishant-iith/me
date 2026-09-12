@@ -13,6 +13,10 @@ export default defineConfig({
     // Strip console.log/warn/error in production to prevent info leaks
     minify: 'esbuild',
     target: 'es2020',
+    // The shiki highlighter lazily loads its cpp grammar (~730 kB) and the oniguruma wasm engine
+    // (~620 kB) only on the Snippets page. Both are required and code-split; raise the warning
+    // limit so the build output stays meaningful.
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks: {
