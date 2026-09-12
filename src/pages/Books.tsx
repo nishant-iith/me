@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, memo } from 'react';
-import { Book, User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight, ExternalLink } from 'lucide-react';
+import { User, Quote, ArrowLeft, Terminal, Clock, ArrowRight, CornerDownRight, ExternalLink } from 'lucide-react';
 import { PatternDivider } from '~components/SharedLayout';
 import { type Book, booksData, groupedBooks } from '../data/books';
 
