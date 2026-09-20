@@ -25,7 +25,7 @@ Personal portfolio of **Nishant Verma** - a Software Engineer and student at IIT
 - **State Management**: React Context, TanStack Query
 - **Routing**: React Router v7
 - **Backend**: Cloudflare Workers (Edge)
-- **Deployment**: Vercel
+- **Deployment**: Cloudflare Pages (`nishant-sde.pages.dev`)
 
 ## Getting Started
 
@@ -75,11 +75,13 @@ src/
 
 ## Deployment
 
-### Vercel (Recommended)
+### Cloudflare Pages (production)
+
+Deploys are manual (Pages has no Git integration) — see `E:\playbooks\portfolio.md`.
 
 ```bash
-npm i -g vercel
-vercel
+npm run build
+npx wrangler pages deploy dist --project-name=nishant-sde --branch=main
 ```
 
 ### Manual Build

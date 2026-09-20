@@ -4,7 +4,7 @@ IMPORTANT: Agent-only document — DO NOT DEPLOY
 
 This file is intended only for developer/agent use (automated coding assistants such as OpenCode).
 Keep it in the repository root so agents can read it, but do NOT include it in production deployments.
-A `.vercelignore` file is added to ensure this file and other agent-only artifacts are excluded from Vercel deployments.
+A `.vercelignore` file is added to ensure this file and other agent-only artifacts are excluded from deployments. The production target is **Cloudflare Pages** (project `nishant-sde`); see `E:\playbooks\portfolio.md`.
 
 This document is written for automated/agentic coding assistants that will operate in this repository.
 It collects the most important commands, repository conventions, and coding-style rules so agents can make safe, consistent changes.
@@ -199,7 +199,7 @@ Appendix — quick file references
 
 20) Final safeguards
 
-- AGENTS.md and any `.opencode/` or agent-only directories MUST NOT be deployed to production. We added `.vercelignore` to prevent accidental Vercel deployments; ensure similar ignores exist for other deployment pipelines.
+- AGENTS.md and any `.opencode/` or agent-only directories MUST NOT be deployed to production. We added `.vercelignore` to prevent accidental deployments; ensure similar ignores exist for other deployment pipelines.
 - Do not expose secrets in PRs or commit messages. If a check requires a token, use environment variables in CI or ask a maintainer to run the step locally.
 - If you are blocked by missing credentials or a destructive action (force-push, rollback, secret rotation), ask exactly one targeted question and recommend a default.
 
