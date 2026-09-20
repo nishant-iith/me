@@ -65,9 +65,8 @@ const Home = () => {
                 <div className="flex flex-col gap-6">
                     <EducationItem
                         school="Indian Institute of Technology, Hyderabad"
-                        degree="Bachelor of Technology in Biomedical Engineering"
+                        degree="Bachelor of Technology"
                         period="2022 - 2026"
-                        grade="CGPA: 8.20"
                         logo={logoIITH}
                         courses={{
                             "Computer Science": [
@@ -153,7 +152,7 @@ interface EducationItemProps {
     school: string;
     degree: string;
     period: string;
-    grade: string;
+    grade?: string;
     logo?: string;
     courses?: Record<string, string[]>;
 }
@@ -198,10 +197,12 @@ const EducationItem = ({ school, degree, period, grade, logo, courses = {} }: Ed
                     </div>
                     <div className="text-xs text-blue-400 font-mono mt-0.5">{degree}</div>
                     <div className="mt-2 flex items-center gap-3">
-                        <span className="inline-flex items-center gap-2 px-2 py-1 rounded border border-dashed border-zinc-800 bg-zinc-900/30 text-[10px] font-mono text-zinc-500">
-                            <BadgeCheck size={12} className="text-zinc-600" />
-                            <span>{grade}</span>
-                        </span>
+                        {grade && (
+                            <span className="inline-flex items-center gap-2 px-2 py-1 rounded border border-dashed border-zinc-800 bg-zinc-900/30 text-[10px] font-mono text-zinc-500">
+                                <BadgeCheck size={12} className="text-zinc-600" />
+                                <span>{grade}</span>
+                            </span>
+                        )}
                         {totalCourses > 0 && (
                             <span className="inline-flex items-center gap-1 text-[10px] font-mono text-zinc-600 hover:text-zinc-400 transition-colors">
                                 <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
