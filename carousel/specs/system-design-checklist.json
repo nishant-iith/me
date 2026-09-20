@@ -1,0 +1,191 @@
+{
+  "title": "System design checklist for 0-2 yr engineers",
+  "author": "Nishant Verma",
+  "out": "system-design-checklist.pdf",
+  "pages": [
+    {
+      "label": "resource  ·  save this",
+      "title": ["SYSTEM DESIGN", "CHECKLIST"],
+      "title_y": 1050,
+      "title_size": 150,
+      "body": ["For engineers with 0 to 2 years", "of experience.", "", "12 slides  ·  the questions that", "actually decide a design review."],
+      "body_y": 720,
+      "body_size": 21,
+      "leading": 44,
+      "takeaway": "Name the constraints before the technology."
+    },
+    {
+      "label": "step 1  ·  before you draw anything",
+      "title": ["REQUIREMENTS FIRST"],
+      "title_size": 112,
+      "body": [
+        "Functional: what must it do?",
+        "Non-functional: how fast, how available,",
+        "how consistent, how cheap?",
+        "",
+        "Write the numbers down before choosing",
+        "any tool. 'Fast' is not a requirement."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Constraints choose the architecture."
+    },
+    {
+      "label": "step 2  ·  the eight numbers",
+      "title": ["NAME THESE EIGHT"],
+      "title_size": 112,
+      "body": [
+        "1.  daily active users",
+        "2.  peak requests per second",
+        "3.  data size now, and in a year",
+        "4.  read to write ratio",
+        "5.  latency budget per request",
+        "6.  consistency requirement",
+        "7.  availability target",
+        "8.  cost ceiling per month"
+      ],
+      "body_size": 18,
+      "leading": 46,
+      "takeaway": "A design without numbers is a guess."
+    },
+    {
+      "label": "step 3  ·  data layer",
+      "title": ["DATA BEFORE CODE"],
+      "title_size": 112,
+      "body": [
+        "What are the access patterns, not just",
+        "the entities?",
+        "Which queries run hottest, and which",
+        "indexes serve them?",
+        "What is the retention policy?",
+        "Where does the data live for compliance?"
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Schema follows queries, never the reverse."
+    },
+    {
+      "label": "step 4  ·  caching",
+      "title": ["CACHE WITH INTENT"],
+      "title_size": 112,
+      "body": [
+        "What exactly are you caching, and why?",
+        "Where: client, CDN, app, or database?",
+        "How does it invalidate? What is the TTL?",
+        "What happens on a cold start or a",
+        "cache stampede?",
+        "A cache you cannot invalidate is a bug."
+      ],
+      "body_size": 18,
+      "leading": 47,
+      "takeaway": "Invalidation is the design, caching is the trick."
+    },
+    {
+      "label": "step 5  ·  scale",
+      "title": ["READS AND WRITES"],
+      "title_size": 112,
+      "body": [
+        "Reads: replicas, cache, denormalisation.",
+        "Writes: sharding key, hot partitions,",
+        "backfill strategy, migration plan.",
+        "",
+        "Always ask: what is the sharding key,",
+        "and what makes it a hot partition?"
+      ],
+      "body_size": 18,
+      "leading": 48,
+      "takeaway": "The key choice decides the ceiling."
+    },
+    {
+      "label": "step 6  ·  async work",
+      "title": ["QUEUES AND RETRIES"],
+      "title_size": 112,
+      "body": [
+        "What work leaves the request path?",
+        "Is every consumer idempotent?",
+        "Retries with backoff and jitter?",
+        "Dead letter queue, and who watches it?",
+        "Does ordering matter, and for what?"
+      ],
+      "body_size": 18,
+      "leading": 48,
+      "takeaway": "Assume every job runs twice."
+    },
+    {
+      "label": "step 7  ·  failure",
+      "title": ["DESIGN FOR BREAKAGE"],
+      "title_size": 112,
+      "body": [
+        "Timeouts on every outbound call.",
+        "Circuit breakers on dependencies.",
+        "Graceful degradation: what still works?",
+        "Blast radius of one bad deploy?",
+        "Rollback plan, and how fast?"
+      ],
+      "body_size": 18,
+      "leading": 48,
+      "takeaway": "Everything fails. Plan the behaviour."
+    },
+    {
+      "label": "step 8  ·  observability",
+      "title": ["YOU CANNOT FIX", "WHAT YOU CANNOT SEE"],
+      "title_size": 100,
+      "body": [
+        "Metrics: latency percentiles, error rate,",
+        "saturation, throughput.",
+        "Logs with request IDs. Traces across services.",
+        "An SLO with an error budget.",
+        "Alert on symptoms users feel, not causes."
+      ],
+      "body_size": 18,
+      "leading": 47,
+      "takeaway": "p99 is the user experience, not the average."
+    },
+    {
+      "label": "step 9  ·  security and cost",
+      "title": ["THE TWO QUIET ONES"],
+      "title_size": 112,
+      "body": [
+        "Auth: who can do what, and where is that",
+        "checked?",
+        "Secrets: storage, rotation, blast radius.",
+        "PII: what is stored, and for how long?",
+        "Rate limits, and cost per request."
+      ],
+      "body_size": 18,
+      "leading": 48,
+      "takeaway": "Both are design inputs, not afterthoughts."
+    },
+    {
+      "label": "step 10  ·  the review",
+      "title": ["THREE QUESTIONS", "THAT END REVIEWS"],
+      "title_size": 100,
+      "body": [
+        "1.  What breaks first when load doubles?",
+        "2.  How do we roll this back in ten minutes?",
+        "3.  What changes if traffic grows 10x?"
+      ],
+      "body_size": 19,
+      "leading": 54,
+      "takeaway": "If you cannot answer, the design is not done."
+    },
+    {
+      "label": "the point",
+      "title": ["TRADE-OFFS,", "NOT TOOLS"],
+      "title_size": 112,
+      "body": [
+        "Nobody is asking whether you know Kafka.",
+        "They are asking whether you know why",
+        "you chose it, and what it costs you.",
+        "",
+        "Design is the set of trade-offs you can",
+        "defend - not the list of things you used."
+      ],
+      "body_size": 19,
+      "leading": 46,
+      "takeaway": "Defend the choice, not the logo.",
+      "note": "system design checklist  ·  save for your next review",
+      "ai_mark": true
+    }
+  ]
+}
