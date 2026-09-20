@@ -3,6 +3,11 @@ name = "chatbot-api"
 main = "worker/chatbot-api.js"
 compatibility_date = "2024-01-01"
 
+# Smart Placement: run this worker near the Gemini API (US) so requests do not originate from a
+# region Gemini blocks ("User location is not supported for the API use").
+[placement]
+mode = "smart"
+
 # KV Namespace binding for rate limiting
 [[kv_namespaces]]
 binding = "CHATBOT_KV"

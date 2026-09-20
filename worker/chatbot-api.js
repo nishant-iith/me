@@ -9,9 +9,11 @@ const ALLOWED_ORIGINS = [
   'http://localhost:3000'
 ];
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
+// Model fallback chain: try the next model if one is unavailable (404) or out of quota (429).
+const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-flash-latest'];
+const GEMINI_MODEL = GEMINI_MODELS[0];
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-const GEMINI_STREAM_URL = `${GEMINI_BASE_URL}/${GEMINI_MODEL}:streamGenerateContent`;
+const geminiStreamUrl = (model) => `${GEMINI_BASE_URL}/${model}:streamGenerateContent`;
 
 const SYSTEM_PROMPT = `You are Nishant Verma. You are responding as yourself in first person on your portfolio website's chat widget. Visitors may be recruiters, fellow developers, or curious people.
 
@@ -93,11 +95,11 @@ function getApiKeys(env) {
   return keys;
 }
 
-// Call Gemini API with a specific key — returns the fetch Response.
-// A 25-second AbortSignal timeout prevents the worker from hanging if
-// Gemini is unresponsive (Cloudflare Workers have a 30-second CPU limit).
-async function callGemini(apiKey, geminiContents) {
-  return fetch(`${GEMINI_STREAM_URL}?alt=sse&key=${apiKey}`, {
+// Call Gemini API with a specific key + model — returns the fetch Response.
+// A 10-second AbortSignal timeout prevents the worker from hanging (Cloudflare cancels Workers that
+// do not return a response promptly).
+async function callGemini(apiKey, model, geminiContents) {
+  return fetch(`${geminiStreamUrl(model)}?alt=sse&key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -109,7 +111,7 @@ async function callGemini(apiKey, geminiContents) {
         maxOutputTokens: 512
       }
     }),
-    signal: AbortSignal.timeout(25000) // 25-second timeout
+    signal: AbortSignal.timeout(10000) // 10-second timeout
   });
 }
 
@@ -120,53 +122,47 @@ async function callGeminiWithFailover(env, geminiContents) {
     return { ok: false, status: 500, errorMsg: 'AI service not configured.' };
   }
 
-  for (let i = 0; i < keys.length; i++) {
-    let response;
-    try {
-      response = await callGemini(keys[i], geminiContents);
-    } catch (err) {
-      // Handle AbortError (timeout) — surface a 504 Gateway Timeout
-      if (err.name === 'AbortError' || err.name === 'TimeoutError') {
-        console.error(`Gemini key ${i + 1} timed out after 25s`);
-        // If there are more keys, try them; otherwise return 504
-        if (i < keys.length - 1) {
-          console.log(`Trying key ${i + 2} after timeout on key ${i + 1}...`);
-          continue;
-        }
-        return { ok: false, status: 504, errorMsg: 'AI service timed out. Please try again.' };
+  // Overall deadline so we always return a response promptly (Cloudflare cancels hung Workers).
+  const DEADLINE_MS = 20000;
+  const startedAt = Date.now();
+  let lastStatus = 0;
+
+  for (const model of GEMINI_MODELS) {
+    for (let i = 0; i < keys.length; i++) {
+      if (Date.now() - startedAt > DEADLINE_MS) break;
+
+      let response;
+      try {
+        response = await callGemini(keys[i], model, geminiContents);
+      } catch (err) {
+        // Timeout / network error — try the next key/model.
+        console.error(`Gemini ${model} key ${i + 1} ${err.name || 'fetch error'}`);
+        continue;
       }
-      // Unexpected network error
-      console.error(`Gemini key ${i + 1} fetch error:`, err);
-      return { ok: false, status: 502, errorMsg: 'AI service unavailable. Please try again shortly.' };
-    }
 
-    if (response.ok) {
-      return { ok: true, response };
-    }
+      if (response.ok) {
+        console.log(`Gemini ok: model=${model} key=${i + 1}`);
+        return { ok: true, response, model };
+      }
 
-    const errText = await response.text().catch(() => '');
-    const status = response.status;
-    console.error(`Gemini key ${i + 1} error: ${status}`, errText.slice(0, 300));
-
-    // If 429 (rate limited) and we have more keys, try the next one
-    if (status === 429 && i < keys.length - 1) {
-      console.log(`Key ${i + 1} rate limited, trying key ${i + 2}...`);
-      continue;
+      const errText = await response.text().catch(() => '');
+      lastStatus = response.status;
+      console.error(`Gemini ${model} key ${i + 1} error: ${response.status}`, errText.slice(0, 300));
+      // Model unavailable (404) or out of quota (429) -> next model.
+      // Any other status -> try the next key, then the next model.
     }
-
-    // Return appropriate user-facing error
-    if (status === 429) {
-      return { ok: false, status: 429, errorMsg: 'I\'m getting a lot of questions right now. Try again in a minute!' };
-    }
-    if (status === 400) {
-      return { ok: false, status: 400, errorMsg: 'Something went wrong with the request. Try rephrasing?' };
-    }
-    if (status === 403) {
-      return { ok: false, status: 502, errorMsg: 'AI service temporarily unavailable.' };
-    }
-    return { ok: false, status: 502, errorMsg: 'AI service unavailable. Please try again shortly.' };
   }
 
+  // All models/keys failed — map the last status to a user-facing message.
+  if (lastStatus === 429) {
+    return { ok: false, status: 429, errorMsg: 'I\'m getting a lot of questions right now. Try again in a minute!' };
+  }
+  if (lastStatus === 400) {
+    return { ok: false, status: 400, errorMsg: 'Something went wrong with the request. Try rephrasing?' };
+  }
+  if (lastStatus === 403) {
+    return { ok: false, status: 502, errorMsg: 'AI service temporarily unavailable.' };
+  }
   return { ok: false, status: 502, errorMsg: 'AI service unavailable. Please try again shortly.' };
 }
 
@@ -211,7 +207,7 @@ export default {
       for (let i = 0; i < keys.length; i++) {
         try {
           const testResponse = await fetch(
-            `${GEMINI_STREAM_URL}?alt=sse&key=${keys[i]}`,
+            `${geminiStreamUrl(GEMINI_MODELS[0])}?alt=sse&key=${keys[i]}`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -454,9 +450,9 @@ export default {
         }
       };
 
-      // Run stream processing — must be awaited so the TransformStream stays open
-      // until all data is written before the Response is returned to the runtime.
-      await processStream();
+      // Start pumping the stream but DO NOT await it — awaiting blocks the Response and can make
+      // the Worker look "hung" to the runtime. The Response body keeps the Worker alive until done.
+      processStream().catch(err => console.error('Stream pump error:', err));
 
       return new Response(readable, {
         headers: {
