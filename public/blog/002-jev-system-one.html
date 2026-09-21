@@ -26,32 +26,8 @@
 <h2>Three kinds of questions</h2>
 <p>Jev gives you exactly three primitives. Think of them as three gut-check questions that a sharp person could answer in a few seconds.</p>
 <p><img alt="The three TypeSafe primitives" src="https://nishant-sde.pages.dev/blog/images/jev-primitives.png" /></p>
-<table>
-<thead>
-<tr>
-<th>Primitive</th>
-<th>The question</th>
-<th>What you get</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Choice</td>
-<td>Which option fits?</td>
-<td>the option, a probability for each option, and confidence</td>
-</tr>
-<tr>
-<td>Score</td>
-<td>How does this rate?</td>
-<td>a score, probabilities, and confidence</td>
-</tr>
-<tr>
-<td>Noul</td>
-<td>Is this true?</td>
-<td>a probability from 0 to 1</td>
-</tr>
-</tbody>
-</table>
+<p>Choice asks which option fits, and returns the option plus a probability for every option. Score rates the state against ordered levels, like "calm" to "very angry". Noul asks whether a statement is true and returns a probability between 0 and 1.</p>
+<p>Choice and Score also return a confidence score, so your code can decide whether to act on the answer at all.</p>
 <p>You send one block of text, which they call the state, and as many questions as you want. Jev answers them all at the same time, in one pass. Adding a fifth question does not make it meaningfully slower.</p>
 <p>Here is what a real request looks like. A frustrated customer writes in, and you ask three things at once.</p>
 <pre><code class="language-bash">curl -X POST https://api.typesafe.ai/v1/systemone \
