@@ -1,0 +1,182 @@
+{
+  "title": "How to practice DSA so it actually sticks",
+  "author": "Nishant Verma",
+  "out": "dsa-practice.pdf",
+  "pages": [
+    {
+      "label": "career  ·  save this",
+      "title": ["HOW TO PRACTICE", "DSA"],
+      "title_y": 1050,
+      "title_size": 150,
+      "body": ["For anyone grinding problems", "and still freezing in interviews.", "", "11 slides  ·  the habits that", "actually move the needle."],
+      "body_y": 720,
+      "body_size": 21,
+      "leading": 44,
+      "takeaway": "Volume is not the skill.",
+      "ai_mark": true
+    },
+    {
+      "label": "the trap",
+      "title": ["MORE PROBLEMS", "IS NOT THE FIX"],
+      "title_size": 112,
+      "body": [
+        "You can solve 400 problems and still",
+        "freeze on a variation you have not seen.",
+        "",
+        "The skill is not recall.",
+        "It is reasoning, out loud, under pressure."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Recall breaks. Reasoning holds.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 1  ·  start dumb",
+      "title": ["STATE THE", "BRUTE FORCE"],
+      "title_size": 112,
+      "body": [
+        "Before optimising, say the obvious",
+        "solution and what it costs.",
+        "",
+        "\"Nested loop, O(n squared).",
+        "Too slow for n = 10 to the 5.\""
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Name the naive answer first.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 2  ·  the real work",
+      "title": ["FIND THE", "BOTTLENECK"],
+      "title_size": 112,
+      "body": [
+        "What is the repeated work?",
+        "The scan inside the loop.",
+        "The sort you keep redoing.",
+        "",
+        "Optimising is just removing",
+        "repeated work."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "The bottleneck tells you the tool.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 3  ·  the toolbox",
+      "title": ["PICK THE TOOL"],
+      "title_size": 112,
+      "body": [
+        "hash map   - remember what you saw",
+        "two pointers - sorted, single pass",
+        "heap       - keep the top k cheaply",
+        "window     - contiguous ranges",
+        "prefix sum - repeated range queries"
+      ],
+      "body_size": 18,
+      "leading": 48,
+      "takeaway": "Patterns are tools, not tricks.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 4  ·  the habit",
+      "title": ["EXPLAIN BEFORE", "YOU CODE"],
+      "title_size": 112,
+      "body": [
+        "Say the approach in plain words.",
+        "Then write it.",
+        "",
+        "If you cannot explain it, you do not",
+        "own it yet. You are hoping."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "The interviewer only hears your reasoning.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 5  ·  review right",
+      "title": ["TRACK WHY", "IT WAS HARD"],
+      "title_size": 112,
+      "body": [
+        "Not just that you solved it.",
+        "Write one line: what beat you,",
+        "and what unlocked it.",
+        "",
+        "Revisit the ones that beat you,",
+        "not the ones you already know."
+      ],
+      "body_size": 18,
+      "leading": 48,
+      "takeaway": "Review the failures, not the wins.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 6  ·  simulate",
+      "title": ["PRACTICE UNDER", "PRESSURE"],
+      "title_size": 112,
+      "body": [
+        "Untimed practice builds comfort,",
+        "not interview skill.",
+        "",
+        "Set 25 minutes. Talk out loud.",
+        "Struggle before you look."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Comfort is not readiness.",
+      "ai_mark": true
+    },
+    {
+      "label": "step 7  ·  depth",
+      "title": ["DO FEWER,", "DEEPER"],
+      "title_size": 112,
+      "body": [
+        "Three problems understood deeply",
+        "beat ten skimmed for the solution.",
+        "",
+        "After each one, ask:",
+        "what class of problem is this?"
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Depth compounds. Volume does not.",
+      "ai_mark": true
+    },
+    {
+      "label": "the test  ·  what it measures",
+      "title": ["WHAT IT", "ACTUALLY TESTS"],
+      "title_size": 112,
+      "body": [
+        "Interviews do not test whether you",
+        "have seen the problem before.",
+        "",
+        "They test whether you can reason",
+        "towards a solution, out loud."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Reasoning is the skill. Practise that.",
+      "ai_mark": true
+    },
+    {
+      "label": "start here  ·  today",
+      "title": ["TODAY'S ONE", "CHANGE"],
+      "title_size": 112,
+      "body": [
+        "Pick the last problem that beat you.",
+        "Re-solve it out loud, from scratch,",
+        "with no help.",
+        "",
+        "That single rep is worth more",
+        "than ten new problems."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Say it before you code it.",
+      "ai_mark": true
+    }
+  ]
+}

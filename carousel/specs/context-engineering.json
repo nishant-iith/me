@@ -1,0 +1,165 @@
+{
+  "title": "Context engineering beats prompt engineering",
+  "author": "Nishant Verma",
+  "out": "context-engineering.pdf",
+  "pages": [
+    {
+      "label": "tech intelligence  ·  save this",
+      "title": ["CONTEXT", "ENGINEERING"],
+      "title_y": 1050,
+      "title_size": 150,
+      "body": ["Six months of \"just write better prompts.\"", "The discourse finally caught up.", "", "8 slides  ·  the boring infrastructure", "of relevance."],
+      "body_y": 720,
+      "body_size": 21,
+      "leading": 44,
+      "takeaway": "Prompts were the demo. Context is the product.",
+      "ai_mark": true
+    },
+    {
+      "label": "the shift",
+      "title": ["PROMPTS WERE", "THE DEMO"],
+      "title_size": 112,
+      "body": [
+        "We spent a year telling each other",
+        "to phrase the ask better.",
+        "",
+        "Different word order. Better adjectives.",
+        "\"You are an expert...\"",
+        "",
+        "The gains flattened in weeks."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Phrasing is not leverage.",
+      "ai_mark": true
+    },
+    {
+      "label": "the correction",
+      "title": ["BETTER CONTEXT, THEY SAID"],
+      "title_size": 104,
+      "body": [
+        "Now the take is \"just give the model",
+        "better context.\"",
+        "",
+        "True. But context is not a vibe.",
+        "It is four separate engineering problems."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Context is engineered, not wished for.",
+      "ai_mark": true
+    },
+    {
+      "label": "the four parts  ·  1 of 4",
+      "title": ["RETRIEVAL"],
+      "title_size": 120,
+      "body": [
+        "Right information, right time.",
+        "",
+        "Most context failures are retrieval failures.",
+        "The model did not lack smarts.",
+        "It lacked the document that mattered.",
+        "",
+        "Fix the index before you touch the prompt."
+      ],
+      "body_size": 19,
+      "leading": 48,
+      "takeaway": "You cannot prompt your way past a bad index.",
+      "ai_mark": true
+    },
+    {
+      "label": "the four parts  ·  2 of 4",
+      "title": ["COMPACTION"],
+      "title_size": 120,
+      "body": [
+        "The window fills. Something must go.",
+        "",
+        "What you drop decides what the model",
+        "remembers. Most teams drop history",
+        "and keep noise.",
+        "",
+        "Compaction is a design decision,",
+        "not an afterthought."
+      ],
+      "body_size": 19,
+      "leading": 48,
+      "takeaway": "What you drop matters more than what you keep.",
+      "ai_mark": true
+    },
+    {
+      "label": "the four parts  ·  3 of 4",
+      "title": ["TOKEN BUDGETS"],
+      "title_size": 112,
+      "body": [
+        "Your context window looks big.",
+        "Your effective budget is not.",
+        "",
+        "Attention degrades. Important facts",
+        "buried at position 60k get missed.",
+        "",
+        "Measure recall across the window.",
+        "Then budget like it is money."
+      ],
+      "body_size": 19,
+      "leading": 48,
+      "takeaway": "The window is a budget, not a warehouse.",
+      "ai_mark": true
+    },
+    {
+      "label": "the four parts  ·  4 of 4",
+      "title": ["TOOL SCHEMAS"],
+      "title_size": 116,
+      "body": [
+        "Every tool call is a contract.",
+        "",
+        "Bad schema, bad call, bad recovery loop.",
+        "The model obeys the interface you gave it.",
+        "",
+        "Design schemas like APIs to a stranger,",
+        "because to the model, they are."
+      ],
+      "body_size": 19,
+      "leading": 48,
+      "takeaway": "The schema is the product surface.",
+      "ai_mark": true
+    },
+    {
+      "label": "the failure mode",
+      "title": ["\"THE MODEL FORGOT\""],
+      "title_size": 108,
+      "body": [
+        "Translation: the context failed.",
+        "",
+        "The fact was never retrieved,",
+        "or it was compacted away,",
+        "or it sat outside the budget,",
+        "or the tool schema cut it off.",
+        "",
+        "The model played the hand you dealt."
+      ],
+      "body_size": 19,
+      "leading": 48,
+      "takeaway": "Blame the plumbing, not the weights.",
+      "ai_mark": true
+    },
+    {
+      "label": "start here  ·  today",
+      "title": ["THE 80 / 20"],
+      "title_size": 112,
+      "body": [
+        "Spend twenty percent of your effort",
+        "on the prompt.",
+        "",
+        "The rest goes to retrieval, compaction,",
+        "budgets, and schemas.",
+        "",
+        "Six months of prompt lore was practice",
+        "for the real job."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Relevance is infrastructure, not phrasing.",
+      "ai_mark": true
+    }
+  ]
+}

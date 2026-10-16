@@ -1,0 +1,159 @@
+{
+  "title": "DSA prep that actually works - from the numbers",
+  "author": "Nishant Verma",
+  "out": "dsa-truths.pdf",
+  "pages": [
+    {
+      "label": "career  ·  save this",
+      "title": ["DSA PREP THAT", "ACTUALLY WORKS"],
+      "title_y": 1050,
+      "title_size": 130,
+      "body": ["500 problems across 3 platforms.", "45 students taught.", "3 rejections before the first offer.", "", "The numbers that actually matter.", "", "8 slides · no fluff · receipts inside."],
+      "body_y": 680,
+      "body_size": 21,
+      "leading": 44,
+      "takeaway": "Volume is not the metric. Variety is.",
+      "ai_mark": true
+    },
+    {
+      "label": "the volume myth",
+      "title": ["500 PROBLEMS,", "STILL STUCK"],
+      "title_size": 112,
+      "body": [
+        "I solved 500+ problems across LeetCode,",
+        "GFG, and InterviewBit.",
+        "Still froze on the first mock interview.",
+        "",
+        "Solving more does not fix solving wrong.",
+        "The gap is not volume."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "More problems will not save you.",
+      "ai_mark": true
+    },
+    {
+      "label": "the actual fix",
+      "title": ["SOLVE DIFFERENT,",
+        "NOT MORE"],
+      "title_size": 112,
+      "body": [
+        "Same problem types on repeat ?= plateau.",
+        "Different topics every week ?= momentum.",
+        "",
+        "Your brain adapts to the pattern.",
+        "Rotate, do not repeat."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Brain adapts to patterns. Break them.",
+      "ai_mark": true
+    },
+    {
+      "label": "the unexpected topic",
+      "title": ["LLD IS ASKED", "IN PLACEMENT"],
+      "title_size": 112,
+      "body": [
+        "I did not expect it.",
+        "No one warned me.",
+        "",
+        "It shows up in placement rounds,",
+        "not internship interviews.",
+        "LLD is the difference between rounding up",
+        "and getting the offer."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Study LLD even if the job posting says coding only.",
+      "ai_mark": true
+    },
+    {
+      "label": "the overrated topic",
+      "title": ["TREES ARE", "THE TRAP"],
+      "title_size": 112,
+      "body": [
+        "Everyone grinds trees.",
+        "Startups place barely ask them.",
+        "",
+        "Trees are beautiful to study,",
+        "easy to over-invest in,",
+        "rarely show up in early interview rounds."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Trees reward study, not interviews.",
+      "ai_mark": true
+    },
+    {
+      "label": "the rotation that worked",
+      "title": ["A2Z FOR BREADTH",
+        "79 FOR DEPTH"],
+      "title_size": 108,
+      "body": [
+        "A2Z first: broad rotation, high volume.",
+        "Then Striver 79: revision after revision until settled.",
+        "",
+        "The error log guided everything.",
+        "Not the count of problems."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Revision of your errors is the actual learning.",
+      "ai_mark": true
+    },
+    {
+      "label": "the resume trick",
+      "title": ["CORE PROJECTS,",
+        "NOT TUTORIALS"],
+      "title_size": 112,
+      "body": [
+        "Do not list AI-powered task managers.",
+        "List projects that show architecture decisions:",
+        "memory layout choices, failure modes,",
+        "what you would redesign.",
+        "",
+        "Interviewers ask how you think, not what tools you installed."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Interviewers testjudgement, not tutorials.",
+      "ai_mark": true
+    },
+    {
+      "label": "teach-as-you-go",
+      "title": ["TEACH DSA TO", "LEARN DSA"],
+      "title_size": 112,
+      "body": [
+        "Explaining a problem out loud",
+        "is how you know you understand it.",
+        "",
+        "Say the approach before writing code.",
+        "The interviewer only hear your reasoning.",
+        "",
+        "Practice explaining out loud alone in your room.",
+        "It sounds silly. It works."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "If you cannot explain it, you do not own it.",
+      "ai_mark": true
+    },
+    {
+      "label": "start here  ·  today",
+      "title": ["TOKEN BUDGETS;", "ONE CHANGE"],
+      "title_size": 108,
+      "body": [
+        "Do revise one old problem today.",
+        "Re-solve a problem you failed last week.",
+        "No notes. No hints.",
+        "",
+        "Say it out loud while you do it.",
+        "That single exerciseworth more than ten new problems."
+      ],
+      "body_size": 19,
+      "leading": 50,
+      "takeaway": "Revision is the work.",
+      "ai_mark": true
+    }
+  ]
+}
