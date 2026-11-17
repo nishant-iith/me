@@ -28,7 +28,7 @@ const Home = () => {
                             <BadgeCheck className="text-black fill-zinc-100" size={32} />
                         </div>
                         <TypewriterEffect
-                            words={["Based in Hyderabad, India", "Software Engineer", "Student at IIT Hyderabad"]}
+                            words={["Based in Hyderabad, India", "Software Engineer", "SDE @ DP World"]}
                         />
                     </div>
 
@@ -317,6 +317,17 @@ interface Experience {
 
 // Experience data with type classification
 const experienceData: Experience[] = [
+    {
+        type: 'corporate',
+        role: "Software Development Engineer",
+        company: "DP World",
+        period: "Jul 2026 - Present",
+        tags: ['Java', 'Spring Boot', 'Backend'],
+        description: [
+            "Working on global logistics and trade solutions.",
+            "Backend development with Java and Spring Boot."
+        ]
+    },
     {
         type: 'corporate',
         role: "Software Development Engineer (Summer Analyst)",

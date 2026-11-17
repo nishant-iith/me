@@ -1,6 +1,6 @@
 # Portfolio Website
 
-Personal portfolio of **Nishant Verma** - a Software Engineer and student at IIT Hyderabad.
+Personal portfolio of **Nishant Verma** - a Software Engineer at DP World and an IIT Hyderabad graduate.
 
 ![Portfolio](https://img.shields.io/badge/portfolio-live-brightgreen)
 ![React](https://img.shields.io/badge/React-19-blue)

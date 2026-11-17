@@ -38,7 +38,7 @@ const DEFAULT_IMAGE = `${BASE_URL}/favicon.svg`;
 
 export function SEO({
   title = 'Nishant Verma - Software Engineer',
-  description = 'Personal portfolio of Nishant Verma - Software Engineer and student at IIT Hyderabad. Showcasing projects, skills, and experience.',
+  description = 'Personal portfolio of Nishant Verma - Software Engineer at DP World, IIT Hyderabad graduate. Showcasing projects, skills, and experience.',
   pathname = '',
   image = DEFAULT_IMAGE,
   type = 'website',
@@ -89,8 +89,8 @@ export function SEO({
 export const HomeSEO = () => (
   <>
     <SEO
-      title="Nishant Verma - Software Engineer | IIT Hyderabad"
-      description="Software Engineer joining DP World in July 2026. B.Tech at IIT Hyderabad with experience at Goldman Sachs. Building scalable web applications and competitive programming."
+      title="Nishant Verma - Software Engineer | DP World"
+      description="Software Engineer at DP World. B.Tech from IIT Hyderabad with experience at Goldman Sachs. Building scalable web applications and competitive programming."
       pathname="/"
     />
     <Helmet>
@@ -101,7 +101,7 @@ export const HomeSEO = () => (
         "url": "https://nishant-sde.pages.dev",
         "email": "nishant.iith@gmail.com",
         "image": "https://nishant-sde.pages.dev/og-image.png",
-        "jobTitle": "Software Engineering Student",
+        "jobTitle": "Software Development Engineer",
         "worksFor": { "@type": "Organization", "name": "DP World" },
         "affiliation": { "@type": "EducationalOrganization", "name": "IIT Hyderabad", "sameAs": "https://www.iith.ac.in" },
         "alumniOf": { "@type": "EducationalOrganization", "name": "IIT Hyderabad", "sameAs": "https://www.iith.ac.in" },
@@ -111,14 +111,14 @@ export const HomeSEO = () => (
           "https://codeforces.com/profile/so-called-iitian"
         ],
         "knowsAbout": ["Software Engineering", "Competitive Programming", "Web Development", "Machine Learning", "React", "TypeScript", "Node.js", "C++", "Python"],
-        "description": "Software Engineer joining DP World in July 2026. B.Tech at IIT Hyderabad with experience at Goldman Sachs."
+        "description": "Software Engineer at DP World. B.Tech from IIT Hyderabad with experience at Goldman Sachs."
       })}</script>
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "Nishant Verma Portfolio",
         "url": "https://nishant-sde.pages.dev",
-        "description": "Personal portfolio of Nishant Verma - Software Engineer and student at IIT Hyderabad",
+        "description": "Personal portfolio of Nishant Verma - Software Engineer at DP World, IIT Hyderabad graduate",
         "author": { "@type": "Person", "name": "Nishant Verma" }
       })}</script>
     </Helmet>
@@ -127,8 +127,8 @@ export const HomeSEO = () => (
 
 export const AboutSEO = () => (
   <SEO
-    title="About Nishant Verma — IITH Student | Software Engineer"
-    description="About Nishant Verma, IIT Hyderabad student and Software Engineer. Joining DP World in July 2026 after a Goldman Sachs internship. Passionate about building things that look good and work even better."
+    title="About Nishant Verma — Software Engineer | DP World"
+    description="About Nishant Verma, Software Engineer at DP World and IIT Hyderabad graduate. Previously a Summer Analyst at Goldman Sachs. Passionate about building things that look good and work even better."
     pathname="/about"
   />
 );
@@ -214,7 +214,7 @@ export const ToolboxSEO = () => (
 export const TimelineSEO = () => (
   <SEO
     title="Journey & Timeline | Nishant Verma"
-    description="A chronological log of my journey - from joining IIT Hyderabad to Goldman Sachs internship and upcoming role at DP World."
+    description="A chronological log of my journey - from joining IIT Hyderabad to Goldman Sachs internship and my current role at DP World."
     pathname="/timeline"
   />
 );

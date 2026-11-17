@@ -11,7 +11,7 @@ export const INITIAL_MESSAGE: ChatMessage = {
 export const SUGGESTED_PROMPTS = [
   "What's your tech stack?",
   "Tell me about Goldman Sachs",
-  "Are you open to work?",
+  "What do you do at DP World?",
   "What projects have you built?",
   "What courses have you taken?",
   "Tell me about yourself"

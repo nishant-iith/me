@@ -13,8 +13,8 @@ interface Milestone {
 const milestones: Milestone[] = [
     {
         date: "JULY 2026",
-        title: "Upcoming: SDE @ DP World",
-        desc: "Preparing for the start of my professional journey as a Software Development Engineer at DP World.",
+        title: "SDE @ DP World",
+        desc: "Started my professional journey as a Software Development Engineer at DP World.",
         icon: <Briefcase size={20} />,
         tags: ["Career", "Full-time"],
         align: "right"

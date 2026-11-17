@@ -8,7 +8,7 @@ export default function About() {
         <section id="about" className="mb-20 space-y-8 animate-in fade-in duration-500">
 
             {/* Visually-hidden H1 for SEO */}
-            <h1 className="sr-only">About Nishant Verma — IITH Student</h1>
+            <h1 className="sr-only">About Nishant Verma — Software Engineer</h1>
 
             {/* 1. TOP SECTION: IDENTITY */}
             <div className="flex flex-col md:flex-row gap-12 items-center">
@@ -62,7 +62,7 @@ export default function About() {
                             <InfoRow index="01" label="Age" value="23" />
                             <InfoRow index="02" label="Location" value="Hyderabad, IN" />
                             <InfoRow index="03" label="Role" value="Software Engineer" />
-                            <InfoRow index="04" label="Status" value="Open to Work" isStatus />
+                            <InfoRow index="04" label="Status" value="SDE @ DP World" isStatus />
                         </div>
 
                         {/* Grid Pattern Overlay */}
@@ -96,7 +96,7 @@ export default function About() {
 
                     {/* Bio Text */}
                     <p className="text-zinc-400 font-mono text-sm leading-relaxed mt-4 pl-5 border-zinc-800 group-hover:border-zinc-700 transition-colors">
-                        Simple as that. I enjoy building things that look good and work even better. Currently at IIT Hyderabad, love to explore new things and build cool stuff. If you vibe with my work or just want to chat about tech, I'm always open.
+                        Simple as that. I enjoy building things that look good and work even better. Currently a Software Engineer at DP World, after finishing my B.Tech at IIT Hyderabad. Love to explore new things and build cool stuff. If you vibe with my work or just want to chat about tech, I'm always open.
                     </p>
 
                     {/* Grid Pattern Overlay */}
