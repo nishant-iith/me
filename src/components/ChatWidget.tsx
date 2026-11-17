@@ -101,7 +101,7 @@ function ChatWidgetInner() {
     return (
       <button
         onClick={() => { initAudioContext(); setIsOpen(true); }}
-        className="fixed bottom-8 right-8 z-[100] group flex items-center justify-center bg-zinc-950/80 backdrop-blur-md border border-dashed border-zinc-800 text-zinc-500 transition-[border-color,color,box-shadow] duration-300 rounded-full h-12 w-12 hover:border-zinc-600 hover:text-zinc-300 shadow-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        className="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-[100] group flex items-center justify-center bg-zinc-950/80 backdrop-blur-md border border-dashed border-zinc-800 text-zinc-500 transition-[border-color,color,box-shadow] duration-300 rounded-full h-12 w-12 hover:border-zinc-600 hover:text-zinc-300 shadow-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         aria-label="Open chat (Ctrl+.)"
         title="Chat with Nishant (Ctrl+.)"
       >
