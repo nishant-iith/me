@@ -29,14 +29,15 @@ export const blogApi = {
             const data = await response.json();
 
             if (data.errors) {
-                console.error('Blog API Error:', data.errors);
-                return [];
+                throw new Error(`Blog API Error: ${JSON.stringify(data.errors)}`);
             }
 
             return data.data?.publication?.posts?.edges?.map((edge: HashnodeEdge) => edge.node) || [];
         } catch (error) {
+            // Rethrow so react-query treats this as an error state instead of
+            // silently rendering "No posts yet" when the API is down.
             console.error('Failed to fetch posts:', error);
-            return [];
+            throw error;
         }
     },
 
@@ -60,14 +61,13 @@ export const blogApi = {
             const data = await response.json();
 
             if (data.errors) {
-                console.error('Blog API Error:', data.errors);
-                return null;
+                throw new Error(`Blog API Error: ${JSON.stringify(data.errors)}`);
             }
 
             return data.data?.publication?.post || null;
         } catch (error) {
             console.error('Failed to fetch post:', error);
-            return null;
+            throw error;
         }
     }
 };

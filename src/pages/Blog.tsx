@@ -8,7 +8,7 @@ import { HASHNODE_HOST } from '../features/blog/constants';
 import type { HashnodePost } from '../features/blog/types';
 
 const Blog = () => {
-    const { data: posts, isLoading } = useBlogPosts(10);
+    const { data: posts, isLoading, isError } = useBlogPosts(10);
     const prefetchPost = usePrefetchBlogPost();
     const queryClient = useQueryClient();
 
@@ -65,6 +65,18 @@ const Blog = () => {
                             </div>
                         </div>
                     ))
+                ) : isError ? (
+                    <p className="font-mono text-zinc-500 text-sm">
+                        Couldn't load posts right now.{' '}
+                        <a
+                            href={`https://${HASHNODE_HOST}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-300"
+                        >
+                            Read them on Hashnode
+                        </a>
+                    </p>
                 ) : posts.length === 0 ? (
                     <p className="font-mono text-zinc-500 text-sm">No posts yet. Check back soon!</p>
                 ) : (
